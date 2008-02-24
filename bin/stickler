@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+
+begin
+    require 'stickler'
+rescue LoadError 
+    path = File.expand_path(File.join(File.dirname(__FILE__),"..","lib"))
+    raise if $:.include?(path)
+    $: << path
+    retry
+end
+
+puts "I am the killer app stickler at version #{Stickler::VERSION}!"
