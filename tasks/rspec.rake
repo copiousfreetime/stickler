@@ -1,24 +1,32 @@
-require 'spec/rake/spectask'
+require 'tasks/config'
+if spec_config = Configuration.for_if_exist('test') then
 
-#-----------------------------------------------------------------------
-# Testing - this is either test or spec, include the appropriate one
-#-----------------------------------------------------------------------
-namespace :test do
-
+  namespace :test do
+  
     task :default => :spec
-
-    Spec::Rake::SpecTask.new do |r| 
-        r.rcov      = true
-        r.rcov_dir  = Stickler::SPEC.local_coverage_dir
-        r.libs      = Stickler::SPEC.require_paths
-        r.spec_opts = %w(--format specdoc --color)
-    end
-
-    if HAVE_HEEL then
-        desc "View the code coverage report locally"
-        task :coverage => [:spec] do
-            sh "heel --root #{Stickler::SPEC.local_coverage_dir}"
-        end 
-    end
     
+    require 'spec/rake/spectask'
+    Spec::Rake::SpecTask.new do |r| 
+      r.ruby_opts   = spec_config.ruby_opts
+      r.libs        = [ Stickler::Configuration.lib_path, 
+                      Stickler::Configuration.root_dir ]
+      r.spec_files  = spec_config.files
+      r.spec_opts   = spec_config.options
+
+      if rcov_config = Configuration.for_if_exist('rcov') then
+        r.rcov      = true
+        r.rcov_dir  = rcov_config.output_dir
+        r.rcov_opts = rcov_config.rcov_opts
+      end
+
+    end
+  end
+
+  #if HAVE_HEEL then
+  #desc "View the code coverage report locally"
+  #task :coverage => [:spec] do
+  #sh "heel --root #{Stickler::SPEC.local_coverage_dir}"
+  #end 
+  #end
+
 end

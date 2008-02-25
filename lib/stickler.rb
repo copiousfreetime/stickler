@@ -1,25 +1,23 @@
+#--
+# Copyright (c) 2008 Jeremy Hinegardner
+# All rights reserved.  Licensed under the same terms as Ruby.  No warranty is
+# provided.  See LICENSE and COPYING for details.
+#++
+
 module Stickler
-    
-    ROOT_DIR        = File.expand_path(File.join(File.dirname(__FILE__),".."))
-    LIB_DIR         = File.join(ROOT_DIR,"lib").freeze
-    RESOURCE_DIR    = File.join(ROOT_DIR,"resources").freeze
 
-    # 
-    # Utility method to require all files ending in .rb in the directory
-    # with the same name as this file minus .rb
-    #
-    def require_all_libs_relative_to(fname)
-        prepend   = File.basename(fname,".rb")
-        search_me = File.join(File.dirname(fname),prepend)
-     
-        Dir.entries(search_me).each do |rb|
-            if File.extname(rb) == ".rb" then
-                require "#{prepend}/#{File.basename(rb,".rb")}"
-            end
-        end
-    end 
-    module_function :require_all_libs_relative_to
+  # recursively descend the directory with the same name as this file and do a
+  # require 'stickler/path/to/file'
+  #
+  def self.require_all_libs_relative_to_me
+    remove_parent = File.dirname(File.expand_path(__FILE__)) + File::SEPARATOR
+    descend_dir   = File.join(remove_parent,File.basename(__FILE__, ".rb"))
 
+    Dir.glob("#{descend_dir}/**/*.rb").each do |rb|
+      lib = rb.gsub(remove_parent,'')
+      require lib
+    end
+  end
 end
 
-Stickler.require_all_libs_relative_to(__FILE__)
+Stickler.require_all_libs_relative_to_me

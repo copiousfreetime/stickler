@@ -1,15 +1,48 @@
-== stickler
+= Stickler
 
-* Homepage
-* rubyforge project
-* email
+* Homepage[http://copiousfreetime.rubyforge.org/stickler/]
+* {Rubyforge Project}[http://rubyforge.org/projects/copiousfreetime/]
+* email jeremy at hinegardner dot org 
 
 == DESCRIPTION
 
+Stickler is a tool to organize and maintain an internal gem distribution server.
+
+At times it is useful to have complete control over the availability of the gems
+for you testing, staging and production environments.  In these cases you
+probably do not want to accidentally type 'gem update' and get a new untested
+version of a gem installed on your machines.  This is where Stickler helps.
+
+Configure stickler with the the names and versions of the gems you require for
+your deployment and it will organize and setup a gem server to serve up only
+those gems.
+
+== INSTALLATION
+
+Install as a gem:
+
+   sudo gem install stickler
+
+Or Get it from RubyForge[http://rubyforge.org/projects/copiousfreetime/] 
+
 == FEATURES
+
+* Serve up a custom collection of gems for your own use.
+* Generation of a custom 'sources' gem to have your rubygems installations point
+  to your custom gem server.
+* Tracking of the gems you care about and notification when a new version of those
+  are released on rubyforge.
+* Integrates with your internal build system so your internal gems can be
+  deployed to the stickler gem server
 
 == SYNOPSIS
 
 == CREDITS
 
+* {The Rubygems Team}[http://rubyforge.org/projects/rubygems/]
+
 == LICENSE
+
+Copyright (c) 2008 Jeremy Hinegardner
+All rights reserved. Licensed under the same terms as Ruby.  No warranty is
+provided.  See LICENSE and COPYING for details.

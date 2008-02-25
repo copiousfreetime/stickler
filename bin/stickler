@@ -1,12 +1,43 @@
 #!/usr/bin/env ruby
 
-begin
-    require 'stickler'
-rescue LoadError 
-    path = File.expand_path(File.join(File.dirname(__FILE__),"..","lib"))
-    raise if $:.include?(path)
-    $: << path
-    retry
+require 'rubygems'
+
+gem = ARGV.shift
+ver = ARGV.shift || Gem::Requirement.default
+
+require 'rubygems/source_info_cache'
+require 'rubygems/dependency_list'
+
+original_dep =  Gem::Dependency.new( gem, ver )
+
+# actually search through and find the ones for this platform
+def spec_from_dependency(dep)
+  spec_and_source = Gem::SourceInfoCache.search_with_source(dep).reverse.first 
+  spec = spec_and_source.first
+  return spec
 end
 
-puts "I am the killer app stickler at version #{Stickler::VERSION}!"
+dep_stack = []
+dep_stack.push(spec_from_dependency(original_dep))
+dep_list = Gem::DependencyList.new
+seen = {}
+
+until dep_stack.empty? 
+    spec = dep_stack.pop
+    next if spec.nil? or seen[spec.name]
+    puts "---> #{spec.full_name}"
+    seen[spec.name] = true
+
+    spec.dependencies.each do |dep|
+        d = spec_from_dependency(dep)
+        next if seen[d.name]
+        puts "<--- #{d.full_name}"
+        dep_stack.push(d)
+    end
+    dep_list.add spec
+end
+
+
+dep_list.dependency_order.reverse.each do |s|
+    puts "Install #{s.full_name}"
+end
