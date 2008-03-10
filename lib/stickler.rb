@@ -15,6 +15,7 @@ module Stickler
 
     Dir.glob("#{descend_dir}/**/*.rb").each do |rb|
       lib = rb.gsub(remove_parent,'')
+      puts "requiring #{lib}"
       require lib
     end
   end

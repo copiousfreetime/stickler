@@ -29,7 +29,7 @@ module Stickler
 
     # returns:: [String] The full expanded path of the +config+ directory
     #           below _root_dir_.  All parameters passed in are joined onto the
-    #           result.  Trailing File::SEPARATOR is guaranteed if _*args_ are
+    #           result.  Trailing File::SEPARATOR is guaranteed if _args_ are
     #           *not* present.
     #
     def self.config_path(*args)
