@@ -1,8 +1,14 @@
 #!/usr/bin/env ruby
 
-require 'stickler'
+begin
+  require 'stickler'
+rescue LoadError
+  require 'rubygems'
+  $: << File.expand_path(File.join(File.dirname(__FILE__), "..", "lib"))
+  require 'stickler'
+end
 
-Stickler::CLI.new.main(ARGV, ENV).run
+Stickler::CLI.new(ARGV, ENV).run
 
 __END__
 gem = ARGV.shift

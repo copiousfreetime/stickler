@@ -36,5 +36,4 @@ Stickler::GEM_SPEC = Gem::Specification.new do |spec|
   if rf = Configuration.for_if_exist('rubyforge') then
     spec.rubyforge_project  = rf.project
   end
-
 end
