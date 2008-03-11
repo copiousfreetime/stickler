@@ -8,10 +8,17 @@ require 'main'
 require 'stickler/version'
 
 module Stickler
-  ##
-  # ::Main.create creates a class that does command line parsing.
+  #
+  # ::Main.create returns a class that is instantiated with ARGV and ENV as
+  # parameters.  The Cli is then used as:
+  #
+  #   Cli.new(ARGV, ENV).run
   #
   CLI = ::Main.create {
+
+    author  "Copyright (c) 2008 Jeremy Hinegardner <jeremy@hinegardner.org>"
+    version Stickler::VERSION
+
     description <<-txt
       Stickler is a tool to organize and maintain an internal gem 
       distribution server.  It synchronizes locally distriubted gems
@@ -29,7 +36,8 @@ module Stickler
       . stickler check --email 'admin@example.com'
       . stickler list
     txt
-    author 
+
+
     run { help! }
 
     mode(:setup) {
@@ -42,7 +50,7 @@ module Stickler
       
       mixin :option_directory
 
-      run { Stickler.setup('directory' => directory) }
+      run { Stickler::Repository.new(directory).setup }
     }
 
     mode(:list) {

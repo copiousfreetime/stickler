@@ -4,8 +4,25 @@
 # provided.  See LICENSE and COPYING for details.
 #++
 
+require 'logging'
+
 module Stickler
 
+  # Setup top level logging to stdout.  Good idea taken from Webby.
+  #
+  def self.logger
+    unless @logger 
+      @logger = ::Logging::Logger['Stickler']
+      @logger.level = :info
+      @logger.add_appenders(::Logging::Appender.stdout)
+      ::Logging::Appender.stdout.layout = Logging::Layouts::Pattern.new(
+        :pattern        => "[%d] %5l : %m\n",   # [date] LEVEL: message 
+        :date_pattern    => "%H:%M:%S"          # [date] => [HH:MM::SS]
+      )
+    end
+    return @logger
+  end
+  
   # recursively descend the directory with the same name as this file and do a
   # require 'stickler/path/to/file'
   #
