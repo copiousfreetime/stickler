@@ -26,6 +26,20 @@ module Stickler
   Stickler.logger # force it to be initialized
 
   #
+  # Turn off the stdout logging
+  #
+  def self.silent!
+    ::Logging::Appender.stdout.level = :off
+  end
+
+  #
+  # Up the logging to debug levels
+  #
+  def self.debug!
+    @logger.level = :debug
+  end
+
+  #
   # Send to both STDOUT and the loggers, but turn off the stdout logger before
   # and turn it back on afterwards.
   #

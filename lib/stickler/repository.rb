@@ -1,4 +1,4 @@
-#--
+
 # Copyright (c) 2008 Jeremy Hinegardner
 # All rights reserved.  Licensed under the same terms as Ruby.  No warranty is
 # provided.  See LICENSE and COPYING for details.
@@ -6,7 +6,7 @@
 
 require 'stickler'
 require 'fileutils'
-require 'configuration'
+require 'ostruct'
 
 module Stickler
   # 
@@ -27,34 +27,64 @@ module Stickler
   #
   class Repository
 
-    # The repository directory
+    #
+    # The repository has customizations created via an eval'd file.  That file
+    # is +config_file+ and it is done via a yeilded OpenStruct
+    #
+    class << self
+      def configuration
+        cfg = OpenStruct.new
+        yield cfg
+        return cfg
+      end
+    end
+      # The repository directory
     attr_reader :directory
 
-    def initialize(directory)
-      @directory = File.expand_path(directory)
-      @config_loaded = false
-      load_config
-      if valid? then
-        layout = ::Logging::Layouts::Pattern.new(
-          :pattern      => "[%d] %c %6p %5l : %m\n",
-          :date_pattern => "%Y-%m-%d %H:%M:%S"
-        )
-        logger.add_appenders ::Logging::Appenders::RollingFile.new( 'stickler_rolling_logfile',
-                                                                   { :filename => log_file,
-                                                                     :layout   => layout,
-                                                                     # at 5MB roll the log
-                                                                     :size     => 5 * (1024**2),
-                                                                     :keep     => 5,
-                                                                     :safe     => true
-                                                                    }) 
-      end
+    def initialize( opts )
+      @directory = File.expand_path( opts['directory'] )
+      enhance_logging( opts ) unless opts['skip_validity_check'] or not valid?
+    end
+
+    #
+    # update logging by turning on a log file in the repository directory, and
+    # possibly turning off the stdout logger that is the default.
+    #
+    def enhance_logging( opts )
+      Stickler.silent! if opts['quiet']
+
+
+      layout = ::Logging::Layouts::Pattern.new(
+        :pattern      => "[%d] %c %6p %5l : %m\n",
+        :date_pattern => "%Y-%m-%d %H:%M:%S"
+      )
+      logger.add_appenders ::Logging::Appenders::RollingFile.new( 'stickler_rolling_logfile',
+                                                                 { :filename => log_file,
+                                                                   :layout   => layout,
+                                                                   # at 5MB roll the log
+                                                                   :size     => 5 * (1024**2),
+                                                                   :keep     => 5,
+                                                                   :safe     => true,
+                                                                   :level    => :debug
+                                                                  }) 
+      Stickler.debug! if opts['debug']
     end
 
     #
     # return a handle to the repository configuration found in stickler.rb
     #
     def configuration
-      @configuration ||= ::Configuration.for('stickler')
+      unless @configuration 
+        @config_contents = File.read(config_file)
+        begin
+          @configuration = eval(@config_contents)
+          @configuration.upstream = [ @configuration.upstream ].flatten
+        rescue => e
+          logger.error "Failure to load configuration #{e}"
+          exit 1
+        end
+      end
+      return @configuration
     end
 
     #
@@ -107,33 +137,19 @@ module Stickler
     end
 
     #
-    # Load the configuration file if it exists.  If it is already loaded then do
-    # nothing.  If there is an error loading the configuration that is logged.
-    #
-    def load_config
-      require config_file if File.exist?(config_file)
-      @config_loaded = true
-    rescue LoadError => le
-      logger.error "Error loading configuration file #{config_file}"
-      logger.error le
-    end
-
-    #
-    # Is the configuration loaded?
-    #
-    def config_loaded?
-      @config_loaded
-    end
-
-    #
     # Is the repository valid?
     #
     def valid?
-      valid!
-      true
-    rescue StandardError => e
-      logger.error "Repository is not valid : #{e}"
-      false
+      if @valid.nil? then 
+        begin
+          valid!
+          @valid = true
+        rescue StandardError => e
+          logger.error "Repository is not valid : #{e}"
+          @valid = false
+        end
+      end
+      return @valid
     end
 
     #
@@ -144,7 +160,7 @@ module Stickler
       raise "#{directory} is not writable" unless File.writable?( directory )
 
       raise "#{config_file} does not exist" unless File.exist?( config_file )
-      raise "#{config_file} is not loaded" unless config_loaded?
+      raise "#{config_file} is not loaded" unless configuration
 
       %w[ gem_dir log_dir rdoc_dir specification_dir ].each do |method|
         sub_dir= self.send( method )
@@ -182,7 +198,7 @@ module Stickler
         FileUtils.cp Stickler::Configuration.data_path("stickler.rb"), config_file
         logger.info "copied in default configuration to #{config_file}"
       end
-      load_config
+
     rescue => e
       logger.error "Unable to setup the respository"
       logger.error e
@@ -195,12 +211,11 @@ module Stickler
     #
     def info
       return unless valid?
-      methods = configuration.methods - Object.methods - ['method_missing']
-      max_length = methods.collect { |m| m.to_s.size }.max
-
       Stickler.tee "Configuration settings:"
-      methods.sort.each do |method|
-        Stickler.tee "    #{method.rjust(max_length)} => #{configuration.send(method)}"
+      cfg_params = %w[ upstream gem_server_home ]
+      max_width = cfg_params.collect { |cp| cp.length }.max
+      cfg_params.sort.each do |param|
+        Stickler.tee "    #{param.rjust(max_width)} : #{configuration.send(param)}"
       end
     end
   end

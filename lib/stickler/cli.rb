@@ -8,6 +8,18 @@ require 'main'
 require 'stickler/version'
 
 module Stickler
+
+  # 
+  # Convert the Parameters::List that exists as the parameters from Main
+  #
+  def self.params_to_hash( params )
+    h = Hash.new
+    params.each do |p|
+      h[p.names.first] = p.value
+    end
+    return h
+  end
+
   #
   # ::Main.create returns a class that is instantiated with ARGV and ENV as
   # parameters.  The Cli is then used as:
@@ -37,6 +49,17 @@ module Stickler
       . stickler list
     txt
 
+    option(:quiet, "q") {
+      description 'be quiet about logging to stdout'
+      default false
+      attr
+    }
+    
+    option(:debug) {
+      description 'be verbose about logging in general'
+      default false
+      attr
+    }
 
     run { help! }
 
@@ -50,7 +73,11 @@ module Stickler
       
       mixin :option_directory
 
-      run { Stickler::Repository.new( directory ).setup }
+      run { 
+        p = Stickler.params_to_hash( params )
+        p['skip_validity_check'] = true
+        Stickler::Repository.new( p ).setup 
+      }
     }
 
     mode(:info) {
@@ -62,7 +89,7 @@ module Stickler
 
       mixin :option_directory
       
-      run { Stickler::Repository.new( directory ).info }
+      run { Stickler::Repository.new( Stickler.params_to_hash( params ) ).info }
     }
 
     mode(:add) {
@@ -143,7 +170,7 @@ module Stickler
     # common options used by more than one commands
     #
     mixin :option_directory do 
-      option(:directory) {
+      option(:directory, "d") {
         argument :required
         default Dir.pwd
         attr 
