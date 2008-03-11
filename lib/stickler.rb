@@ -8,6 +8,7 @@ require 'logging'
 
 module Stickler
 
+  #
   # Setup top level logging to stdout.  Good idea taken from Webby.
   #
   def self.logger
@@ -22,7 +23,25 @@ module Stickler
     end
     return @logger
   end
-  
+  Stickler.logger # force it to be initialized
+
+  #
+  # Send to both STDOUT and the loggers, but turn off the stdout logger before
+  # and turn it back on afterwards.
+  #
+  # This is useful for logging information in a pleasing manner to stdout and
+  # also to have it sent non-stdout logs
+  #
+  def self.tee( msg )
+    prev_level = ::Logging::Appender.stdout.level
+    ::Logging::Appender.stdout.level = :off
+    @logger.info msg
+    ::Logging::Appender.stdout.level = prev_level
+
+    $stdout.puts msg
+  end
+
+  #
   # recursively descend the directory with the same name as this file and do a
   # require 'stickler/path/to/file'
   #

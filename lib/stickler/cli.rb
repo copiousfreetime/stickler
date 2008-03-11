@@ -50,19 +50,19 @@ module Stickler
       
       mixin :option_directory
 
-      run { Stickler::Repository.new(directory).setup }
+      run { Stickler::Repository.new( directory ).setup }
     }
 
-    mode(:list) {
-      description 'list the contents of the stickler repository'
+    mode(:info) {
+      description 'report information about the stickler repository'
 
       examples <<-txt
-        . stickler list
+        . stickler info
       txt
 
       mixin :option_directory
       
-      run { puts "List not implemented" }
+      run { Stickler::Repository.new( directory ).info }
     }
 
     mode(:add) {
@@ -88,7 +88,8 @@ module Stickler
       option('include-dependencies') { 
         desc 'include any dependencies that are not required elsewhere'
         default false
-      } 
+      }
+      
       mixin :option_directory
       
       run { 
