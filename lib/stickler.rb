@@ -44,7 +44,7 @@ module Stickler
   # and turn it back on afterwards.
   #
   # This is useful for logging information in a pleasing manner to stdout and
-  # also to have it sent non-stdout logs
+  # also to have it sent to non-stdout logs
   #
   def self.tee( msg )
     prev_level = ::Logging::Appender.stdout.level

@@ -11,11 +11,11 @@ module Stickler
   module Version
 
     MAJOR = 0
-    MINOR = 0
-    BUILD = 1
+    MINOR = 1
+    BUILD = 0
 
     def self.to_ary
-      [MAJOR, MINOR, BUILD]
+      [ MAJOR, MINOR, BUILD ]
     end
 
     def self.to_s
@@ -25,8 +25,12 @@ module Stickler
     def self.to_hash
       { :major => MAJOR, :minor => MINOR, :build => BUILD }
     end
+
+    # Version string constant
+    STRING = Version.to_s.freeze
     
   end
 
-  VERSION = Version.to_s
+  # Version string constant
+  VERSION = Version.to_s.freeze
 end

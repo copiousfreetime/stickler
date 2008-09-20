@@ -14,12 +14,15 @@ module Stickler
   # is very similar to a GEM_HOME directory.   The layout is as follows, this is
   # all assumed to be under STICKLER_HOME.
   #
-  #   stickler.rb     - sticker, the Stickler configuration file for this repository
+  #   stickler.rb     - the Stickler configuration file for this repository.
+  #                     The existence of this file indicates this is the root 
+  #                     of a stickler repository
   #   doc/            - Generated RDOC of all the gems
   #   gems/           - storage of the actual gem files, somewhat similar to GEM_HOME/cache
   #   specifications/ - ruby gemspec files 
   #   log/            - directory holding rotating logs files for stickler
-  #   
+  #   dist/           - directory holding the distributable gem index location,
+  #                     rsync this to your webserver, or serve from it directly.
   # 
   # Additionally, if a repository is instantiated and it is connected to an
   # already existing repo directory, a logfile appender is added for a logfile
@@ -52,7 +55,6 @@ module Stickler
     #
     def enhance_logging( opts )
       Stickler.silent! if opts['quiet']
-
 
       layout = ::Logging::Layouts::Pattern.new(
         :pattern      => "[%d] %c %6p %5l : %m\n",
@@ -91,42 +93,54 @@ module Stickler
     # The configuration file for the repository
     # 
     def config_file
-      @config_file ||= File.join(directory, 'stickler.rb')
+      @config_file ||= File.join( directory, 'stickler.rb' )
     end
 
     #
     # The log directory
     #
     def log_dir
-      @log_dir ||= File.join(directory, 'log')
+      @log_dir ||= File.join( directory, 'log' )
     end
 
     #
     # The log file 
     #
     def log_file
-      @log_file ||= File.join(log_dir, 'stickler.log')
+      @log_file ||= File.join( log_dir, 'stickler.log' )
     end
 
     #
     # The rdoc directory
     #
     def rdoc_dir
-      @rdoc_dir ||= File.join(directory, 'doc')
+      @rdoc_dir ||= File.join( directory, 'doc' )
     end
 
     #
-    # The gem storage directory
+    # The gem storage directory.  
+    #
+    # This holds the raw gem files downloaded from the sources
     #
     def gem_dir
-      @gem_dir ||= File.join(directory, 'gems')
+      @gem_dir ||= File.join( directory, 'gems' )
     end
 
     #
     # The Gem specification directory
     #
     def specification_dir
-      @specification_dir ||= File.join(directory, 'specifications')
+      @specification_dir ||= File.join( directory, 'specifications' )
+    end
+
+    #
+    # The Distribution directory
+    #
+    # this is the document root for the webserver that will serve your rubygems.
+    # Or they can be served directly from this location
+    #
+    def dist_dir
+      @dist_dir ||= File.join( directory, 'dist' )
     end
 
     #
