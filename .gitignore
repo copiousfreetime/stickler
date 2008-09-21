@@ -3,4 +3,5 @@ pkg
 log
 doc
 coverage
-
+*.swp
+*.swo

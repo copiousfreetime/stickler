@@ -6,6 +6,7 @@
 
 require 'stickler'
 require 'fileutils'
+require 'stickler/configuration'
 
 module Stickler
   # 
@@ -32,6 +33,9 @@ module Stickler
     # The repository directory.  the directory containing the stickler.yml file
     attr_reader :directory
 
+    # The configuration
+    attr_reader :configuration
+
     def self.other_dir_names 
       %w[ gem_dir log_dir specification_dir dist_dir ]
     end
@@ -40,6 +44,10 @@ module Stickler
       @directory = File.expand_path( opts['directory'] )
       enhance_logging( opts ) if File.directory?( log_dir )
       @overwrite = opts['force']
+
+      # this must be loaded early so it overrites the global Gem.configuration
+      load_configuration if File.exist?( config_file )
+
     end
 
     #
@@ -73,18 +81,17 @@ module Stickler
     end
 
     #
-    # return a handle to the repository configuration found in stickler.yml
+    # return a handle to the repository configuration found in stickler.yml.
+    # Set this to be the global Gem.configuration
     #
-    def configuration
-      unless @configuration 
-        begin
-          @configuration = YAML.load_file( config_file )
-        rescue => e
-          logger.error "Failure to load configuration #{e}"
-          exit 1
-        end
+    def load_configuration
+      begin
+        @configuration = Configuration.new( config_file )
+        ::Gem.configuration = @configuration 
+      rescue => e
+        logger.error "Failure to load configuration #{e}"
+        exit 1
       end
-      return @configuration
     end
 
     #
@@ -210,6 +217,9 @@ module Stickler
         logger.info "configuration file #{config_file} already exists"
       end
 
+      # load the configuration for the repo
+      load_configuration
+
     rescue => e
       logger.error "Unable to setup the respository"
       logger.error e
@@ -222,12 +232,43 @@ module Stickler
     #
     def info
       return unless valid?
-      Stickler.tee "Configuration settings:"
-      cfg_params = %w[ upstream gem_server_home ]
-      max_width = cfg_params.collect { |cp| cp.length }.max
-      cfg_params.sort.each do |param|
-        Stickler.tee "    #{param.rjust(max_width)} : #{configuration.send(param)}"
+      Stickler.tee "Configuration settings"
+      Stickler.tee "----------------------"
+      Stickler.tee ""
+      keys = configuration.keys
+      max_width = keys.collect { |k| k.length }.max
+
+      Stickler.tee "  #{"downstream_source".rjust( max_width )} : #{configuration['downstream_source']}"
+      Stickler.tee "  #{"sources".rjust( max_width )} : #{configuration.sources.first}"
+
+      configuration.sources[1..-1].each do |source|
+        Stickler.tee "  #{"".rjust( max_width )}   #{source}"
       end
+
+      Stickler.tee ""
+
+      keys = keys.sort - %w[ downstream_source sources ]
+      keys.each do |key|
+        Stickler.tee "  #{key.rjust( max_width )} : #{configuration[ key ]}"
+      end
+    end
+
+    def sources
+      unless @sources 
+        s = {}
+        configuration.sources.each do |upstream_uri|
+          src = Source.new( upstream_uri )
+          @sources << Sources.new( upstream_uri )
+        end
+      end
+      return @sources
+    end
+
+    #
+    # Add a source to the repository
+    #
+    def add_source( source_uri )
+      sources << Source.new( source_uri )
     end
   end
 end

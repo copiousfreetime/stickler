@@ -25,8 +25,8 @@ describe Stickler::Repository do
     it "setup creates a default stickler.yml file" do
       s_yml = File.join( @top_dir, 'stickler.yml' )
       s = YAML.load_file( s_yml )
-      s['upstream_sources'].size.should == 1
-      s['upstream_sources'].first.should == "http://gems.rubyforge.org/"
+      s['sources'].size.should == 1
+      s['sources'].first.should == "http://gems.rubyforge.org"
     end
   end
 
@@ -49,7 +49,12 @@ describe Stickler::Repository do
   end
 
   it "creates a configuration" do
-    @repo.configuration['upstream_sources'].size.should == 1
-    @repo.configuration['upstream_sources'].first.should == "http://gems.rubyforge.org/"
+    @repo.configuration['sources'].size.should == 1
+    @repo.configuration['sources'].first.should == "http://gems.rubyforge.org"
   end
+
+  it "sets itself as the global Gem.configuration" do
+    @repo.configuration.should == Gem.configuration
+  end
+
 end

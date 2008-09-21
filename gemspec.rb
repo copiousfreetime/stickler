@@ -24,7 +24,6 @@ Stickler::GEM_SPEC = Gem::Specification.new do |spec|
   spec.add_development_dependency( 'rake', "~> 0.8"  )
   spec.add_development_dependency( 'rspec', "~> 1.1" )
   spec.add_development_dependency( 'configuration', "~> 0.0" )
-
   
   pkg = Configuration.for('packaging')
   spec.files        = pkg.files.all

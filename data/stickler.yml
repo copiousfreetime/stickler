@@ -1,5 +1,7 @@
 #
-# Stickler Respository configuration
+# Stickler Respository configuration, this is a superset of a Gem configuration
+# file so it has the same keys as Gem::ConfigFile plus some more used by
+# Stickler
 #
 
 # The source that other rubygems installations will use to access the gems
@@ -7,5 +9,12 @@
 downstream_source: "http://gems.collectiveintellect.com/"
 
 # The upstream locations that stickler should look for gems.
-upstream_sources: 
-  - "http://gems.rubyforge.org/"
+sources: 
+  - http://gems.rubyforge.org
+
+# default configuration values that exist in Gem::ConfigFile
+bulk_threshold: 1000
+benchmark: false
+verbose: true
+update_sources: true
+backtrace: false
