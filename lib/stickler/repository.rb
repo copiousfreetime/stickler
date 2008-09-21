@@ -278,6 +278,9 @@ module Stickler
       end
     end
 
+    #
+    # Access the source cache for the repository
+    #
     def source_cache
       load_configuration unless configuration_loaded?
       @source_cache ||= ::Gem::SourceInfoCache.cache 
