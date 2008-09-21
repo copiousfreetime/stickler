@@ -14,7 +14,6 @@ sources:
 
 # default configuration values that exist in Gem::ConfigFile
 bulk_threshold: 1000
-benchmark: false
 verbose: true
 update_sources: true
 backtrace: false

@@ -19,7 +19,7 @@ module Stickler
     end
 
     # the downstream source  this repository represents
-    def downstream_sources
+    def downstream_source
       hash['downstream_source']
     end
 
@@ -75,7 +75,7 @@ module Stickler
     end
 
     def []=( key, value )
-      @hash[ key ] = value
+      @hash[ key.to_s ] = value
     end
 
     def ==( other )
