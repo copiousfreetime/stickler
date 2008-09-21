@@ -57,4 +57,11 @@ describe Stickler::Repository do
     @repo.configuration.should == Gem.configuration
   end
 
+  it "sets the global sources list for Gem" do
+    Stickler.silent {
+      @repo.add_source( "http://gems.collectiveintellect.com" )
+    }
+    Gem.sources.should == @repo.configuration.sources
+  end
+
 end

@@ -13,7 +13,8 @@ sources:
   - http://gems.rubyforge.org
 
 # default configuration values that exist in Gem::ConfigFile
+# the configurations reply to the Gems subysystem, not to Stickler
 bulk_threshold: 1000
-verbose: true
+verbose: false
 update_sources: true
 backtrace: false

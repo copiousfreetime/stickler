@@ -7,6 +7,7 @@
 require 'stickler'
 require 'fileutils'
 require 'stickler/configuration'
+require 'rubygems/source_info_cache'
 
 module Stickler
   # 
@@ -41,13 +42,19 @@ module Stickler
     end
 
     def initialize( opts )
+
       @directory = File.expand_path( opts['directory'] )
       enhance_logging( opts ) if File.directory?( log_dir )
       @overwrite = opts['force']
 
       # this must be loaded early so it overrites the global Gem.configuration
+      @configuration_loaded = false
       load_configuration if File.exist?( config_file )
 
+    end
+
+    def configuration_loaded?
+      @configuration_loaded
     end
 
     #
@@ -88,6 +95,9 @@ module Stickler
       begin
         @configuration = Configuration.new( config_file )
         ::Gem.configuration = @configuration 
+        ::Gem.sources.replace( @configuration.sources )
+        ENV['GEMCACHE'] = source_cache_dir
+        @configuration_loaded = true
       rescue => e
         logger.error "Failure to load configuration #{e}"
         exit 1
@@ -129,6 +139,13 @@ module Stickler
     #
     def specification_dir
       @specification_dir ||= File.join( directory, 'specifications' )
+    end
+
+    #
+    # The cache dir used by rubygems for this repository
+    #
+    def source_cache_dir
+      @source_cache_dir ||= File.join( directory, 'source_cache' )
     end
 
     #
@@ -232,43 +249,81 @@ module Stickler
     #
     def info
       return unless valid?
-      Stickler.tee "Configuration settings"
-      Stickler.tee "----------------------"
+      Stickler.tee "Stickler Information"
+      Stickler.tee "===================="
       Stickler.tee ""
-      keys = configuration.keys
-      max_width = keys.collect { |k| k.length }.max
 
-      Stickler.tee "  #{"downstream_source".rjust( max_width )} : #{configuration['downstream_source']}"
-      Stickler.tee "  #{"sources".rjust( max_width )} : #{configuration.sources.first}"
+      Stickler.tee "  Upstream Sources"
+      Stickler.tee "  ----------------"
+      Stickler.tee ""
 
-      configuration.sources[1..-1].each do |source|
-        Stickler.tee "  #{"".rjust( max_width )}   #{source}"
+      max_width = configuration.sources.collect { |k| k.length }.max
+      configuration.sources.each do |url|
+        Stickler.tee  "  #{url.rjust( max_width )} : #{source_cache.cache_data[url].source_index.size} available"
       end
 
       Stickler.tee ""
 
-      keys = keys.sort - %w[ downstream_source sources ]
+      keys = configuration.keys
+      max_width = keys.collect { |k| k.length }.max
+
+      keys = keys.sort - %w[ sources ]
+
+      Stickler.tee "  Configuration variables"
+      Stickler.tee "  -----------------------"
+      Stickler.tee ""
+
       keys.each do |key|
         Stickler.tee "  #{key.rjust( max_width )} : #{configuration[ key ]}"
       end
     end
 
-    def sources
-      unless @sources 
-        s = {}
-        configuration.sources.each do |upstream_uri|
-          src = Source.new( upstream_uri )
-          @sources << Sources.new( upstream_uri )
-        end
-      end
-      return @sources
+    def source_cache
+      load_configuration unless configuration_loaded?
+      @source_cache ||= ::Gem::SourceInfoCache.cache 
     end
 
     #
     # Add a source to the repository
     #
     def add_source( source_uri )
-      sources << Source.new( source_uri )
+      load_configuration unless configuration_loaded?
+      begin 
+        uri = ::URI.parse source_uri
+        ::Gem::SpecFetcher.fetcher.load_specs uri, 'specs'
+        configuration.sources << source_uri
+        configuration.write
+        Gem.sources.replace configuration.sources
+        Stickler.tee "#{source_uri} added to sources"
+      rescue ::URI::Error
+        Stickler.tee "Error : #{source_uri} is not a URI"
+      rescue ::Gem::RemoteFetcher::FetchError => e
+        Stickler.tee "Error fetching #{source_uri}"
+        Stickler.tee "\t#{e.message}"
+      end
+    end
+
+    #
+    # Remove a source from the repository
+    #
+    def remove_source( source_uri )
+      load_configuation unless configuration_loaded?
+      begin
+        uri = ::URI.parse source_uri
+        if configuration.sources.delete( source_uri ) then
+          configuration.write
+          Gem.sources.replace configuration.sources
+          Stickler.tee "#{source_uri} removed from sources"
+        else
+          Stickler.tee "#{source_uri} is not one of your sources"
+          Stickler.tee "Your sources are:"
+          configuration.sources.each do |src|
+            Stickler.tee "  #{src}"
+          end
+        end
+      rescue ::URI::Error
+        Stickler.tee "Error : #{source_uri} is not a URI"
+      end
     end
   end
 end

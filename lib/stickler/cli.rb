@@ -144,8 +144,14 @@ module Stickler
         txt
 
         argument( 'source_uri' ) { description "the source uri to add" }
+
         mixin :option_directory
-        run { puts "Add source not implemented" }
+        
+        run {
+          p = Stickler.params_to_hash( params )
+          repo = Stickler::Repository.new( p )
+          repo.add_source( p['source_uri'] )
+        }
       end
     end
 
@@ -170,7 +176,6 @@ module Stickler
 
         mixin :option_directory
         argument( 'gem_name' ) { description "The gem to remove" }
-        run { puts "Remove gem not implemented" }
       end
 
       mode( :source ) do
@@ -186,7 +191,11 @@ module Stickler
         mixin :option_directory
         argument( 'source_uri' ) { description "The source to remove" }
       
-        run { puts "Remove source not implemented" }
+        run {
+          p = Stickler.params_to_hash( params )
+          repo = Stickler::Repository.new( p )
+          repo.remove_source( p['source_uri'] )
+        }
       end
       
     end
