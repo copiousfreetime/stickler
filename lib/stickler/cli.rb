@@ -5,7 +5,7 @@
 #++
 
 require 'main'
-require 'stickler/version'
+require 'stickler'
 
 module Stickler
 
@@ -63,13 +63,16 @@ module Stickler
 
     mode( :setup ) {
       description 'setup a directory as a stickler repository'
+      argument( 'directory' ) { 
+        description "the stickler repository directory"
+        default Stickler::Repository.default_directory
+      }
 
       examples <<-txt
         . stickler setup 
-        . stickler setup -d /var/stickler
+        . stickler setup /tmp/stickler
       txt
       
-      mixin :option_directory
       mixin :option_force
 
       run { 
@@ -129,7 +132,11 @@ module Stickler
           default 'maximum'
         }
 
-        run { puts "Add gem not implemented" }
+        run {
+          p = Stickler.params_to_hash( params )
+          repo = Stickler::Repository.new( p )
+          repo.add_gem( p['gem_name'] )
+        }
       end
 
       mode( :source ) do

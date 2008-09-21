@@ -37,8 +37,32 @@ module Stickler
     # The configuration
     attr_reader :configuration
 
-    def self.other_dir_names 
-      %w[ gem_dir log_dir specification_dir dist_dir ]
+    class << self
+      def other_dir_names 
+        %w[ gem_dir log_dir specification_dir dist_dir ]
+      end
+
+      def config_file_basename
+        "stickler.yml"
+      end
+
+      def basedir
+        "stickler"
+      end
+
+      # 
+      # What should the default stickler directory be, this is one of two
+      # things.  If there is a stickler.yml file in the current directory, then
+      # the default directory is the current directory, otherwise, it is the
+      # _stickler_ directory below the current_directory
+      #
+      def default_directory
+        defaults = [ File.join( Dir.pwd, config_file_basename ), File.join( Dir.pwd, basedir ) ]
+        defaults.each do |def_dir|
+          return def_dir if File.exist?( def_dir )
+        end
+        return defaults.last
+      end
     end
 
     def initialize( opts )
@@ -50,7 +74,6 @@ module Stickler
       # this must be loaded early so it overrites the global Gem.configuration
       @configuration_loaded = false
       load_configuration if File.exist?( config_file )
-
     end
 
     def configuration_loaded?
@@ -108,7 +131,7 @@ module Stickler
     # The configuration file for the repository
     # 
     def config_file
-      @config_file ||= File.join( directory, 'stickler.yml' )
+      @config_file ||= File.join( directory, Repository.config_file_basename )
     end
 
     #
@@ -228,7 +251,7 @@ module Stickler
       end
 
       if overwrite? or not File.exist?( config_file ) then
-        FileUtils.cp Stickler::Paths.data_path( "stickler.yml" ), config_file
+        FileUtils.cp Stickler::Paths.data_path( Repository.config_file_basename ), config_file
         logger.info "copied in default configuration to #{config_file}"
       else
         logger.info "configuration file #{config_file} already exists"
@@ -259,7 +282,7 @@ module Stickler
 
       max_width = configuration.sources.collect { |k| k.length }.max
       configuration.sources.each do |url|
-        Stickler.tee  "  #{url.rjust( max_width )} : #{source_cache.cache_data[url].source_index.size} available"
+        Stickler.tee  "  #{url.rjust( max_width )} : #{source_cache.latest_cache_data[url].source_index.size} available"
       end
 
       Stickler.tee ""

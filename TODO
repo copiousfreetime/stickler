@@ -1,6 +1,5 @@
 = Add
 
-  * either a gem or a source
   * on adding a gem, get the latest N version of it and prompt for which one(s) 
     to store in the repository
   * on adding a gem it will bring down all of that gems dependencies.  with 
@@ -9,13 +8,7 @@
 
 = Remove
 
-  * either a gem or a source
   * on removing a gem, prompt for a version of all of them
   * on a source, prompt for confirmation, since all of those gems will be
     removed
 
-= Info
-
-  * dump information about the repository in general
-
-= 

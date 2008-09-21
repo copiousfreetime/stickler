@@ -71,6 +71,6 @@ end
 
 require 'stickler/paths'
 require 'stickler/version'
-require 'stickler/cli'
 require 'stickler/repository'
 require 'stickler/configuration'
+require 'stickler/cli'
