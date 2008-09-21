@@ -33,6 +33,19 @@ module Stickler
   end
 
   #
+  # Turn off logging for the execution of a block
+  #
+  def self.silent( &block )
+    begin
+      old_level = @logger.level
+      @logger.level = :off
+      block.call
+    ensure
+      @logger.level = old_level
+    end
+  end
+
+  #
   # Up the logging to debug levels
   #
   def self.debug!

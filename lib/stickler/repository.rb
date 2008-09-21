@@ -6,7 +6,6 @@
 
 require 'stickler'
 require 'fileutils'
-require 'ostruct'
 
 module Stickler
   # 
@@ -28,25 +27,26 @@ module Stickler
   #
   #
   class Repository
-
-    #
-    # The repository has customizations created via an eval'd file.  That file
-    # is +config_file+ and it is done via a yeilded OpenStruct
-    #
-    class << self
-      def configuration
-        cfg = OpenStruct.new
-        yield cfg
-        return cfg
-      end
-    end
+    class Error < ::StandardError ; end
 
     # The repository directory.  the directory containing the stickler.yml file
     attr_reader :directory
 
+    def self.other_dir_names 
+      %w[ gem_dir log_dir specification_dir dist_dir ]
+    end
+
     def initialize( opts )
       @directory = File.expand_path( opts['directory'] )
-      enhance_logging( opts ) unless opts['skip_validity_check'] or not valid?
+      enhance_logging( opts ) if File.directory?( log_dir )
+      @overwrite = opts['force']
+    end
+
+    #
+    # should existing items be overwritten
+    #
+    def overwrite?
+      @overwrite
     end
 
     #
@@ -77,10 +77,8 @@ module Stickler
     #
     def configuration
       unless @configuration 
-        @config_contents = File.read(config_file)
         begin
-          @configuration = eval( @config_contents )
-          @configuration.upstream = [ @configuration.upstream ].flatten
+          @configuration = YAML.load_file( config_file )
         rescue => e
           logger.error "Failure to load configuration #{e}"
           exit 1
@@ -108,13 +106,6 @@ module Stickler
     #
     def log_file
       @log_file ||= File.join( log_dir, 'stickler.log' )
-    end
-
-    #
-    # The rdoc directory
-    #
-    def rdoc_dir
-      @rdoc_dir ||= File.join( directory, 'doc' )
     end
 
     #
@@ -170,20 +161,20 @@ module Stickler
     # raise an error if the repository is not valid
     #
     def valid!
-      raise "#{directory} does not exist" unless File.exist?( directory )
-      raise "#{directory} is not writable" unless File.writable?( directory )
+      raise Error, "#{directory} does not exist" unless File.exist?( directory )
+      raise Error, "#{directory} is not writable" unless File.writable?( directory )
 
-      raise "#{config_file} does not exist" unless File.exist?( config_file )
-      raise "#{config_file} is not loaded" unless configuration
+      raise Error, "#{config_file} does not exist" unless File.exist?( config_file )
+      raise Error, "#{config_file} is not loaded" unless configuration
 
-      %w[ gem_dir log_dir rdoc_dir specification_dir ].each do |method|
-        sub_dir= self.send( method )
-        raise "#{sub_dir} does not exist" unless File.exist?( sub_dir )
-        raise "#{sub_dir} is not writeable" unless File.writable?( sub_dir )
+      Repository.other_dir_names.each do |method|
+        other_dir = self.send( method )
+        raise Error, "#{other_dir} does not exist" unless File.exist?( other_dir )
+        raise Error, "#{other_dir} is not writeable" unless File.writable?( other_dir )
       end
 
       if File.exist?( log_file ) then
-        raise "#{log_file} is not writable" unless File.writable?( log_file )
+        raise Error, "#{log_file} is not writable" unless File.writable?( log_file )
       end
     end
 
@@ -195,22 +186,28 @@ module Stickler
     # destroyed.
     # 
     def setup
-      unless File.exist?( directory )
+      if overwrite? or not File.exist?( directory )
         FileUtils.mkdir_p( directory ) 
         logger.info "created repository root #{directory}"
+      else
+        logger.info "repository root already exiss #{directory}"
       end
 
-      %w[ gem_dir log_dir rdoc_dir specification_dir ].each do |sub_dir|
-        d = self.send(sub_dir)
-        unless File.exist?( d )
+      Repository.other_dir_names.each do |method|
+        d = self.send( method )
+        if overwrite? or not File.exist?( d ) 
           FileUtils.mkdir_p( d ) 
           logger.info "created directory #{d}"
+        else
+          logger.info "directory #{d} already exists"
         end
       end
 
-      unless File.exist?( config_file )
-        FileUtils.cp Stickler::Configuration.data_path( "stickler.yml"), config_file
+      if overwrite? or not File.exist?( config_file ) then
+        FileUtils.cp Stickler::Paths.data_path( "stickler.yml" ), config_file
         logger.info "copied in default configuration to #{config_file}"
+      else
+        logger.info "configuration file #{config_file} already exists"
       end
 
     rescue => e

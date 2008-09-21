@@ -15,7 +15,7 @@ module Stickler
   def self.params_to_hash( params )
     h = Hash.new
     params.each do |p|
-      h[p.names.first] = p.value
+      h [p.names.first ] = p.value
     end
     return h
   end
@@ -24,11 +24,11 @@ module Stickler
   # ::Main.create returns a class that is instantiated with ARGV and ENV as
   # parameters.  The Cli is then used as:
   #
-  #   Cli.new(ARGV, ENV).run
+  #   Cli.new( ARGV, ENV ).run
   #
   CLI = ::Main.create {
 
-    author  "Copyright (c) 2008 Jeremy Hinegardner <jeremy@hinegardner.org>"
+    author  "Copyright (c) 2008 Jeremy Hinegardner <jeremy@copiousfreetime.org>"
     version Stickler::VERSION
 
     description <<-txt
@@ -49,13 +49,13 @@ module Stickler
       . stickler list
     txt
 
-    option(:quiet, "q") {
+    option( :quiet, "q" ) {
       description 'be quiet about logging to stdout'
       default false
       attr
     }
     
-    option(:debug) {
+    option( :debug ) {
       description 'be verbose about logging in general'
       default false
       attr
@@ -63,7 +63,7 @@ module Stickler
 
     run { help! }
 
-    mode(:setup) {
+    mode( :setup ) {
       description 'setup a directory as a stickler repository'
 
       examples <<-txt
@@ -72,15 +72,14 @@ module Stickler
       txt
       
       mixin :option_directory
+      mixin :option_force
 
       run { 
-        p = Stickler.params_to_hash( params )
-        p['skip_validity_check'] = true
-        Stickler::Repository.new( p ).setup 
+        Stickler::Repository.new( Stickler.params_to_hash( params ) ).setup 
       }
     }
 
-    mode(:info) {
+    mode( :info ) {
       description 'report information about the stickler repository'
 
       examples <<-txt
@@ -92,7 +91,7 @@ module Stickler
       run { Stickler::Repository.new( Stickler.params_to_hash( params ) ).info }
     }
 
-    mode(:add) {
+    mode( :add ) {
       description 'add a gem, or a directory of gems  and all dependencies to the repository'
 
       examples <<-txt
@@ -105,14 +104,14 @@ module Stickler
       run { puts "Add not implemented" }
     }
 
-    mode(:remove) {
+    mode( :remove ) {
       description 'remove a gem from the repository'
       example <<-txt
         . stickler remove mongrel
         . stickler remove rails --include-dependencies
       txt
 
-      option('include-dependencies') { 
+      option( 'include-dependencies' ) { 
         desc 'include any dependencies that are not required elsewhere'
         default false
       }
@@ -125,22 +124,22 @@ module Stickler
       }
     }
 
-    mode(:check) {
+    mode( :check ) {
       description "check upstream repository for new versions of gems"
       example <<-txt
         . stickler check --email 'admin@example.com'
-        . stickler check --source http://www.copiousfreetime.org/gems/
+        . stickler check --email 'admin@example.com' --via 'smtp.example.com'
       txt
 
-      option(:email) {
+      option( :email ) {
         desc "send the check results via email"
-        argument(:required)
+        argument( :required )
         attr
       }
 
-      option(:via) {
+      option( :via ) {
         desc "send the email via a particular server"
-        argument(:required)
+        argument( :required )
         default "localhost"
         attr
       }
@@ -155,7 +154,7 @@ module Stickler
       }
     }
 
-    mode(:rebuild) {
+    mode( :rebuild ) {
       description "rebuild all gems synced from elsewhere"
 
       example <<-txt
@@ -170,11 +169,19 @@ module Stickler
     # common options used by more than one commands
     #
     mixin :option_directory do 
-      option(:directory, "d") {
+      option( :directory, "d" ) {
         argument :required
         default Dir.pwd
         attr 
       }
     end
+
+    mixin :option_force do
+      option( :force )  {
+        default false
+        attr
+      }
+    end
+    
   }
 end
