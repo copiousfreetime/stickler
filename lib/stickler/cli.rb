@@ -52,13 +52,11 @@ module Stickler
     option( :quiet, "q" ) {
       description 'be quiet about logging to stdout'
       default false
-      attr
     }
     
     option( :debug ) {
       description 'be verbose about logging in general'
       default false
-      attr
     }
 
     run { help! }
@@ -91,57 +89,128 @@ module Stickler
       run { Stickler::Repository.new( Stickler.params_to_hash( params ) ).info }
     }
 
-    mode( :add ) {
-      description 'add a gem, or a directory of gems  and all dependencies to the repository'
+    mode( :add ) do
+      description <<-desc
+        Add a gem and all dependencies or a source to the repository.  
+      desc
 
       examples <<-txt
-        . stickler add heel
-        . stickler add ramaze -v 0.3.5
+        . stickler add gem heel 
+        . stickler add gem ramaze -v 0.3.5
+        . stickler add source http://gems.github.com/
       txt
 
-      mixin :option_directory
+      mode( :gem ) do
+        description <<-desc
+        Add a gem and all its dependencies to the repository.  Run from
+        within the stickler repository or use the --directory option
+        desc
 
-      run { puts "Add not implemented" }
-    }
+        examples <<-txt
+          . stickler add gem heel
+          . stickler add gem ramaze -v 2008.06 --directory /var/stickler
+        txt
 
-    mode( :remove ) {
-      description 'remove a gem from the repository'
+        argument( 'gem_name' ) { description "The gem to add" }
+        mixin :option_directory
+        mixin :option_version
+
+        option( :requirements ) {
+          desc <<-desc
+          Satisfy dependency requirements using minimum or the maximum version 
+          that satisfies the dependency.  For instance if you had a gem that 
+          dependend on rake >= 0.8.1, if you used --requirements minimum then
+          stickler will download rake-0.8.1.  If you used --requrements maximum
+          then stickler will download the latest version of rake.
+          desc
+          
+          argument( :required )
+          validate { |r| %w[ maximum minimum ].include?( r.downcase ) }
+          default 'maximum'
+        }
+
+        run { puts "Add gem not implemented" }
+      end
+
+      mode( :source ) do
+        description <<-desc
+          Add a source the repository.  This makes that source available 
+          for use within the repository.  Run from within the stickler 
+          repository or use the --directory option.
+        desc
+
+        examples <<-txt
+          . stickler add source http://gems.github.com/
+        txt
+
+        argument( 'source_uri' ) { description "the source uri to add" }
+        mixin :option_directory
+        run { puts "Add source not implemented" }
+      end
+    end
+
+    mode( :remove ) do
+      description 'remove a gem or source from the repository'
       example <<-txt
-        . stickler remove mongrel
-        . stickler remove rails --include-dependencies
+        . stickler remove gem mongrel 
+        . stickler remove gem rails 
+        . stickler remove source htp://gems.github.com/
       txt
 
-      option( 'include-dependencies' ) { 
-        desc 'include any dependencies that are not required elsewhere'
-        default false
-      }
-      
-      mixin :option_directory
-      
-      run { 
-        puts "Remove not implemented" 
-        puts "include_dependencies = #{include_dependencies}"
-      }
-    }
+      mode( :gem ) do
+        description <<-desc
+          Remove a gem and all other gems that depend on it from the repository.
+          Run from within the stickler repository or use the --directory option
+        desc
 
-    mode( :check ) {
-      description "check upstream repository for new versions of gems"
+        example <<-txt
+          . stickler remove gem mongrel 
+          . stickler remove gem rails 
+        txt
+
+        mixin :option_directory
+        argument( 'gem_name' ) { description "The gem to remove" }
+        run { puts "Remove gem not implemented" }
+      end
+
+      mode( :source ) do
+        description <<-desc
+          Remove a source and all is gems from the repository.
+          Run from within the stickler repository or use the --directory option
+        desc
+
+        example <<-txt
+          . stickler remove source htp://gems.github.com/
+        txt
+
+        mixin :option_directory
+        argument( 'source_uri' ) { description "The source to remove" }
+      
+        run { puts "Remove source not implemented" }
+      end
+      
+    end
+
+    mode( 'check-update' ) do
+      description <<-desc
+      check upstream sources for new versions of gems
+      Run from within the stickler repository or use the --directory option
+      desc
+
       example <<-txt
-        . stickler check --email 'admin@example.com'
-        . stickler check --email 'admin@example.com' --via 'smtp.example.com'
+        . stickler check-update --email 'admin@example.com'
+        . stickler check-update --email 'admin@example.com' --via 'smtp.example.com'
       txt
 
       option( :email ) {
         desc "send the check results via email"
         argument( :required )
-        attr
       }
 
       option( :via ) {
         desc "send the email via a particular server"
         argument( :required )
         default "localhost"
-        attr
       }
 
       mixin :option_directory
@@ -152,18 +221,21 @@ module Stickler
         puts "email     = #{email}"
         puts "via       = #{via}"
       }
-    }
+    end
 
-    mode( :rebuild ) {
-      description "rebuild all gems synced from elsewhere"
+    mode( 'check-consistency' ) do
+      description <<-desc
+      check all gems in the repository and make sure that all is well
+      Run from within the stickler repository or use the --directory option
+      desc
 
       example <<-txt
-        . stickler rebuild
+        . stickler check-consistency 
       txt
       mixin :option_directory
       
-      run { puts "Check not implemented" }
-    }
+      run { puts "Check consistency not implemented" }
+    end
 
     ##
     # common options used by more than one commands
@@ -172,15 +244,15 @@ module Stickler
       option( :directory, "d" ) {
         argument :required
         default Dir.pwd
-        attr 
       }
     end
 
     mixin :option_force do
-      option( :force )  {
-        default false
-        attr
-      }
+      option( :force )  { default false }
+    end
+
+    mixin :option_version do
+      option( :version, "v" ) { argument :required }
     end
     
   }

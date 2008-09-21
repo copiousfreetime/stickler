@@ -8,7 +8,13 @@ rescue LoadError
   require 'stickler'
 end
 
-Stickler::CLI.new(ARGV, ENV).run
+cli = Stickler::CLI.new(ARGV, ENV)
+begin
+  cli.run
+rescue => e
+  $stderr.puts "ERROR: #{e}"
+  $stderr.puts cli.usage.to_s
+end
 
 __END__
 gem = ARGV.shift

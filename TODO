@@ -1,4 +1,3 @@
-
 = Add
 
   * either a gem or a source
@@ -15,9 +14,8 @@
   * on a source, prompt for confirmation, since all of those gems will be
     removed
 
-= Setup
-  * prompt for the location to setup, or just use the current directory
-    and create a 'stickler' subdirectory.  or pass in -d which is the
-    directory to create as the 'stickler' directory
+= Info
 
-  * a stickler directory is  
+  * dump information about the repository in general
+
+= 
