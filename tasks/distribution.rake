@@ -1,15 +1,16 @@
-#-----------------------------------------------------------------------
-# Distribution and Packaging
-#-----------------------------------------------------------------------
 require 'tasks/config'
 
-# only do this task if the appropriate section from the configuration exists
-if pkg_config= Configuration.for_if_exist("packaging") then
+#-------------------------------------------------------------------------------
+# Distribution and Packaging
+#-------------------------------------------------------------------------------
+if pkg_config = Configuration.for_if_exist?("packaging") then
 
   require 'gemspec'
   require 'rake/gempackagetask'
+  require 'rake/contrib/sshpublisher'
 
   namespace :dist do
+
     Rake::GemPackageTask.new(Stickler::GEM_SPEC) do |pkg|
       pkg.need_tar = pkg_config.formats.tgz
       pkg.need_zip = pkg_config.formats.zip
@@ -17,21 +18,21 @@ if pkg_config= Configuration.for_if_exist("packaging") then
 
     desc "Install as a gem"
     task :install => [:clobber, :package] do
-      sh "sudo gem install -y pkg/#{Stickler::SPEC.full_name}.gem"
+      sh "sudo gem install pkg/#{Stickler::GEM_SPEC.full_name}.gem"
     end
 
     desc "Uninstall gem"
     task :uninstall do 
-      sh "sudo gem uninstall -i #{Stickler::SPEC.name} -x"
+      sh "sudo gem uninstall -x #{Stickler::GEM_SPEC.name}"
     end
 
     desc "dump gemspec"
     task :gemspec do
-      puts Stickler::GEM_SPEC
+      puts Stickler::GEM_SPEC.to_ruby
     end
 
     desc "reinstall gem"
     task :reinstall => [:uninstall, :repackage, :install]
 
-  end
+ end
 end

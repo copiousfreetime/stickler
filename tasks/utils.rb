@@ -1,4 +1,25 @@
 require 'stickler/version'
+
+#-------------------------------------------------------------------------------
+# Additions to the Configuration class that are useful
+#-------------------------------------------------------------------------------
+class Configuration
+  class << self
+    def exist?( name )
+      Configuration::Table.has_key?( name )
+    end
+
+    def for_if_exist?( name )
+      if self.exist?( name ) then
+        self.for( name )
+      end
+    end
+  end
+end
+
+#-------------------------------------------------------------------------------
+# some useful utilitiy methods for the tasks
+#-------------------------------------------------------------------------------
 module Utils
   class << self
 
@@ -34,13 +55,26 @@ module Utils
     def release_notes_from(history_file)
       releases = {}
       File.read(history_file).split(/^(?==)/).each do |section|
-        lines = release.split("\n")
+        lines = section.split("\n")
         md = %r{Version ((\w+\.)+\w+)}.match(lines.first)
         next unless md
         releases[md[1]] = lines[1..-1].join("\n").strip
       end
       return releases
     end
-  end # << self
-end
 
+    # return a hash of useful information for the latest release
+    # urls, subject, title, description and latest release notes
+    #
+    def announcement
+      cfg = Configuration.for("project") 
+      { 
+        :subject        => "#{cfg.name} #{Stickler::VERSION} Released",
+        :title          => "#{cfg.name} version #{Stickler::VERSION} has been released.",
+        :urls           => "#{cfg.homepage}",
+        :description    => "#{cfg.description.rstrip}",
+        :release_notes  => Utils.release_notes_from(cfg.history)[Stickler::VERSION].rstrip 
+      }
+    end
+  end
+end # << self

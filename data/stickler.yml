@@ -1,0 +1,11 @@
+#
+# Stickler Respository configuration
+#
+
+# The source that other rubygems installations will use to access the gems
+# collected and managed by stickler.
+downstream_source: "http://gems.collectiveintellect.com/"
+
+# The upstream locations that stickler should look for gems.
+upstream_sources: 
+  - "http://gems.rubyforge.org/"

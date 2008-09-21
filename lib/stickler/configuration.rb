@@ -11,12 +11,11 @@ module Stickler
   #
   module Configuration
 
-    # The root directory of the project is considered to be the parent directory
-    # of the 'lib' directory.
     #
-    # returns:: [String] The full expanded path of the parent directory of 'lib'
-    #           going up the path from the current file.  Trailing
-    #           File::SEPARATOR is guaranteed.
+    # The root directory of the project is considered to be the parent directory
+    # of the 'lib' directory.  returns the full expanded path of the parent
+    # directory of 'lib' going up the path from the current file.  A trailing
+    # File::SEPARATOR is guaranteed.
     #
     def self.root_dir
       unless @root_dir
@@ -27,28 +26,28 @@ module Stickler
       return @root_dir
     end
 
-    # returns:: [String] The full expanded path of the +config+ directory
-    #           below _root_dir_.  All parameters passed in are joined onto the
-    #           result.  Trailing File::SEPARATOR is guaranteed if _args_ are
-    #           *not* present.
+    # 
+    # return the full expanded path of the +config+ directory below +root_dir+.
+    # All parameters passed in are joined on to the result. a Trailing
+    # File::SEPARATOR is guaranteed if _args_ are *not* present
     #
     def self.config_path(*args)
       self.sub_path("config", *args)
     end
 
-    # returns:: [String] The full expanded path of the +data+ directory below
-    #           _root_dir_.  All parameters passed in are joined onto the 
-    #           result. Trailing File::SEPARATOR is guaranteed if 
-    #           _*args_ are *not* present.
+    #
+    # return the full expanded path of the +data+ directory below +root_dir+.
+    # All parameters passed in are joined on to the result. a Trailing
+    # File::SEPARATOR is guaranteed if _args_ are *not* present
     #
     def self.data_path(*args)
       self.sub_path("data", *args)
     end
-    
-    # returns:: [String] The full expanded path of the +lib+ directory below
-    #           _root_dir_.  All parameters passed in are joined onto the 
-    #           result. Trailing File::SEPARATOR is guaranteed if 
-    #           _*args_ are *not* present.
+   
+    #
+    # return the full expanded path of the +lib+ directory below +root_dir+.
+    # All parameters passed in are joined on to the result. a Trailing
+    # File::SEPARATOR is guaranteed if _args_ are *not* present
     #
     def self.lib_path(*args)
       self.sub_path("lib", *args)

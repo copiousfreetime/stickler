@@ -1,9 +1,10 @@
+require 'tasks/config'
+
 #-----------------------------------------------------------------------
 # Documentation
 #-----------------------------------------------------------------------
 
-require 'tasks/config'
-if rdoc_config = Configuration.for('rdoc') then
+if rdoc_config = Configuration.for_if_exist?('rdoc') then
 
   namespace :doc do
 
@@ -15,19 +16,16 @@ if rdoc_config = Configuration.for('rdoc') then
       rdoc.options    = rdoc_config.options
       rdoc.rdoc_files = rdoc_config.files
       rdoc.title      = rdoc_config.title
-      rdoc.main       = rdoc_config.main
-    end
+      rdoc.main       = rdoc_config.main_page
+    end 
 
-    # desc "Deploy the RDoc documentation to #{Stickler::SPEC.remote_rdoc_location}"
-    # task :deploy => :rerdoc do
-      # sh "rsync -zav --delete #{Stickler::SPEC.local_rdoc_dir}/ #{Stickler::SPEC.remote_rdoc_location}"
-    # end
+    if rubyforge_config = Configuration.for_if_exist?('rubyforge') then
+      desc "Deploy the RDoc documentation to #{rubyforge_config.rdoc_location}"
+      task :deploy => :rerdoc do
+        sh "rsync -zav --delete #{rdoc_config.output_dir}/ #{rubyforge_config.rdoc_location}"
+      end 
+    end 
 
-    # if HAVE_HEEL then
-      # desc "View the RDoc documentation locally"
-      # task :view => :rdoc do
-        # sh "heel --root  #{Stickler::SPEC.local_rdoc_dir}"
-      # end
-    # end
-  end
+  end 
 end
+

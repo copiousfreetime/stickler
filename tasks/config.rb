@@ -1,24 +1,21 @@
 require 'configuration'
 
 require 'rake'
-require 'stickler/configuration'
-require 'stickler/version'
-
 require 'tasks/utils'
 
 #-----------------------------------------------------------------------
 # General project configuration
 #-----------------------------------------------------------------------
 Configuration.for('project') {
-  name          Stickler.to_s.downcase
-  version       Stickler::VERSION
-  author        "Jeremy Hinegardner"
-  email         "jeremy at hinegardner dot org"
-  homepage      "http://copiousfreetime.rubyforge.org/stickler/"
+  name          "FIXME: NAME"
+  version       "FIXME: 0.0.0"
+  author        "FIXME: The Author"
+  email         "FIXME: author@example.com"
+  homepage      "FIXME: http://project.example.com"
   description   Utils.section_of("README", "description")
   summary       description.split(".").first
   history       "HISTORY"
-  license       "LICENSE"
+  license       FileList["LICENSE", "COPYING"]
   readme        "README"
 }
 
@@ -30,20 +27,21 @@ Configuration.for('packaging') {
   proj_conf = Configuration.for('project')
   files {
     bin       FileList["bin/*"]
+    ext       FileList["ext/*.{c,h,rb}"]
     lib       FileList["lib/**/*.rb"]
-    test      FileList["spec/**/*.rb"]
+    test      FileList["spec/**/*.rb", "test/**/*.rb"]
     data      FileList["data/**/*"]
     tasks     FileList["tasks/**/*.r{ake,b}"]
-    rdoc      FileList[proj_conf.history, "COPYING", proj_conf.readme, 
+    rdoc      FileList[proj_conf.readme, proj_conf.history,
                        proj_conf.license] + lib
-    all       bin + lib + test + data + rdoc + tasks 
+    all       bin + ext + lib + test + data + rdoc + tasks 
   }
 
   # ways to package the results
   formats {
     tgz true
     zip true
-    gem Configuration.exist?('gem')
+    gem Configuration::Table.has_key?('gem')
   }
 }
 
@@ -57,6 +55,7 @@ Configuration.for("gem") {
 
 #-----------------------------------------------------------------------
 # Testing
+#   - change mode to 'testunit' to use unit testing
 #-----------------------------------------------------------------------
 Configuration.for('test') {
   mode      "spec"
@@ -74,8 +73,6 @@ Configuration.for('rcov') {
   rcov_opts   %w[ --html ]
   ruby_opts   %w[ ]
   test_files  Configuration.for('packaging').files.test
-
-  # hmm... how to configure remote publishing
 }
 
 #-----------------------------------------------------------------------
@@ -83,49 +80,28 @@ Configuration.for('rcov') {
 #-----------------------------------------------------------------------
 Configuration.for('rdoc') {
   files       Configuration.for('packaging').files.rdoc
-  main        files.first
+  main_page   files.first
   title       Configuration.for('project').name
   options     %w[ --line-numbers --inline-source ]
   output_dir  "doc"
-
-  # hmm... how to configure remote publishing ...
 }
 
+#-----------------------------------------------------------------------
+# Extensions
+#-----------------------------------------------------------------------
+Configuration.for('extension') {
+  configs   Configuration.for('packaging').files.ext.find_all { |x| 
+                %w[ mkrf_conf.rb extconf.rb ].include?( File.basename(x) ) 
+            }
+}
 #-----------------------------------------------------------------------
 # Rubyforge 
 #-----------------------------------------------------------------------
 Configuration.for('rubyforge') {
-  project   "copiousfreetime"
-  user      "jjh"
+  project       "FIXME: rubyforge project"
+  user          "FIXME: username"
+  host          "rubyforge.org"
+  rdoc_location "#{user}@#{host}:/var/www/gforge-projects/#{project}"
 }
 
-#-----------------------------------------------------------------------
-# dump the configuration
-#-----------------------------------------------------------------------
-if $0 == __FILE__ then
-  $: << "../lib"
 
-  def dump_config(config, prefix = "")
-    (config.methods - Object.methods - ['method_missing']).each do |method|
-      r = config.send(method)
-      r = r.to_ary if r.respond_to?(:to_ary)
-      case r
-      when Configuration
-        puts "#{prefix}<#{method.to_s.center(12)}>" 
-        dump_config(r,prefix + "    ")
-      when Array
-        puts "#{prefix}#{method.to_s.rjust(12)} :"
-        r.each do |x|
-          puts "#{prefix}#{"-".rjust(12)} #{x}"
-        end
-      else
-        puts "#{prefix}#{method.to_s.rjust(12)} : #{r.inspect}"
-      end
-    end
-  end
-
-  Configuration::Table.keys.sort.each do |config_key|
-    puts "[#{config_key.center(12)}]" 
-    dump_config(Configuration.for(config_key), "    ")
-  end
-end

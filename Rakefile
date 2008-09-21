@@ -23,6 +23,8 @@ require 'rake/clean'
 # load up all the project tasks and setup the default task to be the
 # test:default task.
 #-------------------------------------------------------------------------------
+require 'stickler/paths'
+require 'stickler/version'
 Configuration.for("packaging").files.tasks.each do |tasklib|
   import tasklib
 end

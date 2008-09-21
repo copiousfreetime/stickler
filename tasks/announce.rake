@@ -1,57 +1,39 @@
-#-----------------------------------------------------------------------
-# Announcement tasks
-#   - create a basic email template that can be used to send email to
-#     rubytalk.
-#-----------------------------------------------------------------------
-def changes
-    change_file = File.expand_path(File.join(Stickler::ROOT_DIR,"CHANGES"))
-    sections    = File.read(change_file).split(/^(?===)/)
-end
+require 'tasks/config'
+#-------------------------------------------------------------------------------
+# announcement methods
+#-------------------------------------------------------------------------------
 
-def last_changeset
-    changes[1]
-end
-
-def announcement
-    urls    = "  #{Stickler::SPEC.homepage}"
-    subject = "#{Stickler::SPEC.name} #{Stickler::VERSION} Released"
-    title   = "#{Stickler::SPEC.name} version #{Stickler::VERSION} has been released."
-    body    = <<BODY
-#{Stickler::SPEC.description.rstrip}
-
-{{ Changelog for Version #{Stickler::VERSION} }}
-
-#{last_changeset.rstrip}
-
-BODY
-
-    return subject, title, body, urls
-end
-
+proj_config = Configuration.for('project')
 namespace :announce do
-    desc "create email for ruby-talk"
-    task :email do
-        subject, title, body, urls = announcement
+  desc "create email for ruby-talk"
+  task :email do
+    info = Utils.announcement
 
-        File.open("email.txt", "w") do |mail|
-            mail.puts "From: #{Stickler::SPEC.author} <#{Stickler::SPEC.email}>"
-            mail.puts "To: ruby-talk@ruby-lang.org"
-            mail.puts "Date: #{Time.now.rfc2822}"
-            mail.puts "Subject: [ANN] #{subject}"
-            mail.puts
-            mail.puts title
-            mail.puts
-            mail.puts urls
-            mail.puts 
-            mail.puts body
-            mail.puts 
-            mail.puts urls
-        end
-        puts "Created the following as email.txt:"
-        puts "-" * 72
-        puts File.read("email.txt")
-        puts "-" * 72
-    end
-    
-    CLOBBER << "email.txt"
+    File.open("email.txt", "w") do |mail|
+      mail.puts "From: #{proj_config.author} <#{proj_config.email}>"
+      mail.puts "To: ruby-talk@ruby-lang.org"
+      mail.puts "Date: #{Time.now.rfc2822}"
+      mail.puts "Subject: [ANN] #{info[:subject]}"
+      mail.puts
+      mail.puts info[:title]
+      mail.puts
+      mail.puts "  gem install #{Stickler::GEM_SPEC.name}"
+      mail.puts
+      mail.puts info[:urls]
+      mail.puts 
+      mail.puts info[:description]
+      mail.puts 
+      mail.puts "{{ Release notes for Version #{Stickler::VERSION} }}"
+      mail.puts 
+      mail.puts info[:release_notes]
+      mail.puts
+    end 
+    puts "Created the following as email.txt:"
+    puts "-" * 72
+    puts File.read("email.txt")
+    puts "-" * 72
+  end 
+
+  CLOBBER << "email.txt"
 end
+

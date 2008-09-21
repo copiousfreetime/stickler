@@ -14,19 +14,18 @@ module Stickler
   # is very similar to a GEM_HOME directory.   The layout is as follows, this is
   # all assumed to be under STICKLER_HOME.
   #
-  #   stickler.rb     - the Stickler configuration file for this repository.
+  #   stickler.yml    - the Stickler configuration file for this repository.
   #                     The existence of this file indicates this is the root 
   #                     of a stickler repository
-  #   doc/            - Generated RDOC of all the gems
-  #   gems/           - storage of the actual gem files, somewhat similar to GEM_HOME/cache
+  #   gems/           - storage of the actual gem files, somewhat similar to the
+  #                     GEM_HOME/cache directory
   #   specifications/ - ruby gemspec files 
   #   log/            - directory holding rotating logs files for stickler
   #   dist/           - directory holding the distributable gem index location,
   #                     rsync this to your webserver, or serve from it directly.
-  # 
-  # Additionally, if a repository is instantiated and it is connected to an
-  # already existing repo directory, a logfile appender is added for a logfile
-  # in the log directory
+  #   log/            - directory holding the rolling logs of what has gone on
+  #                     with the repository.
+  #
   #
   class Repository
 
@@ -41,7 +40,8 @@ module Stickler
         return cfg
       end
     end
-      # The repository directory
+
+    # The repository directory.  the directory containing the stickler.yml file
     attr_reader :directory
 
     def initialize( opts )
@@ -73,13 +73,13 @@ module Stickler
     end
 
     #
-    # return a handle to the repository configuration found in stickler.rb
+    # return a handle to the repository configuration found in stickler.yml
     #
     def configuration
       unless @configuration 
         @config_contents = File.read(config_file)
         begin
-          @configuration = eval(@config_contents)
+          @configuration = eval( @config_contents )
           @configuration.upstream = [ @configuration.upstream ].flatten
         rescue => e
           logger.error "Failure to load configuration #{e}"
@@ -93,7 +93,7 @@ module Stickler
     # The configuration file for the repository
     # 
     def config_file
-      @config_file ||= File.join( directory, 'stickler.rb' )
+      @config_file ||= File.join( directory, 'stickler.yml' )
     end
 
     #
@@ -209,7 +209,7 @@ module Stickler
       end
 
       unless File.exist?( config_file )
-        FileUtils.cp Stickler::Configuration.data_path("stickler.rb"), config_file
+        FileUtils.cp Stickler::Configuration.data_path( "stickler.yml"), config_file
         logger.info "copied in default configuration to #{config_file}"
       end
 
