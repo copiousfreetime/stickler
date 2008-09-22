@@ -89,10 +89,6 @@ module Stickler
 
     end
 
-    def installer
-      @installer ||= ::Stickler::Installer.new( self )
-    end
-
     def configuration_loaded?
       @configuration_loaded
     end
@@ -378,16 +374,14 @@ module Stickler
     # Add a gem to the repository
     #
     def add_gem( gem_name, version )
-      Console.info "Obtaining version information for `#{gem_name}'"
+
+      Console.info ""
 
       version = ::Gem::Requirement.default if version == :latest
       search_pattern = ::Gem::Dependency.new( gem_name, version ) 
       choices = {}
-      source_cache.search_with_source( search_pattern, false, true).each do |spec, source_uri|
-        r = OpenStruct.new
-        r.spec = spec
-        r.source_uri = source_uri
-        choices[ spec.full_name ] = r
+      source_group.search( search_pattern ).each do |spec|
+        choices[ spec.full_name ] = spec
       end
 
       ::HighLine.track_eof = false
@@ -396,11 +390,11 @@ module Stickler
         menu.prompt = "Choose the version to add ? "
         menu.shell = true
         menu.choices( *choices.keys.sort.reverse ) do |name, details|
-          installer.install( choices[ name ] )
+          source_group.install( choices[ name ] )
         end
 
         menu.choice( :all ) do |all, details |
-          choices.values.each { |spec| installer.install( spec ) }
+          choices.values.each { |spec| source_group.install( spec ) }
         end
       end
     end

@@ -10,11 +10,11 @@ module Stickler
 
     class Error < StandardError ; end
 
-    # The repository this Installer installes into
-    attr_reader :repository
+    # The SourceGroup this installers belongs to
+    attr_reader :source_group
 
-    def initialize( repository )
-      @repository = repository
+    def initialize( source_group )
+      @source_group = source_group
     end
 
     def logger
@@ -22,35 +22,47 @@ module Stickler
     end
 
     def installed_specs 
-      @installed_specs ||= {}
+      unless @installed_specs
+        is = {}
+        Dir.glob( File.join( source_group.specification_dir, "*.spec" ) ).each do |spec_file|
+          begin
+            spec = eval( IO.read( spec_file ) )
+            is[spec.full_name] = spec
+          rescue => e
+            logger.error "Failure loading specfile #{File.basenem(spec_file)} : #{e}"
+          end
+        end
+        @installed_specs = is
+      end
+      return @installed_specs
     end
 
     #
     # Install the gem given by the spec and all of its dependencies.
     #
-    def install( install_info )
+    def install( top_spec )
       install_list = []
 
       todo = []
-      todo << install_info.dup
+      todo << top_spec
       seen = {}
 
       until todo.empty? do
-        spec_meta = todo.pop
-        logger.debug "queueing #{spec_meta.spec.full_name} for download"
+        spec = todo.pop
+        next if seen[ spec.full_name ] or installed_specs[ spec.full_name ]
 
-        install_list << spec_meta
+        seen[ spec.full_name ] = true
 
-        next if seen[ spec_meta.spec.full_name ] or installed_specs[ spec_meta.spec.full_name ]
-        seen[ spec_meta.spec.full_name ] = true
+        logger.debug "queueing #{spec.full_name} for download"
+        install_list << spec
 
-        deps = spec_meta.spec.runtime_dependencies 
-        deps |= spec_meta.spec.development_dependencies
+        deps = spec.runtime_dependencies 
+        deps |= spec.development_dependencies
 
         deps.each do |dep|
           results = find_specs_satisfying_dependency( dep )
 
-          results.reverse! if repository.requirement_satisfaction_method == :minimum 
+          results.reverse! if source_group.requirement_satisfaction_method == :minimum 
 
           todo.push matching_from_each_platform( results )
           todo.flatten!
@@ -68,10 +80,10 @@ module Stickler
     def matching_from_each_platform( results )
       by_platform = {}
       until results.empty?
-        r = results.pop
-        if not by_platform.has_key?( r.spec.platform.to_s ) then
-          by_platform[ r.spec.platform.to_s ] = r 
-          logger.debug "adding #{ r.spec.full_name } for platform #{r.spec.platform.to_s} for dependency evaluation"
+        spec = results.pop
+        if not by_platform.has_key?( spec.platform.to_s ) then
+          by_platform[ spec.platform.to_s ] = spec
+          logger.debug "adding #{ spec.full_name } for platform #{spec.platform.to_s} for dependency evaluation"
         end
       end
       return by_platform.values
@@ -82,30 +94,31 @@ module Stickler
     # sorted order from lowest to highest version number
     #
     def find_specs_satisfying_dependency( dep )
-      results = []
-      repository.source_cache.search_with_source( dep ).each do |spec, source_uri|
-        result = OpenStruct.new
-        result.spec = spec
-        result.source_uri = source_uri
-        results <<  result
-      end
+      results = source_group.search( dep )
       raise Error, "Unable to find gem satisfying dependendcy #{dep.to_s}" if results.empty?
 
-      results.sort_by { |r| r.spec.version }
+      results.sort_by { |s| s.version }
     end
 
     private
 
-    def install_gem( spec, source_uri )
-      Stickler.tee "installing #{ spec.full_name }"
+    def install_gem( spec )
+      Console.info "installing #{ spec.full_name }"
       gem_file = "#{spec.full_name}.gem"
-      dest_gem_file = File.join( repository.gem_dir, gem_file )
+      dest_gem_file = File.join( source_group.gems_dir, gem_file )
 
       if not File.exist?( dest_gem_file ) then
-        open( File.join( source_uri, 'gems', gem_file ), "rb" ) do |gem|
-          File.open( dest_gem, "wb" ) do |f|
-            f.write( gem.read )
+        logger.debug "getting source_uri for #{spec.full_name}"
+        uri = source_group.full_uri_for_spec( spec )
+        logger.debug "  downloading #{uri}"
+        begin
+          open( uri, "rb" ) do |upstream_gem|
+            File.open( dest_gem_file, "wb" ) do |f|
+              f.write( upstream_gem.read )
+            end
           end
+        rescue => e
+          Console.error "Error downloading #{uri} : #{e}"
         end
         logger.debug "  downloaded to #{dest_gem_file}"
       else
@@ -116,18 +129,15 @@ module Stickler
 
     def install_spec( spec )
       rubycode = spec.to_ruby
-      file_name = File.join( repository.specification_dir, "#{spec.full_name}.gemspec" )
+      file_name = File.join( source_group.specification_dir, "#{spec.full_name}.gemspec" )
       File.open( file_name, "wb" ) do |file|
         file.puts rubycode 
       end
     end
 
     def install_gems_and_specs( install_list )
-      install_list.each do |install_info|
-        spec       = install_info.spec
-        source_uri = install_info.source_uri 
-
-        install_gem( spec, source_uri )
+      install_list.each do |spec|
+        install_gem( spec )
         install_spec( spec )
       end
     end

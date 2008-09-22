@@ -146,9 +146,17 @@ module Stickler
     end
 
     #
+    # shortcut for search
+    #
+    def search( pattern )
+      source_index.search( pattern )
+    end
+
+    #
     # Access its source_index
     #
     def source_index
+      return @source_index unless last_check_expired?
       return @source_index if source_index_same_as_upstream?
       load_source_index_from_upstream
       return @source_index
@@ -172,11 +180,20 @@ module Stickler
     end
 
     #
+    # return true if the last upstream check has expired
+    #
+    def last_check_expired?
+      return true if @last_check.nil?
+      return true if (Time.now - @last_check) >  5*60
+    end
+
+    #
     # return true if the current source_index is the same as the upstream
     # source_index as indicated by the HTTP headers
     def source_index_same_as_upstream? 
       logger.debug "Checking if our our cached version of #{uri} is up to date"
       response = fetch( 'head', upstream_marshal_uri )
+      @last_check = Time.now
 
       Source.cache_detection_headers.each do |key|
         unless response[key].nil?
