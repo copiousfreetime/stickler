@@ -6,6 +6,8 @@
 
 require 'stickler'
 require 'fileutils'
+require 'ostruct'
+require 'highline'
 require 'stickler/configuration'
 require 'rubygems/source_info_cache'
 
@@ -18,7 +20,7 @@ module Stickler
   #   stickler.yml    - the Stickler configuration file for this repository.
   #                     The existence of this file indicates this is the root 
   #                     of a stickler repository
-  #   gems/           - storage of the actual gem files, somewhat similar to the
+  #   cache/          - storage of the actual gem files, somewhat similar to the
   #                     GEM_HOME/cache directory
   #   specifications/ - ruby gemspec files 
   #   log/            - directory holding rotating logs files for stickler
@@ -36,6 +38,9 @@ module Stickler
 
     # The configuration
     attr_reader :configuration
+
+    # Are requrements satisfied in a minimal or maximal approach
+    attr_reader :requirement_satisfaction_method
 
     class << self
       def other_dir_names 
@@ -68,12 +73,18 @@ module Stickler
     def initialize( opts )
 
       @directory = File.expand_path( opts['directory'] )
+      @requirement_satisfaction_method = opts['requirements'].to_sym
       enhance_logging( opts ) if File.directory?( log_dir )
       @overwrite = opts['force']
 
       # this must be loaded early so it overrites the global Gem.configuration
       @configuration_loaded = false
       load_configuration if File.exist?( config_file )
+
+    end
+
+    def installer
+      @installer ||= ::Stickler::Installer.new( self )
     end
 
     def configuration_loaded?
@@ -151,10 +162,11 @@ module Stickler
     #
     # The gem storage directory.  
     #
-    # This holds the raw gem files downloaded from the sources
+    # This holds the raw gem files downloaded from the sources.  This is
+    # equivalent to a gem installations 'cache' directory.
     #
     def gem_dir
-      @gem_dir ||= File.join( directory, 'gems' )
+      @gem_dir ||= File.join( directory, 'cache' )
     end
 
     #
@@ -349,6 +361,37 @@ module Stickler
         end
       rescue ::URI::Error
         Stickler.tee "Error : #{source_uri} is not a URI"
+      end
+    end
+
+    #
+    # Add a gem to the repository
+    #
+    def add_gem( gem_name, version )
+      Stickler.tee "Obtaining version information for `#{gem_name}'"
+
+      version = ::Gem::Requirement.default if version == :latest
+      search_pattern = ::Gem::Dependency.new( gem_name, version ) 
+      choices = {}
+      source_cache.search_with_source( search_pattern, false, true).each do |spec, source_uri|
+        r = OpenStruct.new
+        r.spec = spec
+        r.source_uri = source_uri
+        choices[ spec.full_name ] = r
+      end
+
+      ::HighLine.track_eof = false
+      ::HighLine.new( STDIN, STDOUT).choose do |menu|
+        menu.header = "Available versions of #{gem_name}"
+        menu.prompt = "Choose the version to add ? "
+        menu.shell = true
+        menu.choices( *choices.keys.sort.reverse ) do |name, details|
+          installer.install( choices[ name ] )
+        end
+
+        menu.choice( :all ) do |all, details |
+          choices.values.each { |spec| installer.install( spec ) }
+        end
       end
     end
   end

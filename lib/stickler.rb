@@ -14,12 +14,13 @@ module Stickler
   def self.logger
     unless @logger 
       @logger = ::Logging::Logger['Stickler']
-      @logger.level = :info
+      @logger.level = :debug
       @logger.add_appenders(::Logging::Appender.stdout)
       ::Logging::Appender.stdout.layout = Logging::Layouts::Pattern.new(
         :pattern        => "[%d] %5l : %m\n",   # [date] LEVEL: message 
         :date_pattern    => "%H:%M:%S"          # [date] => [HH:MM::SS]
       )
+      ::Logging::Appender.stdout.level = :info
     end
     return @logger
   end
@@ -72,5 +73,6 @@ end
 require 'stickler/paths'
 require 'stickler/version'
 require 'stickler/repository'
+require 'stickler/installer'
 require 'stickler/configuration'
 require 'stickler/cli'

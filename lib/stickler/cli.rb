@@ -135,7 +135,7 @@ module Stickler
         run {
           p = Stickler.params_to_hash( params )
           repo = Stickler::Repository.new( p )
-          repo.add_gem( p['gem_name'] )
+          repo.add_gem( p['gem_name'], p['version'] )
         }
       end
 
@@ -268,7 +268,10 @@ module Stickler
     end
 
     mixin :option_version do
-      option( :version, "v" ) { argument :required }
+      option( :version, "v" ) { 
+        argument :required 
+        default :latest
+      }
     end
     
   }
