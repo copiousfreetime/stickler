@@ -39,10 +39,13 @@ module Stickler
   def self.silent( &block )
     begin
       old_level = @logger.level
+      old_stdout = $stdout
+      $stdout = StringIO.new
       @logger.level = :off
       block.call
     ensure
       @logger.level = old_level
+      $stdout = old_stdout
     end
   end
 
@@ -65,7 +68,6 @@ module Stickler
     ::Logging::Appender.stdout.level = :off
     @logger.info msg
     ::Logging::Appender.stdout.level = prev_level
-
     $stdout.puts msg
   end
 end

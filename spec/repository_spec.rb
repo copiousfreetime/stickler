@@ -15,7 +15,7 @@ describe Stickler::Repository do
 
 
   describe "#setup" do
-    %w[ gems log specifications dist ].each do |sub_dir|
+    %w[ cache log specifications dist ].each do |sub_dir|
       it "creates #{sub_dir} directory" do
         new_dir = File.join( @top_dir , sub_dir )
         File.directory?( new_dir ).should == true
@@ -31,7 +31,7 @@ describe Stickler::Repository do
   end
 
   describe "validity checks" do
-    %w[ gems log specifications dist ].each do |sub_dir|
+    %w[ cache log specifications dist ].each do |sub_dir|
       it "raises error if #{sub_dir} is missing" do
         FileUtils.rmdir( File.join( @top_dir, sub_dir ) )
         lambda { Stickler.silent { @repo.valid! } }.should raise_error( Stickler::Repository::Error ) 
@@ -59,7 +59,7 @@ describe Stickler::Repository do
 
   it "sets the global sources list for Gem" do
     Stickler.silent {
-      @repo.add_source( "http://gems.collectiveintellect.com" )
+      @repo.add_source( "http://copiousfreetime.org/gems/" )
     }
     Gem.sources.should == @repo.configuration.sources
   end

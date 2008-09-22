@@ -44,7 +44,7 @@ module Stickler
 
     class << self
       def other_dir_names 
-        %w[ gem_dir log_dir specification_dir dist_dir ]
+        %w[ cache_dir log_dir specification_dir dist_dir ]
       end
 
       def config_file_basename
@@ -73,7 +73,7 @@ module Stickler
     def initialize( opts )
 
       @directory = File.expand_path( opts['directory'] )
-      @requirement_satisfaction_method = opts['requirements'].to_sym
+      @requirement_satisfaction_method = ( opts['requirements'] || "maximum" ).to_sym
       enhance_logging( opts ) if File.directory?( log_dir )
       @overwrite = opts['force']
 
@@ -165,8 +165,8 @@ module Stickler
     # This holds the raw gem files downloaded from the sources.  This is
     # equivalent to a gem installations 'cache' directory.
     #
-    def gem_dir
-      @gem_dir ||= File.join( directory, 'cache' )
+    def cache_dir
+      @cache_dir ||= File.join( directory, 'cache' )
     end
 
     #
