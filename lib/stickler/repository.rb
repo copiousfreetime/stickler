@@ -9,7 +9,7 @@ require 'fileutils'
 require 'ostruct'
 require 'highline'
 require 'stickler/configuration'
-require 'rubygems/source_info_cache'
+require 'rubygems/source_index'
 
 module Stickler
   # 
@@ -20,7 +20,7 @@ module Stickler
   #   stickler.yml    - the Stickler configuration file for this repository.
   #                     The existence of this file indicates this is the root 
   #                     of a stickler repository
-  #   cache/          - storage of the actual gem files, somewhat similar to the
+  #   gems/          - storage of the actual gem files, somewhat similar to the
   #                     GEM_HOME/cache directory
   #   specifications/ - ruby gemspec files 
   #   log/            - directory holding rotating logs files for stickler
@@ -44,7 +44,7 @@ module Stickler
 
     class << self
       def other_dir_names 
-        %w[ cache_dir log_dir specification_dir dist_dir ]
+        %w[ gems_dir log_dir specification_dir dist_dir ]
       end
 
       def config_file_basename
@@ -128,9 +128,9 @@ module Stickler
     def load_configuration
       begin
         @configuration = Configuration.new( config_file )
-        ::Gem.configuration = @configuration 
-        ::Gem.sources.replace( @configuration.sources )
-        ENV['GEMCACHE'] = source_cache_dir
+        #::Gem.configuration = @configuration 
+        #::Gem.sources.replace( @configuration.sources )
+        #ENV['GEMCACHE'] = source_gems_dir
         @configuration_loaded = true
       rescue => e
         logger.error "Failure to load configuration #{e}"
@@ -163,10 +163,10 @@ module Stickler
     # The gem storage directory.  
     #
     # This holds the raw gem files downloaded from the sources.  This is
-    # equivalent to a gem installations 'cache' directory.
+    # equivalent to a gem installations 'gems' directory.
     #
-    def cache_dir
-      @cache_dir ||= File.join( directory, 'cache' )
+    def gems
+      @gems_dir ||= File.join( directory, 'gems' )
     end
 
     #
@@ -174,13 +174,6 @@ module Stickler
     #
     def specification_dir
       @specification_dir ||= File.join( directory, 'specifications' )
-    end
-
-    #
-    # The cache dir used by rubygems for this repository
-    #
-    def source_cache_dir
-      @source_cache_dir ||= File.join( directory, 'source_cache' )
     end
 
     #
