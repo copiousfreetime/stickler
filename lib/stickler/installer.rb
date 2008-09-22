@@ -1,9 +1,10 @@
-require 'rubygems/dependency_list'
 require 'ostruct'
+require 'open-uri'
 
 module Stickler
   #
-  # an altered version of Gem::DependencyInstaller
+  # A class that fetches gems and all its dependencies from a series of remote
+  # sources and installs them into the appropriate locations in the Repository.
   #
   class Installer
 
@@ -12,16 +13,12 @@ module Stickler
     # The repository this Installer installes into
     attr_reader :repository
 
-    # The Gem::RemoteFetcher used to obtain gems
-    attr_reader :fetcher
-
     def initialize( repository )
       @repository = repository
-      @fetcher = ::Gem::RemoteFetcher.fetcher
     end
 
     def logger
-      @logger ||= repository.logger
+      @logger ||= ::Logging::Logger[self]
     end
 
     def installed_specs 
@@ -101,9 +98,20 @@ module Stickler
 
     def install_gem( spec, source_uri )
       Stickler.tee "installing #{ spec.full_name }"
-      local_path = fetcher.download( spec, source_uri, repository.directory )
-      logger.debug "  downloaded to #{local_path}"
-      return local_path
+      gem_file = "#{spec.full_name}.gem"
+      dest_gem_file = File.join( repository.gem_dir, gem_file )
+
+      if not File.exist?( dest_gem_file ) then
+        open( File.join( source_uri, 'gems', gem_file ), "rb" ) do |gem|
+          File.open( dest_gem, "wb" ) do |f|
+            f.write( gem.read )
+          end
+        end
+        logger.debug "  downloaded to #{dest_gem_file}"
+      else
+        logger.debug "  already exists #{dest_gem_file}"
+      end
+      return dest_gem_file 
     end
 
     def install_spec( spec )

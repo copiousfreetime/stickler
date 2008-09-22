@@ -9,7 +9,7 @@ require 'fileutils'
 require 'ostruct'
 require 'highline'
 require 'stickler/configuration'
-require 'rubygems/source_index'
+require 'stickler/source_group'
 
 module Stickler
   # 
@@ -29,6 +29,8 @@ module Stickler
   #   log/            - directory holding the rolling logs of what has gone on
   #                     with the repository.
   #
+  #   upsteram_source_cache/   - directory holding serialized Source objects for caching
+  #
   #
   class Repository
     class Error < ::StandardError ; end
@@ -44,7 +46,7 @@ module Stickler
 
     class << self
       def other_dir_names 
-        %w[ gems_dir log_dir specification_dir dist_dir ]
+        %w[ gems_dir log_dir specification_dir dist_dir upstream_source_cache_dir ]
       end
 
       def config_file_basename
@@ -62,9 +64,13 @@ module Stickler
       # _stickler_ directory below the current_directory
       #
       def default_directory
+         
         defaults = [ File.join( Dir.pwd, config_file_basename ), File.join( Dir.pwd, basedir ) ]
         defaults.each do |def_dir|
-          return def_dir if File.exist?( def_dir )
+          if File.exist?( def_dir ) then
+            return File.dirname( def_dir ) if File.file?( def_dir )
+            return def_dir
+          end
         end
         return defaults.last
       end
@@ -103,13 +109,12 @@ module Stickler
     # possibly turning off the stdout logger that is the default.
     #
     def enhance_logging( opts )
-      Stickler.silent! if opts['quiet']
 
       layout = ::Logging::Layouts::Pattern.new(
         :pattern      => "[%d] %c %6p %5l : %m\n",
         :date_pattern => "%Y-%m-%d %H:%M:%S"
       )
-      logger.add_appenders ::Logging::Appenders::RollingFile.new( 'stickler_rolling_logfile',
+      Logging::Logger.root.add_appenders ::Logging::Appenders::RollingFile.new( 'stickler_rolling_logfile',
                                                                  { :filename => log_file,
                                                                    :layout   => layout,
                                                                    # at 5MB roll the log
@@ -118,7 +123,6 @@ module Stickler
                                                                    :safe     => true,
                                                                    :level    => :debug
                                                                   }) 
-      Stickler.debug! if opts['debug']
     end
 
     #
@@ -128,9 +132,7 @@ module Stickler
     def load_configuration
       begin
         @configuration = Configuration.new( config_file )
-        #::Gem.configuration = @configuration 
-        #::Gem.sources.replace( @configuration.sources )
-        #ENV['GEMCACHE'] = source_gems_dir
+        source_group # force a load
         @configuration_loaded = true
       rescue => e
         logger.error "Failure to load configuration #{e}"
@@ -165,7 +167,7 @@ module Stickler
     # This holds the raw gem files downloaded from the sources.  This is
     # equivalent to a gem installations 'gems' directory.
     #
-    def gems
+    def gems_dir
       @gems_dir ||= File.join( directory, 'gems' )
     end
 
@@ -174,6 +176,13 @@ module Stickler
     #
     def specification_dir
       @specification_dir ||= File.join( directory, 'specifications' )
+    end
+
+    #
+    # The uppstream source cache directory
+    #
+    def upstream_source_cache_dir
+      @source_cache_dir ||= File.join( directory, 'upstream_source_cache' )
     end
 
     #
@@ -190,7 +199,22 @@ module Stickler
     # Local handler to the top level Stickler logger
     #
     def logger
-      @logger ||= Stickler.logger
+      @logger ||= ::Logging::Logger[self]
+    end
+
+
+    # 
+    # The SourceGroup containing all of the sources for this repository
+    #
+    def source_group
+      unless @source_group
+        sg = SourceGroup.new( self )
+        configuration.sources.each do |source_uri|
+          sg.add_source( source_uri )
+        end
+        @source_group = sg 
+      end 
+      return @source_group
     end
 
     #
@@ -237,37 +261,38 @@ module Stickler
     # files and directories that do not already exist are created.  Nothing is
     # destroyed.
     # 
-    def setup
-      if overwrite? or not File.exist?( directory )
-        FileUtils.mkdir_p( directory ) 
-        logger.info "created repository root #{directory}"
+    def setup 
+      if File.exist?( directory ) then
+        Console.info "repository root already exists #{directory}"
       else
-        logger.info "repository root already exiss #{directory}"
+        FileUtils.mkdir_p( directory ) 
+        Console.info "created repository root #{directory}"
       end
 
       Repository.other_dir_names.each do |method|
         d = self.send( method )
-        if overwrite? or not File.exist?( d ) 
-          FileUtils.mkdir_p( d ) 
-          logger.info "created directory #{d}"
+        if File.exist?( d ) then
+          Console.info "directory #{d} already exists"
         else
-          logger.info "directory #{d} already exists"
+          FileUtils.mkdir_p( d ) 
+          Console.info "created directory #{d}"
         end
       end
 
       if overwrite? or not File.exist?( config_file ) then
         FileUtils.cp Stickler::Paths.data_path( Repository.config_file_basename ), config_file
-        logger.info "copied in default configuration to #{config_file}"
+        Console.info "copied in default configuration to #{config_file}"
       else
-        logger.info "configuration file #{config_file} already exists"
+        Console.info "configuration file #{config_file} already exists"
       end
 
       # load the configuration for the repo
       load_configuration
 
     rescue => e
-      logger.error "Unable to setup the respository"
-      logger.error e
+      $stderr.puts "Unable to setup the respository"
+      $stderr.puts e
+      $stderr.puts e.backtrace.join("\n")
       exit 1
     end
 
@@ -277,41 +302,33 @@ module Stickler
     #
     def info
       return unless valid?
-      Stickler.tee "Stickler Information"
-      Stickler.tee "===================="
-      Stickler.tee ""
+      Console.info "Stickler Information"
+      Console.info "===================="
+      Console.info ""
 
-      Stickler.tee "  Upstream Sources"
-      Stickler.tee "  ----------------"
-      Stickler.tee ""
+      Console.info "  Upstream Sources"
+      Console.info "  ----------------"
+      Console.info ""
 
       max_width = configuration.sources.collect { |k| k.length }.max
-      configuration.sources.each do |url|
-        Stickler.tee  "  #{url.rjust( max_width )} : #{source_cache.latest_cache_data[url].source_index.size} available"
+      source_group.sources.each do |source|
+        Console.info "  #{source.uri.rjust( max_width )} : #{source.latest_specs.size} gems available"
       end
 
-      Stickler.tee ""
+      Console.info ""
 
       keys = configuration.keys
       max_width = keys.collect { |k| k.length }.max
 
       keys = keys.sort - %w[ sources ]
 
-      Stickler.tee "  Configuration variables"
-      Stickler.tee "  -----------------------"
-      Stickler.tee ""
+      Console.info "  Configuration variables"
+      Console.info "  -----------------------"
+      Console.info ""
 
       keys.each do |key|
-        Stickler.tee "  #{key.rjust( max_width )} : #{configuration[ key ]}"
+        Console.info "  #{key.rjust( max_width )} : #{configuration[ key ]}"
       end
-    end
-
-    #
-    # Access the source cache for the repository
-    #
-    def source_cache
-      load_configuration unless configuration_loaded?
-      @source_cache ||= ::Gem::SourceInfoCache.cache 
     end
 
     #
@@ -321,16 +338,16 @@ module Stickler
       load_configuration unless configuration_loaded?
       begin 
         uri = ::URI.parse source_uri
-        ::Gem::SpecFetcher.fetcher.load_specs uri, 'specs'
-        configuration.sources << source_uri
-        configuration.write
-        Gem.sources.replace configuration.sources
-        Stickler.tee "#{source_uri} added to sources"
+        if configuration.sources.include?( source_uri ) then
+          Console.info "#{source_uri} already in sources"
+        else
+          configuration.sources << source_uri
+          configuration.write
+          source_group.add_source( source_uri )
+          Console.info "#{source_uri} added to sources"
+        end
       rescue ::URI::Error
-        Stickler.tee "Error : #{source_uri} is not a URI"
-      rescue ::Gem::RemoteFetcher::FetchError => e
-        Stickler.tee "Error fetching #{source_uri}"
-        Stickler.tee "\t#{e.message}"
+        Console.info "Error : #{source_uri} is not a URI"
       end
     end
 
@@ -342,18 +359,19 @@ module Stickler
       begin
         uri = ::URI.parse source_uri
         if configuration.sources.delete( source_uri ) then
+          source_group.remove_source( source_uri )
           configuration.write
-          Gem.sources.replace configuration.sources
-          Stickler.tee "#{source_uri} removed from sources"
+          Console.info "#{source_uri} removed from sources"
+          logger.warn "Still need to cleanup gems and source cache"
         else
-          Stickler.tee "#{source_uri} is not one of your sources"
-          Stickler.tee "Your sources are:"
+          Console.info "#{source_uri} is not one of your sources"
+          Console.info "Your sources are:"
           configuration.sources.each do |src|
-            Stickler.tee "  #{src}"
+            Console.info "  #{src}"
           end
         end
       rescue ::URI::Error
-        Stickler.tee "Error : #{source_uri} is not a URI"
+        Console.info "Error : #{source_uri} is not a URI"
       end
     end
 
@@ -361,7 +379,7 @@ module Stickler
     # Add a gem to the repository
     #
     def add_gem( gem_name, version )
-      Stickler.tee "Obtaining version information for `#{gem_name}'"
+      Console.info "Obtaining version information for `#{gem_name}'"
 
       version = ::Gem::Requirement.default if version == :latest
       search_pattern = ::Gem::Dependency.new( gem_name, version ) 

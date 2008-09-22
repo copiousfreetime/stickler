@@ -6,7 +6,7 @@ describe Stickler::Repository do
   before( :each ) do
     @top_dir = File.join( "/tmp/stickler" )
     @repo = Stickler::Repository.new( 'directory' => @top_dir )
-    Stickler.silent { @repo.setup }
+    Stickler::Console.silent { @repo.setup }
   end
 
   after( :each ) do
@@ -15,7 +15,7 @@ describe Stickler::Repository do
 
 
   describe "#setup" do
-    %w[ cache log specifications dist ].each do |sub_dir|
+    %w[ gems log specifications dist upstream_source_cache ].each do |sub_dir|
       it "creates #{sub_dir} directory" do
         new_dir = File.join( @top_dir , sub_dir )
         File.directory?( new_dir ).should == true
@@ -31,15 +31,15 @@ describe Stickler::Repository do
   end
 
   describe "validity checks" do
-    %w[ cache log specifications dist ].each do |sub_dir|
+    %w[ gems log specifications dist upstream_source_cache ].each do |sub_dir|
       it "raises error if #{sub_dir} is missing" do
         FileUtils.rmdir( File.join( @top_dir, sub_dir ) )
-        lambda { Stickler.silent { @repo.valid! } }.should raise_error( Stickler::Repository::Error ) 
+        lambda { Stickler::Console.silent { @repo.valid! } }.should raise_error( Stickler::Repository::Error ) 
       end
 
       it "return false if #{sub_dir} is missing" do
         FileUtils.rmdir( File.join( @top_dir, sub_dir ) )
-        Stickler.silent{ @repo.should_not be_valid }
+        Stickler::Console.silent{ @repo.should_not be_valid }
       end
     end
 
@@ -52,16 +52,4 @@ describe Stickler::Repository do
     @repo.configuration['sources'].size.should == 1
     @repo.configuration['sources'].first.should == "http://gems.rubyforge.org"
   end
-
-  it "sets itself as the global Gem.configuration" do
-    @repo.configuration.should == Gem.configuration
-  end
-
-  it "sets the global sources list for Gem" do
-    Stickler.silent {
-      @repo.add_source( "http://copiousfreetime.org/gems/" )
-    }
-    Gem.sources.should == @repo.configuration.sources
-  end
-
 end

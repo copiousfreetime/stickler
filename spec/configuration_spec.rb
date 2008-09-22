@@ -12,7 +12,7 @@ describe Stickler::Configuration do
     FileUtils.rm_f @config_file_name
   end
 
-  %w[ downstream_source sources bulk_threshold benchmark verbose update_sources backtrace ].each do |key|
+  %w[ downstream_source sources ].each do |key|
     it "has a value for #{key}" do
       @config.send( key ).should_not == nil
     end
@@ -29,15 +29,6 @@ describe Stickler::Configuration do
 
   it "lists its keys" do
     @config.keys.size.should > 0
-  end
-
-  it "is NOT really verbose by default" do
-    @config.really_verbose.should == false
-  end
-
-  it "it can be really verbose" do
-    @config['verbose'] = "really verbose"
-    @config.really_verbose.should == true
   end
 
   it "can write the configuration back out to a file" do
