@@ -209,6 +209,7 @@ module Stickler
     def source_group
       unless @source_group
         sg = SourceGroup.new( self )
+        Console.info "Setting up sources"
         configuration.sources.each do |source_uri|
           sg.add_source( source_uri )
         end
@@ -302,12 +303,10 @@ module Stickler
     #
     def info
       return unless valid?
-      Console.info "Stickler Information"
-      Console.info "===================="
-      Console.info ""
 
-      Console.info "  Upstream Sources"
-      Console.info "  ----------------"
+      Console.info ""
+      Console.info "Upstream Sources"
+      Console.info "----------------"
       Console.info ""
 
       max_width = configuration.sources.collect { |k| k.length }.max
@@ -315,15 +314,15 @@ module Stickler
         Console.info "  #{source.uri.rjust( max_width )} : #{source.latest_specs.size} gems available"
       end
 
-      Console.info ""
 
       keys = configuration.keys
       max_width = keys.collect { |k| k.length }.max
 
       keys = keys.sort - %w[ sources ]
 
-      Console.info "  Configuration variables"
-      Console.info "  -----------------------"
+      Console.info ""
+      Console.info "Configuration variables"
+      Console.info "-----------------------"
       Console.info ""
 
       keys.each do |key|

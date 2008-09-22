@@ -42,15 +42,16 @@ module Stickler
       # load a source from a cache file if it exists, otherwise
       # load it the normal way
       #
-      def load( uri, source_group )
+      def load( uri, source_group, opts = {} )
         cache_dir = source_group.cache_dir
         cache_file = File.join( cache_dir, marshal_file_name_for( uri ) )
         if File.exist?( cache_file ) then
-          source_group.logger.debug "Loading #{uri} from cache"
+          Console.info " * loading cache of #{uri}"
           source = Marshal.load( IO.read( cache_file ) )
           source.source_group = source_group
+          source.refresh!
         else
-          source = Source.new( uri, source_group )
+          source = Source.new( uri, source_group, opts )
         end
         return source
       end
@@ -61,7 +62,8 @@ module Stickler
     # Try and load the source from the cache if it can and if not, 
     # load it from the uri
     #
-    def initialize( uri, source_group )
+    def initialize( uri, source_group, opts = {})
+
       begin
         @uri = uri 
         ::URI.parse( uri ) # make sure it is valid
@@ -69,9 +71,22 @@ module Stickler
         @source_group = source_group
         @upstream_stats = {}
 
+        if opts[:eager] then 
+          logger.info "eager loading #{uri}"
+          refresh!
+        end
+
       rescue ::URI::Error => e
         raise Error, "Unable to create source from uri #{uri} : #{e}"
       end
+    end
+
+    #
+    # Trigger a check to see if the source_index should be refreshed
+    #
+    def refresh!
+      source_index
+      nil
     end
 
     #
@@ -105,6 +120,7 @@ module Stickler
       response = nil
       while limit > 0
         uri = URI.parse( uri ) 
+
         logger.debug " -> #{method.upcase} #{uri}"
         connection = Net::HTTP.new( uri.host, uri.port )
         response = connection.send( method, uri.path )
@@ -142,6 +158,7 @@ module Stickler
     # load the source index member variable from the upstream source
     #
     def load_source_index_from_upstream
+      Console.info " * loading #{uri} from upstream"
       response = fetch( 'get', upstream_marshal_uri )
       inflated = Zlib::Inflate.inflate( response.body )
       begin
@@ -171,7 +188,7 @@ module Stickler
           end
         end
       end
-      logger.debug "  our cache is NOT up to date"
+      Console.info " * cache of #{uri} is out of date"
       return false
     end
 

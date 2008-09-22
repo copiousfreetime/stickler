@@ -22,7 +22,7 @@ module Stickler
     end
 
     def add_source( source_uri )
-      @sources[source_uri] = Source.new( source_uri, self )  
+      @sources[source_uri] = Source.load( source_uri, self, :eager => true )  
     end
 
     def sources
