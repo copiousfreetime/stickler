@@ -46,8 +46,7 @@ module Stickler
         logger.info "Creating reverse index of spec -> uri"
         h = {}
         @sources.each_pair do |uri, src|
-          src.source_index.gems.each_pair do |name, s|
-            #logger.debug "name = #{name}, spec.full_name = #{s.full_name}"
+          src.specifications.each do |s|
             h[ s.full_name ] = uri
           end
         end
@@ -68,13 +67,13 @@ module Stickler
     def search( dependency )
       results = []
       @sources.each_pair do |uri, src|
-        results << src.search( dependency )
+        results.concat src.search( dependency )
       end
-      results.flatten
+      return results
     end
 
-    def install( spec )
-      installer.install( spec )
+    def install( spec_info )
+      installer.install( spec_info )
     end
 
     def remove_source( source_uri )

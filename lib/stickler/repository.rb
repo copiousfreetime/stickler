@@ -29,7 +29,7 @@ module Stickler
   #   log/            - directory holding the rolling logs of what has gone on
   #                     with the repository.
   #
-  #   upsteram_source_cache/   - directory holding serialized Source objects for caching
+  #   upstream_source_cache/   - directory holding serialized Source objects for caching
   #
   #
   class Repository
@@ -42,7 +42,7 @@ module Stickler
     attr_reader :configuration
 
     # Are requrements satisfied in a minimal or maximal approach
-    attr_reader :requirement_satisfaction_method
+    attr_reader :requirement_satisfaction_behavior
 
     class << self
       def other_dir_names 
@@ -64,7 +64,6 @@ module Stickler
       # _stickler_ directory below the current_directory
       #
       def default_directory
-         
         defaults = [ File.join( Dir.pwd, config_file_basename ), File.join( Dir.pwd, basedir ) ]
         defaults.each do |def_dir|
           if File.exist?( def_dir ) then
@@ -76,21 +75,23 @@ module Stickler
       end
     end
 
+    #
+    # Initialize a stickler repository
+    #
     def initialize( opts )
 
       @directory = File.expand_path( opts['directory'] )
-      @requirement_satisfaction_method = ( opts['requirements'] || "maximum" ).to_sym
+      @requirement_satisfaction_behavior = ( opts['requirements'] || "maximum" ).to_sym
       enhance_logging( opts ) if File.directory?( log_dir )
       @overwrite = opts['force']
 
-      # this must be loaded early so it overrites the global Gem.configuration
-      @configuration_loaded = false
+      @configuration = nil
       load_configuration if File.exist?( config_file )
 
     end
 
     def configuration_loaded?
-      @configuration_loaded
+      @configuration.nil?
     end
 
     #
@@ -123,13 +124,10 @@ module Stickler
 
     #
     # return a handle to the repository configuration found in stickler.yml.
-    # Set this to be the global Gem.configuration
     #
     def load_configuration
       begin
         @configuration = Configuration.new( config_file )
-        source_group # force a load
-        @configuration_loaded = true
       rescue => e
         logger.error "Failure to load configuration #{e}"
         exit 1
@@ -192,12 +190,11 @@ module Stickler
     end
 
     #
-    # Local handler to the top level Stickler logger
+    # logging handler
     #
     def logger
       @logger ||= ::Logging::Logger[self]
     end
-
 
     # 
     # The SourceGroup containing all of the sources for this repository
@@ -380,8 +377,8 @@ module Stickler
       version = ::Gem::Requirement.default if version == :latest
       search_pattern = ::Gem::Dependency.new( gem_name, version ) 
       choices = {}
-      source_group.search( search_pattern ).each do |spec|
-        choices[ spec.full_name ] = spec
+      source_group.search( search_pattern ).each do |spec_info|
+        choices[ spec.full_name ] = spec_info
       end
 
       ::HighLine.track_eof = false
@@ -394,7 +391,7 @@ module Stickler
         end
 
         menu.choice( :all ) do |all, details |
-          choices.values.each { |spec| source_group.install( spec ) }
+          choices.values.each { |spec| source_group.install( spec_info ) }
         end
       end
     end

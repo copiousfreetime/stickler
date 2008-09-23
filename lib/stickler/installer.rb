@@ -40,7 +40,8 @@ module Stickler
     #
     # Install the gem given by the spec and all of its dependencies.
     #
-    def install( top_spec )
+    def install( spec_info )
+      spec_name, version, original_platform  = spec_info
       install_list = []
 
       todo = []
@@ -127,7 +128,7 @@ module Stickler
       return dest_gem_file 
     end
 
-    def install_spec( spec )
+    def install_spec( name, version, platform )
       rubycode = spec.to_ruby
       file_name = File.join( source_group.specification_dir, "#{spec.full_name}.gemspec" )
       File.open( file_name, "wb" ) do |file|

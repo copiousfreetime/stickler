@@ -2,9 +2,6 @@
 
   * on adding a gem, get the latest N version of it and prompt for which one(s) 
     to store in the repository
-  * on adding a gem it will bring down all of that gems dependencies.  with 
-    the MINIMAL version that satisfies the dependencies, or maximum as defined
-    by the command line operations.
 
 = Remove
 

@@ -1,5 +1,4 @@
 require 'uri'
-require 'rubygems/source_index'
 require 'base64'
 require 'progressbar'
 require 'zlib'
@@ -24,7 +23,7 @@ module Stickler
 
     class << self
       #
-      # Upstream headers to be used to detect if an upstream Marshal is okay
+      # Upstream headers to be used to detect if an upstream specs file is okay
       #
       def cache_detection_headers
         %w[ etag last-modified content-length ]
@@ -35,7 +34,7 @@ module Stickler
       #
       def marshal_file_name_for( uri )
         encoded_uri = Base64.encode64( uri ).strip
-        return "#{encoded_uri}.Marshal.#{Gem.marshal_version}"
+        return "#{encoded_uri}.specs.#{Gem.marshal_version}"
       end
 
       #
@@ -82,10 +81,10 @@ module Stickler
     end
 
     #
-    # Trigger a check to see if the source_index should be refreshed
+    # Trigger a check to see if the source_specs should be refreshed
     #
     def refresh!
-      source_index
+      source_specs
       nil
     end
 
@@ -110,7 +109,30 @@ module Stickler
     # server.
     #
     def upstream_marshal_uri
-      URI.join( uri, "Marshal.#{Gem.marshal_version}.Z" ).to_s
+      URI.join( uri, "specs.#{Gem.marshal_version}.gz" ).to_s
+    end
+
+    #
+    # Fetch the compressed spec file from the upstream server
+    #
+    def fetch_spec( name, version, platform )
+      spec_file_name = "#{name}-#{version}"
+      spec_file_name += "-#{platform}" unless platform == Gem::Platform::RUBY
+      spec_file_name += ".gemspec"
+
+      spec_uri = URI.join( uri, "#{Gem::MARSHAL_SPEC_DIR}#{spec_file_name}" ).to_s
+      local_spec = File.join( source_group.specification_dir, spec_file_name )
+      if File.exist?( local_spec ) then
+        spec = nil
+        File.open( local_spec, "rb" ) { |f| spec = f.read }
+      else
+        spec_uri << ".rz"
+        response = fetch( "get", spec_uri.to_s )
+        spec = Zlib::Inflate.inflate response.body
+        File.open( local_spec, "wb" ) { |f| f.write spec }
+      end
+
+      return Marshal.load( spec )
     end
 
     #
@@ -142,41 +164,54 @@ module Stickler
     # shortcut for the latests specs
     #
     def latest_specs
-      source_index.latest_specs
+      unless @latest_specs
+        latest = {}
+        source_specs.each do |name, version, original_platform|
+          key = "#{name}-#{original_platform}"
+          if latest[ key ].nil? or latest[ key ][1] < version then
+            latest[ key ] = [ name, version, original_platform ]
+          end
+        end
+        @latest_specs = latest
+      end
+      return @latest_specs.values
     end
 
     #
-    # shortcut for search
+    # find all matching gems and return their Gem::Specification
     #
-    def search( pattern )
-      source_index.search( pattern )
+    def search( dependency )
+      found = source_specs.select do |name, version, platform|
+        dependency =~ Gem::Dependency.new( name, version )
+      end
     end
 
     #
-    # Access its source_index
+    # Access its source_specs
     #
-    def source_index
-      return @source_index unless last_check_expired?
-      return @source_index if source_index_same_as_upstream?
-      load_source_index_from_upstream
-      return @source_index
+    def source_specs
+      return @source_specs unless last_check_expired?
+      return @source_specs if source_specs_same_as_upstream?
+      load_source_specs_from_upstream
+      return @source_specs
     end
 
     #
     # load the source index member variable from the upstream source
     #
-    def load_source_index_from_upstream
+    def load_source_specs_from_upstream
       Console.info " * loading #{uri} from upstream"
       response = fetch( 'get', upstream_marshal_uri )
-      inflated = Zlib::Inflate.inflate( response.body )
+      body = StringIO.new( response.body )
+      inflated = Zlib::GzipReader.new( body ).read
       begin
-        @source_index = Marshal.load( inflated ) 
+        @source_specs = Marshal.load( inflated ) 
         save!
       rescue => e
         Console.error e.backtrace.join("\n")
         raise Error, "Corrupt upstream source index of #{upstream_marshal_uri} : #{e}"
       end
-      return @source_index
+      return @source_specs
     end
 
     #
@@ -188,9 +223,9 @@ module Stickler
     end
 
     #
-    # return true if the current source_index is the same as the upstream
-    # source_index as indicated by the HTTP headers
-    def source_index_same_as_upstream? 
+    # return true if the current source_specs is the same as the upstream
+    # source_specs as indicated by the HTTP headers
+    def source_specs_same_as_upstream? 
       logger.debug "Checking if our our cached version of #{uri} is up to date"
       response = fetch( 'head', upstream_marshal_uri )
       @last_check = Time.now
