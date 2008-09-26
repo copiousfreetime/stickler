@@ -9,6 +9,10 @@ module Stickler
     def initialize( config_file_name )
       @config_file_name = config_file_name
       @hash = YAML.load_file( config_file_name )
+      @hash['sources'] = @hash['sources'].collect do |uri|
+        p = uri.split("/")
+        p.join("/") + "/" # ensure a trailing slash
+      end
     end
 
     # the array of sources in this configuration

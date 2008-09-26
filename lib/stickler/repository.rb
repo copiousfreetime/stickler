@@ -20,16 +20,13 @@ module Stickler
   #   stickler.yml    - the Stickler configuration file for this repository.
   #                     The existence of this file indicates this is the root 
   #                     of a stickler repository
-  #   gems/          - storage of the actual gem files, somewhat similar to the
-  #                     GEM_HOME/cache directory
+  #   gems/           - storage of the actual gem files
+  #   cache/          - cache of gem files downloaded from upstream sources
+  #                     managed by the rubygems fetcher classes
   #   specifications/ - ruby gemspec files 
   #   log/            - directory holding rotating logs files for stickler
   #   dist/           - directory holding the distributable gem index location,
   #                     rsync this to your webserver, or serve from it directly.
-  #   log/            - directory holding the rolling logs of what has gone on
-  #                     with the repository.
-  #
-  #   upstream_source_cache/   - directory holding serialized Source objects for caching
   #
   #
   class Repository
@@ -46,7 +43,7 @@ module Stickler
 
     class << self
       def other_dir_names 
-        %w[ gems_dir log_dir specification_dir dist_dir upstream_source_cache_dir ]
+        %w[ gems_dir log_dir specification_dir dist_dir cache_dir ]
       end
 
       def config_file_basename
@@ -128,6 +125,7 @@ module Stickler
     def load_configuration
       begin
         @configuration = Configuration.new( config_file )
+        source_group # force load
       rescue => e
         logger.error "Failure to load configuration #{e}"
         exit 1
@@ -173,10 +171,10 @@ module Stickler
     end
 
     #
-    # The uppstream source cache directory
+    # The cache dir for the downloads
     #
-    def upstream_source_cache_dir
-      @source_cache_dir ||= File.join( directory, 'upstream_source_cache' )
+    def cache_dir
+      @cache_dir ||= File.join( directory, 'cache' )
     end
 
     #
@@ -302,9 +300,10 @@ module Stickler
       Console.info "----------------"
       Console.info ""
 
-      max_width = configuration.sources.collect { |k| k.length }.max
+      max_width = configuration.sources.collect { |s| s.length }.max
       source_group.sources.each do |source|
-        Console.info "  #{source.uri.rjust( max_width )} : #{source.latest_specs.size} gems available"
+        Console.info "  #{source.uri.to_s.rjust( max_width )} : #{source.source_specs.size} gems available"
+        Console.info "  #{" ".rjust( max_width )} : #{source_group.installed_specs_for_source_uri( source.uri ).size} gems installed"
       end
 
 
@@ -328,18 +327,13 @@ module Stickler
     #
     def add_source( source_uri )
       load_configuration unless configuration_loaded?
-      begin 
-        uri = ::URI.parse source_uri
-        if configuration.sources.include?( source_uri ) then
-          Console.info "#{source_uri} already in sources"
-        else
-          configuration.sources << source_uri
-          configuration.write
-          source_group.add_source( source_uri )
-          Console.info "#{source_uri} added to sources"
-        end
-      rescue ::URI::Error
-        Console.info "Error : #{source_uri} is not a URI"
+      if configuration.sources.include?( source_uri ) then
+        Console.info "#{source_uri} already in sources"
+      else
+        source_group.add_source( source_uri )
+        configuration.sources << source_uri
+        configuration.write
+        Console.info "#{source_uri} added to sources"
       end
     end
 
@@ -348,22 +342,18 @@ module Stickler
     #
     def remove_source( source_uri )
       load_configuation unless configuration_loaded?
-      begin
-        uri = ::URI.parse source_uri
-        if configuration.sources.delete( source_uri ) then
-          source_group.remove_source( source_uri )
-          configuration.write
-          Console.info "#{source_uri} removed from sources"
-          logger.warn "Still need to cleanup gems and source cache"
-        else
-          Console.info "#{source_uri} is not one of your sources"
-          Console.info "Your sources are:"
-          configuration.sources.each do |src|
-            Console.info "  #{src}"
-          end
+      uri = ::URI.parse source_uri
+      if configuration.sources.delete( source_uri ) then
+        source_group.remove_source( source_uri )
+        configuration.write
+        Console.info "#{source_uri} removed from sources"
+        logger.warn "Still need to cleanup gems and source cache"
+      else
+        Console.info "#{source_uri} is not one of your sources"
+        Console.info "Your sources are:"
+        configuration.sources.each do |src|
+          Console.info "  #{src}"
         end
-      rescue ::URI::Error
-        Console.info "Error : #{source_uri} is not a URI"
       end
     end
 
@@ -377,8 +367,8 @@ module Stickler
       version = ::Gem::Requirement.default if version == :latest
       search_pattern = ::Gem::Dependency.new( gem_name, version ) 
       choices = {}
-      source_group.search( search_pattern ).each do |spec_info|
-        choices[ spec.full_name ] = spec_info
+      source_group.search( search_pattern ).each do |spec|
+        choices[ spec.full_name ] = spec
       end
 
       ::HighLine.track_eof = false
@@ -391,7 +381,7 @@ module Stickler
         end
 
         menu.choice( :all ) do |all, details |
-          choices.values.each { |spec| source_group.install( spec_info ) }
+          choices.values.each { |spec| source_group.install( spec ) }
         end
       end
     end

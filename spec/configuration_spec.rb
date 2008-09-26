@@ -36,7 +36,7 @@ describe Stickler::Configuration do
     @config.write
     @config = Stickler::Configuration.new( @config_file_name )
     @config.sources.size.should == 2
-    @config.sources.should be_include( "http://gems.github.com" )
+    @config.sources.should be_include( "http://gems.github.com/" )
   end
 
 end
