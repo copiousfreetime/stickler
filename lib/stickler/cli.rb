@@ -135,7 +135,7 @@ module Stickler
         run {
           p = Stickler.params_to_hash( params )
           repo = Stickler::Repository.new( p )
-          repo.add_gem( p['gem_name'], p['version'] )
+          repo.add_gem( p['gem_name'], p['version'] || :latest )
         }
       end
 
@@ -182,7 +182,15 @@ module Stickler
         txt
 
         mixin :option_directory
+        mixin :option_version
+
         argument( 'gem_name' ) { description "The gem to remove" }
+
+        run {
+          p = Stickler.params_to_hash( params )
+          repo = Stickler::Repository.new( p )
+          repo.remove_gem( p['gem_name'], p['version'] || :all )
+        }
       end
 
       mode( :source ) do
@@ -270,7 +278,6 @@ module Stickler
     mixin :option_version do
       option( :version, "v" ) { 
         argument :required 
-        default :latest
       }
     end
     

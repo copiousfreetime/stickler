@@ -7,7 +7,7 @@ module Stickler
   #
   # The representation of an upstream source from which stickler pulls gems.
   # This wraps up the contents of the upstream specs.4.8 file found in a
-  # rubygems 1.2 repository.
+  # rubygems 1.2 or greater repository.
   #
   class Source
     class Error < ::StandardError; end
@@ -42,12 +42,8 @@ module Stickler
       end
     end
 
-    def logger
-     ::Logging::Logger[self]
-    end
-
     #
-    # find all matching gems and return their Gem::Specification
+    # find all matching gems and return their SpecLite
     #
     def search( dependency )
       found = source_specs.select do | spec |
@@ -76,14 +72,5 @@ module Stickler
       @source_specs = nil
       return source_specs
     end
-
-    #
-    # Destroy self and all gems that come from me
-    #
-    def destroy!
-      logger.info "Destroying source #{uri} "
-      Console.error " Still need to delete the gems from this source"
-    end
-
   end
 end

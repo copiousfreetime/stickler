@@ -341,13 +341,12 @@ module Stickler
     # Remove a source from the repository
     #
     def remove_source( source_uri )
-      load_configuation unless configuration_loaded?
+      load_configuration unless configuration_loaded?
       uri = ::URI.parse source_uri
       if configuration.sources.delete( source_uri ) then
         source_group.remove_source( source_uri )
         configuration.write
         Console.info "#{source_uri} removed from sources"
-        logger.warn "Still need to cleanup gems and source cache"
       else
         Console.info "#{source_uri} is not one of your sources"
         Console.info "Your sources are:"
@@ -385,5 +384,21 @@ module Stickler
         end
       end
     end
+
+    #
+    # Remove a gem from the repository
+    #
+    def remove_gem( gem_name, version )
+
+      Console.info ""
+      
+      version = ::Gem::Requirement.default if version == :all
+      search_pattern = ::Gem::Dependency.new( gem_name, version )
+      ulist = source_group.search_installed( search_pattern )
+      source_group.search_installed( search_pattern ).each do |spec|
+        source_group.uninstall( spec )
+      end
+    end
+
   end
 end
