@@ -70,6 +70,19 @@ module Stickler
         end
         return defaults.last
       end
+
+      #
+      # gem requirement information 
+      #
+      def requirement_meta
+        [ [ "="  , "Equals version" ],
+          [ "!=" , "Not equal to version" ],
+          [ ">"  , "Greater than version" ],
+          [ "<"  , "Less than version" ],
+          [ ">=" , "Greater than or equal to" ],
+          [ "<=" , "Less than or equal to" ],
+          [ "~>" , "Approximately greater than" ]]
+      end
     end
 
     #
@@ -303,7 +316,7 @@ module Stickler
       max_width = configuration.sources.collect { |s| s.length }.max
       source_group.sources.each do |source|
         Console.info "  #{source.uri.to_s.rjust( max_width )} : #{source.source_specs.size} gems available"
-        Console.info "  #{" ".rjust( max_width )} : #{source_group.installed_specs_for_source_uri( source.uri ).size} gems installed"
+        Console.info "  #{" ".rjust( max_width )} : #{source_group.existing_specs_for_source_uri( source.uri ).size} gems existing"
       end
 
 
@@ -363,42 +376,50 @@ module Stickler
 
       Console.info ""
 
+      ::HighLine.track_eof = false
+      hl = ::HighLine.new( STDIN, STDOUT, :auto)
+      hl.say("You need to pick the #{gem_name} Requirement to configure Stickler.")
+      hl.say("This involves picking one of the following Requirement operators")
+      hl.say('See http://docs.rubygems.org/read/chapter/16#page74 for operator info.')
+      hl.say("\nYou need to (1) pick an operator and (2) pick a requirement.")
+      hl.say("The most common operators are >=, > and ~>")
+
+      op = hl.choose(*Repository.requirement_meta.collect { |k,v| "#{k.ljust(3)}#{v}" } ) do |m|
+        m.prompt =  "(1) Pick an operator ? "
+      end
+
+      op = op.split.first # get only the operator, not the trailing text
+
       version = ::Gem::Requirement.default if version == :latest
       search_pattern = ::Gem::Dependency.new( gem_name, version ) 
-      choices = {}
+      choices = []
       source_group.search( search_pattern ).each do |spec|
-        choices[ spec.full_name ] = spec
+        choices << "#{op} #{spec.version.to_s}"
+      end
+      choices = choices.sort.reverse
+
+      hl.say("\nNow to pick a requirement.  Based upon your chosen operator '#{op}',")
+      hl.say("These are the available version of the #{gem_name} gem.")
+      requirement = hl.choose do |m|
+        m.flow = :columns_down
+        m.prompt = "(2) Pick a requirement ? "
+        m.choices( *choices )
       end
 
-      ::HighLine.track_eof = false
-      ::HighLine.new( STDIN, STDOUT).choose do |menu|
-        menu.header = "Available versions of #{gem_name}"
-        menu.prompt = "Choose the version to add ? "
-        menu.shell = true
-        menu.choices( *choices.keys.sort.reverse ) do |name, details|
-          source_group.install( choices[ name ] )
-        end
-
-        menu.choice( :all ) do |all, details |
-          choices.values.each { |spec| source_group.install( spec ) }
-        end
-      end
+      source_group.add_from_dependency( ::Gem::Dependency.new( gem_name, requirement ) )
     end
 
     #
     # Remove a gem from the repository
     #
     def remove_gem( gem_name, version )
-
       Console.info ""
-      
       version = ::Gem::Requirement.default if version == :all
       search_pattern = ::Gem::Dependency.new( gem_name, version )
-      ulist = source_group.search_installed( search_pattern )
-      source_group.search_installed( search_pattern ).each do |spec|
-        source_group.uninstall( spec )
+      ulist = source_group.search_existing( search_pattern )
+      source_group.search_existing( search_pattern ).each do |spec|
+        source_group.remove( spec )
       end
     end
-
   end
 end

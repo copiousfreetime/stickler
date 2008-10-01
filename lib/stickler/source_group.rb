@@ -88,7 +88,7 @@ module Stickler
     end
 
     #
-    # Force a reload of the gem from the installed specs
+    # Force a reload of the gem from the existing specs
     #
     def reload_gems!
       @gems = nil
@@ -97,17 +97,17 @@ module Stickler
 
     #
     # Return a list of Gem::Specification instances corresponding to the
-    # installed gems for a particular source
+    # existing gems for a particular source
     #
-    def installed_specs_for_source_uri( uri )
-      unless @installed_specs_for_source_uri
-        logger.debug "Loading installed_specs_for_source_uri"
-        @installed_specs_for_source_uri = Hash.new{ |h,k| h[k] = Array.new }
+    def existing_specs_for_source_uri( uri )
+      unless @existing_specs_for_source_uri
+        logger.debug "Loading existing_specs_for_source_uri"
+        @existing_specs_for_source_uri = Hash.new{ |h,k| h[k] = Array.new }
         gems.values.each do |spec|
-          @installed_specs_for_source_uri[ source_uri_for_spec( spec ) ] << spec
+          @existing_specs_for_source_uri[ source_uri_for_spec( spec ) ] << spec
         end
       end
-      @installed_specs_for_source_uri[ Source.normalize_uri( uri ) ]
+      @existing_specs_for_source_uri[ Source.normalize_uri( uri ) ]
     end
 
     #
@@ -123,24 +123,37 @@ module Stickler
     end
 
     #
-    # Search through all the installed specs for gemes that match the given
+    # Search through all the existing specs for gemes that match the given
     # Gem::Dependency
     #
-    def search_installed( dependency )
+    def search_existing( dependency )
       results = gems.values.find_all do |spec|
         dependency =~ Gem::Dependency.new( spec.name, spec.version )
       end
     end
 
     #
-    # Install the gem given by the spec and all of its dependencies.
+    # Add the gem that satisfies the dependency based upon the current
+    # satisfication method
     #
-    def install( spec )
-      Console.info "Resolving installation dependencies..."
-      source_uri = source_uri_for_spec( spec )
-      top_spec   = @spec_fetcher.fetch_spec( spec.to_a, source_uri )
+    def add_from_dependency( dep )
+      Console.info "Resolving gem dependencies for #{dep.to_s} ..."
+      specs_satisfying_dependency( dep ).each do |s|
+        add( s )
+      end
+    end
 
-      install_list = []
+    #
+    # Add the gem given by the spec and all of its dependencies.
+    #
+    def add( spec )
+      top_spec = spec
+      unless spec.instance_of?( ::Gem::Specification )
+        source_uri = source_uri_for_spec( spec )
+        top_spec   = @spec_fetcher.fetch_spec( spec.to_a, source_uri )
+      end
+
+      add_list = []
 
       todo = []
       todo.push top_spec
@@ -150,8 +163,8 @@ module Stickler
         spec = todo.pop
         next if seen[ spec.full_name ] or gems[ spec.full_name ] 
 
-        Console.info "Queueing #{spec.full_name} for download"
-        install_list << spec
+        logger.info "Queueing #{spec.full_name} for download"
+        add_list << spec
 
         seen[ spec.full_name ] = true
 
@@ -165,25 +178,26 @@ module Stickler
         end
       end
 
-      install_gems_and_specs( install_list )
+      add_gems_and_specs( add_list )
+      reload_gems!
     end
 
 
     #
     # unisntall the gem given by the spec and all gems that depend on it.
     #
-    def uninstall( spec_or_list )
-      Console.info "Resolving uninstall dependencies..."
+    def remove( spec_or_list )
+      Console.info "Resolving remove dependencies..."
 
       todo = [ spec_or_list ].flatten
-      uninstall_list = []
+      remove_list = []
 
       until todo.empty? do
         spec = todo.pop
-        next if uninstall_list.include?( spec )
+        next if remove_list.include?( spec )
 
-        Console.info "Queueing #{spec.full_name} for removal"
-        uninstall_list << spec
+        logger.info "queueing #{spec.full_name} for removal"
+        remove_list << spec
 
         sibling_gems_of( spec ).each do |sspec|
           Console.debug "pushing #{sspec.full_name} onto todo list"
@@ -196,12 +210,12 @@ module Stickler
         end
       end
 
-      uninstall_gems_and_specs( uninstall_list )
+      remove_gems_and_specs( remove_list )
       reload_gems!
     end
 
     #
-    # Return the list of installed Specifications that have the same name as
+    # Return the list of existing Specifications that have the same name as
     # then given spec
     #
     def sibling_gems_of( spec )
@@ -215,7 +229,7 @@ module Stickler
     end
 
     #
-    # Get the list of installed Specifications that have the input spec as
+    # Get the list of existing Specifications that have the input spec as
     # either a runtime or development dependency
     #
     def specs_depending_on( spec )
@@ -286,18 +300,18 @@ module Stickler
     # remove the source from the source group
     #
     def remove_source( source_uri )
-      ulist = installed_specs_for_source_uri( source_uri )
-      uninstall( ulist )
+      ulist = existing_specs_for_source_uri( source_uri )
+      remove( ulist )
       @sources.delete( source_uri )
       logger.info "removed #{source_uri}"
     end
 
     #
-    # Uninstall a list of gems from specifications
+    # Remove a list of gems from specifications
     #
-    def uninstall_gems_and_specs( uninstall_list )
-      while spec = uninstall_list.pop do
-        Console.info "Uninstalling #{ spec.full_name }"
+    def remove_gems_and_specs( remove_list )
+      while spec = remove_list.pop do
+        Console.info "Removeing #{ spec.full_name }"
         delete_gem_files( spec )
       end
     end
@@ -311,9 +325,9 @@ module Stickler
     end
 
     #
-    # Install the gem represented by the spec
+    # Add the gem represented by the spec
     #
-    def install_gem( spec )
+    def add_gem( spec )
 
       local_fetch_path = @fetcher.download( spec, source_uri_for_spec( spec ).to_s, root_dir )
       dest_gem_path    = File.join( gems_dir, File.basename( local_fetch_path ) )
@@ -325,9 +339,9 @@ module Stickler
 
 
     # 
-    # Install the specification
+    # Add the specification
     #
-    def install_spec( spec )
+    def add_spec( spec )
       rubycode = spec.to_ruby
       file_name = File.join( specification_dir, "#{spec.full_name}.gemspec" )
       logger.info  "writing #{file_name}"
@@ -338,13 +352,13 @@ module Stickler
 
 
     # 
-    # Install all the gems and specifications in the install list
+    # Add all the gems and specifications in the add list
     #
-    def install_gems_and_specs( install_list )
-      while spec = install_list.pop do
-        Console.info "Installing #{ spec.full_name }"
-        install_gem( spec )
-        install_spec( spec )
+    def add_gems_and_specs( add_list )
+      while spec = add_list.pop do
+        Console.info "Adding #{ spec.full_name }"
+        add_gem( spec )
+        add_spec( spec )
       end
     end
   end
