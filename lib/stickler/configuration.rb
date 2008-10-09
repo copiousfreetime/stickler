@@ -25,8 +25,26 @@ module Stickler
       hash['downstream_source']
     end
 
+    # The gem and version requirements for this repository
+    def gem_dependencies
+      unless @gem_dependencies
+        @gem_dependencies = []
+        if hash['gems'] then
+          hash['gems'].each do |name, reqs|
+            @gem_dependencies << ::Gem::Dependency.new( name, reqs )
+          end
+        end
+      end
+      return @gem_dependencies
+    end
+
     def write
       File.open( config_file_name, 'w' ) do |f|
+        g = {}
+        gem_dependencies.each do |dep|
+          g[dep.name] = dep.requirement_list
+        end
+        hash['gems'] = g
         f.write hash.to_yaml
       end
     end

@@ -215,50 +215,27 @@ module Stickler
       
     end
 
-    mode( 'check-update' ) do
+    mode( 'sync' ) do
       description <<-desc
-      check upstream sources for new versions of gems
-      Run from within the stickler repository or use the --directory option
+      check and make sure all the gems in the configuration file are available.
       desc
 
       example <<-txt
-        . stickler check-update --email 'admin@example.com'
-        . stickler check-update --email 'admin@example.com' --via 'smtp.example.com'
+        . sticker sync
       txt
 
-      option( :email ) {
-        desc "send the check results via email"
-        argument( :required )
-      }
-
-      option( :via ) {
-        desc "send the email via a particular server"
-        argument( :required )
-        default "localhost"
-      }
-
       mixin :option_directory
-
-      run { 
-        puts "Check not implemented " 
-        puts "directory = #{directory}"
-        puts "email     = #{email}"
-        puts "via       = #{via}"
+      option( :rebuild ) {
+        default false
       }
-    end
 
-    mode( 'check-consistency' ) do
-      description <<-desc
-      check all gems in the repository and make sure that all is well
-      Run from within the stickler repository or use the --directory option
-      desc
 
-      example <<-txt
-        . stickler check-consistency 
-      txt
-      mixin :option_directory
-      
-      run { puts "Check consistency not implemented" }
+      run {
+        p = Stickler.params_to_hash( params )
+        repo = Stickler::Repository.new( p )
+        puts p.inspect
+        repo.sync( p['rebuild'] )
+      }
     end
 
     ##

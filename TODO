@@ -1,11 +1,17 @@
-= Add
-
-  * on adding a gem, get the latest N version of it and prompt for which one(s) 
-    to store in the repository
-
 = Remove
 
   * on removing a gem, prompt for a version of all of them
   * on a source, prompt for confirmation, since all of those gems will be
     removed
 
+= check-update
+
+  * look for a new version of the gems that are in the repository and send an
+    alert to someone about them.
+
+= sync
+
+  check the configuration file, looking for all the version that are stored
+  there.  Make sure that they are all available.
+
+= 

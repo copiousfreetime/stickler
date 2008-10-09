@@ -31,6 +31,29 @@ describe Stickler::Configuration do
     @config.keys.size.should > 0
   end
 
+  it "can have gems added to it and reloaded" do
+    d = ::Gem::Dependency.new( 'rake', ">= 0.8.0" )
+    @config.gem_dependencies << d
+    @config.write
+
+    @config = Stickler::Configuration.new( @config_file_name )
+    @config.gem_dependencies.size.should == 1
+
+    @config.gem_dependencies.should be_include d
+
+  end
+
+  it "can have multiple requirements for each gem" do
+    d = ::Gem::Dependency.new( 'rake', [">= 0.8.0", "~> 0.9.0"] )
+    @config.gem_dependencies << d
+    @config.write
+
+    @config = Stickler::Configuration.new( @config_file_name )
+    @config.gem_dependencies.size.should == 1
+    @config.gem_dependencies.should be_include( d )
+  end
+
+
   it "can write the configuration back out to a file" do
     @config.sources << "http://gems.github.com"
     @config.write

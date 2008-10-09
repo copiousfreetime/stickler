@@ -406,7 +406,16 @@ module Stickler
         m.choices( *choices )
       end
 
-      source_group.add_from_dependency( ::Gem::Dependency.new( gem_name, requirement ) )
+      Console.info ""
+
+      dep = ::Gem::Dependency.new( gem_name, requirement ) 
+      if configuration.gem_dependencies.include?( dep ) then
+        Console.info "#{dep} is already in your list of gems"
+      else
+        source_group.add_from_dependency( dep )
+        configuration.gem_dependencies << dep 
+        configuration.write
+      end
     end
 
     #
@@ -419,6 +428,24 @@ module Stickler
       ulist = source_group.search_existing( search_pattern )
       source_group.search_existing( search_pattern ).each do |spec|
         source_group.remove( spec )
+      end
+    end
+
+    #
+    # Sync the repository
+    #
+    def sync( rebuild = false )
+      Console.info ""
+      Console.info "Making sure that all gems listed in configuration are available"
+      Console.info ""
+
+      if rebuild then
+        Console.info "Removing existing gems and specifications ... "
+        Dir[ File.join( gems_dir, "*.gem" ) ].each { |g| FileUtils.rm_f g }
+        Dir[ File.join( specification_dir , "*.gemspec" ) ].each { |s| FileUtils.rm_f s }
+      end
+      configuration.gem_dependencies.each do |dep|
+        source_group.add_from_dependency( dep )
       end
     end
   end
