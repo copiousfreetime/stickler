@@ -31,7 +31,9 @@ module Stickler
         @gem_dependencies = []
         if hash['gems'] then
           hash['gems'].each do |name, reqs|
-            @gem_dependencies << ::Gem::Dependency.new( name, reqs )
+            [ reqs ].flatten.each do |req|
+              @gem_dependencies << ::Gem::Dependency.new( name, req )
+            end
           end
         end
       end
@@ -40,9 +42,10 @@ module Stickler
 
     def write
       File.open( config_file_name, 'w' ) do |f|
-        g = {}
-        gem_dependencies.each do |dep|
-          g[dep.name] = dep.requirement_list
+        g = Hash.new { |h,k| h[k] = [] }
+        gem_dependencies.each do |d|
+          g[d.name] << d.requirement_list
+          g[d.name].flatten!
         end
         hash['gems'] = g
         f.write hash.to_yaml

@@ -233,9 +233,47 @@ module Stickler
       run {
         p = Stickler.params_to_hash( params )
         repo = Stickler::Repository.new( p )
-        puts p.inspect
         repo.sync( p['rebuild'] )
       }
+    end
+
+    mode( 'generate' ) do
+      mode( 'sysconfig' ) do
+        description <<-desc
+        generate the system wide configuration for use by rubygem clients that should use
+        the repository stickler creates.  
+        desc
+
+        example <<-txt
+          . stickler generate sysconfig
+        txt
+
+        mixin :option_directory
+        run {
+          p = Stickler.params_to_hash( params )
+          repo = Stickler::Repository.new( p )
+          repo.generate_sysconfig
+        }
+      end
+
+      mode( 'index' ) do
+        description <<-desc
+        generate the rubygems index of the gems to distribute in this repository.  
+        This is the same as doing a 'gem generate_index' but with a scope limited
+        to just the gems in this repository.
+        desc
+
+        example <<-txt
+          . stickler generate index
+        txt
+
+        mixin :option_directory
+        run {
+          p = Stickler.params_to_hash( params )
+          repo = Stickler::Repository.new( p )
+          repo.generate_index
+        }
+      end
     end
 
     ##

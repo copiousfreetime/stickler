@@ -7,15 +7,15 @@ module Stickler
   class Console
     class << self
       #
-      # Items that get logged to stdout for the user to see should use this logger
+      # Items that get logged to stderr for the user to see should use this logger
       #
       def logger
         unless @logger 
           @logger = ::Logging::Logger['User']
           @logger.level = :info
-          @logger.add_appenders(::Logging::Appender.stdout)
-          ::Logging::Appender.stdout.layout = Logging::Layouts::Pattern.new( :pattern => "%m\n" )
-          ::Logging::Appender.stdout.level = :info
+          @logger.add_appenders(::Logging::Appender.stderr)
+          ::Logging::Appender.stderr.layout = Logging::Layouts::Pattern.new( :pattern => "%m\n" )
+          ::Logging::Appender.stderr.level = :info
         end
         return @logger
       end

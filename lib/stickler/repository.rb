@@ -320,19 +320,24 @@ module Stickler
       end
 
 
-      keys = configuration.keys
-      max_width = keys.collect { |k| k.length }.max
-
-      keys = keys.sort - %w[ sources ]
-
       Console.info ""
-      Console.info "Configuration variables"
-      Console.info "-----------------------"
+      Console.info "Configured gems (in stickler.yml)"
+      Console.info "---------------------------------"
       Console.info ""
-
-      keys.each do |key|
-        Console.info "  #{key.rjust( max_width )} : #{configuration[ key ]}"
+      configuration.gem_dependencies.sort.each do |dep|
+        Console.info "#{dep.name} : #{dep.version_requirements}"
       end
+
+      Console.info ""
+      Console.info "Existing gems"
+      Console.info "-------------"
+      Console.info ""
+
+      source_group.gems.keys.sort.each do |g|
+        puts g
+      end
+
+
     end
 
     #
@@ -428,7 +433,9 @@ module Stickler
       ulist = source_group.search_existing( search_pattern )
       source_group.search_existing( search_pattern ).each do |spec|
         source_group.remove( spec )
+        configuration.gem_dependencies.reject! { |d| d.name == spec.name }
       end
+      configuration.write
     end
 
     #
@@ -448,5 +455,48 @@ module Stickler
         source_group.add_from_dependency( dep )
       end
     end
+
+    #
+    # generate the system configuration to be used by rubygem clients of the
+    # repository that stickler managers
+    #
+    def generate_sysconfig( to = $stdout )
+      Console.info "Generating configuration to stdout"
+      txt = <<-cfg
+#
+# This is the system wide configuration to be used by
+# rubygem clients that install gems from the repository
+# located at :
+#
+#   #{configuration.downstream_source}
+#
+# On Unix like machines install in
+#
+#   /etc/gemrc
+#
+# On Windows machines install in
+#
+#   C:\\Documents and Settings\\All Users\\Application Data\\gemrc
+#
+---
+:sources:
+- #{configuration.downstream_source}
+cfg
+      to.puts txt
+    end
+
+    #
+    # Generate the gem index that can be rsynced to another location
+    #
+    #
+    def generate_index
+      require 'rubygems/indexer'
+      Console.info "Generating rubygems index in #{dist_dir}"
+      FileUtils.rm_rf dist_dir
+      FileUtils.mkdir_p dist_dir
+      FileUtils.cp_r gems_dir, dist_dir
+      indexer = ::Gem::Indexer.new dist_dir
+      indexer.generate_index
+    end
   end
-end
+end 

@@ -44,13 +44,16 @@ describe Stickler::Configuration do
   end
 
   it "can have multiple requirements for each gem" do
-    d = ::Gem::Dependency.new( 'rake', [">= 0.8.0", "~> 0.9.0"] )
-    @config.gem_dependencies << d
+    d1 = ::Gem::Dependency.new( 'rake', ">= 0.8.0" )
+    @config.gem_dependencies << d1
+    d2 = ::Gem::Dependency.new( 'rake', ">= 0.8.0" )
+    @config.gem_dependencies << d2
     @config.write
 
     @config = Stickler::Configuration.new( @config_file_name )
-    @config.gem_dependencies.size.should == 1
-    @config.gem_dependencies.should be_include( d )
+    @config.gem_dependencies.size.should == 2
+    @config.gem_dependencies.should be_include( d1 )
+    @config.gem_dependencies.should be_include( d2 )
   end
 
 

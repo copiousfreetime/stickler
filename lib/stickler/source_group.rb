@@ -311,7 +311,7 @@ module Stickler
     #
     def remove_gems_and_specs( remove_list )
       while spec = remove_list.pop do
-        Console.info "Removeing #{ spec.full_name }"
+        Console.info "Removing #{ spec.full_name }"
         delete_gem_files( spec )
       end
     end
