@@ -7,7 +7,7 @@
 
 == DESCRIPTION
 
-Stickler is a tool to organize and maintain an internal gem distribution.
+Stickler is a tool to organize and maintain an internal gem repository.
 
 At times it is useful to have complete control over the availability of the gems
 for you testing, staging and production environments.  In these cases you
