@@ -7,11 +7,11 @@ require 'tasks/utils'
 # General project configuration
 #-----------------------------------------------------------------------
 Configuration.for('project') {
-  name          "FIXME: NAME"
-  version       "FIXME: 0.0.0"
-  author        "FIXME: The Author"
-  email         "FIXME: author@example.com"
-  homepage      "FIXME: http://project.example.com"
+  name          "stickler"
+  version       Stickler::Version.to_s
+  author        "Jeremy Hinegardner"
+  email         "jeremy at copiousfreetime dot org"
+  homepage      "http://copiousfreetime.rubyforge.org/stickler"
   description   Utils.section_of("README", "description")
   summary       description.split(".").first
   history       "HISTORY"
@@ -98,10 +98,10 @@ Configuration.for('extension') {
 # Rubyforge 
 #-----------------------------------------------------------------------
 Configuration.for('rubyforge') {
-  project       "FIXME: rubyforge project"
-  user          "FIXME: username"
+  project       "copiousfreetime"
+  user          "jjh"
   host          "rubyforge.org"
-  rdoc_location "#{user}@#{host}:/var/www/gforge-projects/#{project}"
+  rdoc_location "#{user}@#{host}:/var/www/gforge-projects/#{project}/stickler"
 }
 
 
