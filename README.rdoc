@@ -3,6 +3,7 @@
 * Homepage[http://copiousfreetime.rubyforge.org/stickler/]
 * {Rubyforge Project}[http://rubyforge.org/projects/copiousfreetime/]
 * email jeremy at hinegardner dot org 
+* {Managing a Gem Repository with Stickler}[http://copiousfreetime.org/articles/2008/10/09/managing-a-gem-repository-with-stickler.html]
 
 == DESCRIPTION
 
@@ -16,6 +17,7 @@ version of a gem installed on your machines.  This is where Stickler helps.
 Configure stickler with the the names and versions of the gems you require for
 your deployment and it will organize and setup everything that is necessary for
 a standard web server to function as your internal gem distribution server.
+
 
 == INSTALLATION
 

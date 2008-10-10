@@ -12,11 +12,11 @@ Configuration.for('project') {
   author        "Jeremy Hinegardner"
   email         "jeremy at copiousfreetime dot org"
   homepage      "http://copiousfreetime.rubyforge.org/stickler"
-  description   Utils.section_of("README", "description")
+  description   Utils.section_of("README.rdoc", "description")
   summary       description.split(".").first
-  history       "HISTORY"
+  history       "HISTORY.rdoc"
   license       FileList["LICENSE", "COPYING"]
-  readme        "README"
+  readme        "README.rdoc"
 }
 
 #-----------------------------------------------------------------------

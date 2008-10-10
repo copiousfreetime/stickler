@@ -1,0 +1,4 @@
+= stickler Changelog
+=== Version 0.1.0
+* {Managing a Gem Repository with Stickler}[http://copiousfreetime.org/articles/2008/10/09/managing-a-gem-repository-with-stickler.html]
+* Initial public release
