@@ -14,8 +14,22 @@ Stickler::GEM_SPEC = Gem::Specification.new do |spec|
   spec.description  = proj.description
   spec.platform     = Gem::Platform::RUBY
 
+  spec.post_install_message = <<-msg
+  ============================================================
+  
+  Thank you for installing Stickler!
+
+  * Create a new stickler repository:
+      stickler setup /path/to/repo
+
+  * Look at the help:
+      stickler help
+
+  ============================================================
+  msg
+
+
   spec.required_rubygems_version = [ ">= 1.2.0" ]
-  spec.post_install_message = "Run `stickler help` for more information"
 
   spec.add_runtime_dependency( 'highline', "~> 1.4" )
   spec.add_runtime_dependency( 'logging', "~> 0.9" )

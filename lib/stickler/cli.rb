@@ -42,11 +42,12 @@ module Stickler
 
     examples <<-txt
       . stickler setup 
-      . stickler delete rails
-      . stickler add ramaze 
-      . stickler add keybox --version 1.2.1
-      . stickler check --email 'admin@example.com'
-      . stickler list
+      . stickler remove gem rails
+      . stickler add gem ramaze 
+      . stickler add gem keybox --version 1.2.1
+      . stickler sync
+      . stickler info
+      . stickler generate index
     txt
 
     option( :quiet, "q" ) {
@@ -221,11 +222,12 @@ module Stickler
       desc
 
       example <<-txt
-        . sticker sync
+        . sticker sync --rebuild
       txt
 
       mixin :option_directory
       option( :rebuild ) {
+        description "Rebuild the repository from scratch"
         default false
       }
 

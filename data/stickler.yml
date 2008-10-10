@@ -6,7 +6,7 @@
 
 # The source that other rubygems installations will use to access the gems
 # collected and managed by stickler.
-downstream_source: "http://gems.collectiveintellect.com/"
+downstream_source: "http://gems.example.com/"
 
 # The upstream locations that stickler should look for gems.
 sources: 

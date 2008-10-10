@@ -6,7 +6,7 @@
 
 == DESCRIPTION
 
-Stickler is a tool to organize and maintain an internal gem distribution server.
+Stickler is a tool to organize and maintain an internal gem distribution.
 
 At times it is useful to have complete control over the availability of the gems
 for you testing, staging and production environments.  In these cases you
@@ -14,29 +14,65 @@ probably do not want to accidentally type 'gem update' and get a new untested
 version of a gem installed on your machines.  This is where Stickler helps.
 
 Configure stickler with the the names and versions of the gems you require for
-your deployment and it will organize and setup a gem server to serve up only
-those gems.
+your deployment and it will organize and setup everything that is necessary for
+a standard web server to function as your internal gem distribution server.
 
 == INSTALLATION
 
 Install as a gem:
 
-   sudo gem install stickler
+   gem install stickler
 
 Or Get it from RubyForge[http://rubyforge.org/projects/copiousfreetime/] 
 or github[http://github.com/copiousfreetime/stickler/tree/master]
 
-== FEATURES
-
-* Serve up a custom collection of gems for your own use.
-* Generation of a custom 'sources' gem to have your rubygems installations point
-  to your custom gem server.
-* Tracking of the gems you care about and notification when a new version of those
-  are released on rubyforge.
-* Integrates with your internal build system so your internal gems can be
-  deployed to the stickler gem server
-
 == SYNOPSIS
+
+Using stickler is fairly simple.  First install it, then create a new stickler
+repository with the setup command:
+
+  stickler setup /var/stickler
+
+This will create a stickler repository in /var/stickler, assuming you have the
+correct permissions to create that directory.  Now you need to populate it with
+some gems.  You can add and remove both gems and sources.  The best way to do
+this is to change into stickler repository and run other commands.  
+
+  cd /var/stickler
+  stickler add gem ramaze
+
+This will prompt you for the gem version requirement for 'ramaze' and then
+download ramaze and everything it depends upon into the stickler repository.
+
+You can also add your own upstream gem repository to stickler.  This enables you
+to merge multiple upstream repositories into a single repository.
+
+  stickler add source http://gems.example.com/
+
+Now you can add gems to your stickler repository that are found in the default
+upstream repository (rubygems) and your custom upstream repositories.  It will
+even resolve dependencies between them.
+
+When you are ready to distribute the gems found in your stickler repository,
+edit the 'stickler.yml' file found in the root of your repository and set the
+'downstream_source' configuration variable.  This is the location that your
+installed rubygems clients will contact to download gems.  Most likely something
+like 'http://gems.example.com' or whatever your company / organization name is.
+
+Then run the index command to generate the distributable gem repository.
+
+  stickler generate index
+
+This generates a directory structure under the 'dist' directory that you can
+rsync to a web server or otherwise push to some location for your managed
+machines to contact for gems.
+
+If you want to setup a system gem source configuration, use the 'generate
+sysconfig' command to generate the text file you can put on your systems so that
+they contact the 'downstream_source' as the default gem server.  The command
+informs you of where to install the file.
+
+  stickler generate sysconfig
 
 == CREDITS
 
@@ -45,5 +81,6 @@ or github[http://github.com/copiousfreetime/stickler/tree/master]
 == LICENSE
 
 Copyright (c) 2008 Jeremy Hinegardner
+
 All rights reserved. Licensed under the same terms as Ruby.  No warranty is
 provided.  See LICENSE and COPYING for details.
