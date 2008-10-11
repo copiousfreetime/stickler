@@ -1,6 +1,5 @@
 require 'uri'
 require 'base64'
-require 'progressbar'
 require 'zlib'
 
 module Stickler
