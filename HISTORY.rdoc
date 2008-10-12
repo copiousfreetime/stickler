@@ -1,7 +1,7 @@
 = stickler Changelog
 
 === Version 0.1.1
-* 1 minor bugfixe
+* 1 minor bugfix
   * remove unnecessary require 'progressbar' 
 
 === Version 0.1.0
