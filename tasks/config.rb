@@ -41,7 +41,7 @@ Configuration.for('packaging') {
   formats {
     tgz true
     zip true
-    gem Configuration::Table.has_key?('gem')
+    rubygem Configuration::Table.has_key?('gem')
   }
 }
 

@@ -29,7 +29,7 @@ Stickler::GEM_SPEC = Gem::Specification.new do |spec|
   msg
 
 
-  spec.required_rubygems_version = [ ">= 1.2.0" ]
+  spec.required_rubygems_version = [ "~> 1.3.0" ]
 
   spec.add_runtime_dependency( 'highline', "~> 1.4" )
   spec.add_runtime_dependency( 'logging', "~> 0.9" )

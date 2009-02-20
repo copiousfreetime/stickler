@@ -1,3 +1,4 @@
+require 'rubygems/remote_fetcher'
 module Stickler
   # 
   # A source group contains a set of Source objects, and runs common operations
