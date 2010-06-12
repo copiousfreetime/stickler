@@ -78,16 +78,17 @@ module Stickler
     #
     # optional deflating of the output should only be used for debugging
     #
-    get %r{\A/quick(/Marshal\.#{Regexp.escape(Gem.marshal_version)})/?((.*?)-([0-9.]+)(-.*?)?)\.gemspec(\.rz)?\Z} do 
+    get %r{\A/quick(/Marshal\.#{Regexp.escape(Gem.marshal_version)})?/((.*?)-([0-9.]+)(-.*?)?)\.gemspec(\.rz)?\Z} do 
       marshal, full_name, name, version, platform, deflate = *params[:captures]
 
-      dep      = Gem::Dependency.new( name, version )
       platform = platform ? Gem::Platform.new( platform.sub(/\A-/,'')) : Gem::Platform::RUBY
+      dep      = Gem::Dependency.new( name, version )
       specs    = source_index.search( dep )
       specs    = specs.find_all { |spec| spec.platform == platform }
 
-      raise error( 404, "No gems found matching [#{full_name}]"       ) if specs.empty?
-      raise error( 500, "Multiple gems found matching [#{full_name}]" ) if specs.size > 1
+      content_type 'text/plain'
+      not_found "No gems found matching [#{full_name}]"           if specs.empty?
+      error( 500, "Multiple gems found matching [#{full_name}]" ) if specs.size > 1
       
       env['stickler.compress'] = 'deflate' if deflate
 
