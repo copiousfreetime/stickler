@@ -17,16 +17,15 @@ module Stickler
 
       if compress_method = env['stickler.compress'] then
         headers.delete('Content-Length')
-        headers['Content-Encoding'] = compress_method
         case compress_method
         when 'gzip'
           puts "Gzipping output"
+          headers['Content-Type'] = 'application/x-gzip'
           stream = ::Rack::Deflater::GzipStream.new( body, Time.now )
         when 'deflate'
           puts "Deflating output"
+          headers['Content-Type'] = 'application/x-deflate'
           stream = ::Rack::Deflater::DeflateStream.new( body )
-        else
-          headers.delete('Content-Encoding')
         end
       end
 
