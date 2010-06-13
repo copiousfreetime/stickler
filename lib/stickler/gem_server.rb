@@ -13,8 +13,8 @@ module Stickler
 
     def initialize( app = nil, opts = {} )
       @gem_path     = [ opts[:gem_path] ].flatten
+      #STDERR.puts "Using GEM_PATH #{gem_path.join(':')}"
       @source_index = Gem::SourceIndex.from_gems_in( *spec_dirs )
-      puts "Using GEM_PATH #{gem_path.join(':')}"
       super( app )
     end
 

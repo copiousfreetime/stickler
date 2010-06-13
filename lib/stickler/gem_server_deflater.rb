@@ -1,6 +1,4 @@
-require 'rack/deflater'
 require 'rack/utils'
-require 'pp'
 
 module Stickler
   class GemServerDeflater
@@ -19,16 +17,13 @@ module Stickler
         headers.delete('Content-Length')
         case compress_method
         when 'gzip'
-          puts "Gzipping output"
           headers['Content-Type'] = 'application/x-gzip'
-          stream = ::Rack::Deflater::GzipStream.new( body, Time.now )
+          stream = Gem.gzip( body.first )
         when 'deflate'
-          puts "Deflating output"
           headers['Content-Type'] = 'application/x-deflate'
-          stream = ::Rack::Deflater::DeflateStream.new( body )
+          stream = Gem.deflate( body.first )
         end
       end
-
       return [ status, headers, stream ]
     end
   end
