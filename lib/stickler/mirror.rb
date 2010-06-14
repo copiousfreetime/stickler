@@ -35,6 +35,7 @@ module Stickler
       @root_dir     = File.join( File.expand_path( parent_dir ), mirror_path )
       @upstream_uri = Mirror.normalize_mirror_path( mirror_path )
       @http         = Resourceful::HttpAccessor.new( :cache_manager => Resourceful::InMemoryCacheManager.new )
+      @local_source_index = Gem::SourceIndex.new
       setup_dirs
     end
 
@@ -58,6 +59,20 @@ module Stickler
       Marshal.load( download_upstream_specs( upstream_specs_uri ) )
     end
 
+    def local_source_index
+      @local_source_index.load_gems_in( specifications_dir )
+      return @local_source_index
+    end
+
+    def search_local_source_index_for( spec )
+      found = []
+      platform = Gem::Platform.new( spec.platform )
+      dep      = Gem::Dependency.new( spec.name, spec.version )
+      specs    = local_source_index.search( dep )
+      specs    = specs.find_all { |spec| spec.platform == platform }
+      return specs
+    end
+
     def search_upstream_source_index_for( spec )
       found = []
       upstream_source_index.each do |name, version, platform|
@@ -77,6 +92,9 @@ module Stickler
     #
     def add_gem( opts = {} )
       spec  = SpecLite.new( opts[:name], opts[:version], opts[:platform] )
+      specs = search_local_source_index_for( spec )
+      return specs.first unless specs.empty?
+      
       specs = search_upstream_source_index_for( spec )
       return fetch_and_install( specs.first )
     end
@@ -92,6 +110,7 @@ module Stickler
     def fetch_and_install( spec )
       dest_file = download_gem( spec )
       full_spec = install_specification_from( dest_file )
+      return SpecLite.new( full_spec.name, full_spec.version, full_spec.platform )
     end
 
     def install_specification_from( file_path )
