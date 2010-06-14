@@ -1,9 +1,0 @@
-Next release:
-    - Remove command
-        - on removing a gem, prompt for a version of all of them
-        - on a source, prompt for confirmation, since all of those gems will be removed
-    - check-update 
-        - look for a new version of the gems that are in the repository and send an alert to someone about them.
-    - add
-        - have a handy way to install a local gem from the file system.
-
