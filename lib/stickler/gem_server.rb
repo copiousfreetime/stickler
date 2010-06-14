@@ -21,12 +21,11 @@ module Stickler
       if env.has_key?( 'stickler.gem_path' ) then
         puts "env['stickler.gem_path'] => #{env['stickler.gem_path']}"
       end
-      env['stickler.gem_path'] || []
+      env['stickler.gem_path'] || @default_gem_path 
     end
 
     before do
       if spec_dirs.size > 0 then
-        puts "Spec dirs => #{spec_dirs.inspect}"
         source_index.load_gems_in( *spec_dirs )
         response["Date"] = spec_dirs.collect do |dir|
           File.stat(dir).mtime
