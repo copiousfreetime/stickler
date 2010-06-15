@@ -35,7 +35,6 @@ module Stickler
 
     # put all the gem paths into the env so that everyone else can use it
     before do
-      puts "setting gem_path -> #{mirror_manager.gem_path}"
       env['stickler.gem_path'] = mirror_manager.gem_path
     end
 

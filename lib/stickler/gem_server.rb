@@ -18,10 +18,11 @@ module Stickler
     end
 
     def gem_path
-      if env.has_key?( 'stickler.gem_path' ) then
-        puts "env['stickler.gem_path'] => #{env['stickler.gem_path']}"
+      if env['stickler.gem_path'] and not env['stickler.gem_path'].empty? then
+        env['stickler.gem_path']
+      else
+        @default_gem_path
       end
-      env['stickler.gem_path'] || @default_gem_path 
     end
 
     before do
@@ -38,14 +39,7 @@ module Stickler
 
     # some fancy schmacny webpage
     get '/' do
-      s = []
-      if source_index.latest_specs.size > 0 then 
-        source_index.latest_specs.sort_by { |spec| spec.full_name }.each do |spec|
-          s << "#{spec.name}\t#{spec.version}"
-        end
-      end
-      content_type "text/plain"
-      s.join("\n")
+      erb :index
     end
 
     get %r{\A/yaml(\.Z)?\Z} do |deflate|

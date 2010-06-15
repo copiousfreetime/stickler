@@ -22,6 +22,8 @@ Bones {
   spec.opts << "--color"
 
   depend_on 'sinatra', '~> 1.0.0'
+  depend_on 'addressable', '~> 2.1.2'
+  depend_on 'resourceful', '~> 1.0.1'
 
   depend_on 'bones'       , '~> 3.4.6', :development => true
   depend_on 'rack-test'   , '~> 0.5.4', :development => true
