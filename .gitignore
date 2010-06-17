@@ -7,3 +7,4 @@ coverage
 *.swo
 announcement.txt
 spec/mm-tmp
+version.txt
