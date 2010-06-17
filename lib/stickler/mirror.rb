@@ -101,12 +101,6 @@ module Stickler
 
     private
 
-    def setup_dirs
-      [ root_dir, specifications_dir, gems_dir ].each do |dir|
-        FileUtils.mkdir_p( dir ) unless File.directory?( dir )
-      end
-    end
-
     def fetch_and_install( spec )
       dest_file = download_gem( spec )
       full_spec = install_specification_from( dest_file )
