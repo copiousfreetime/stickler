@@ -5,6 +5,7 @@ doc
 coverage
 *.swp
 *.swo
+.*.swp
 announcement.txt
 spec/mm-tmp
 version.txt

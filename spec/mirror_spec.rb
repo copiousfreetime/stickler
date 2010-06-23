@@ -34,7 +34,7 @@ describe 'Sticker::Mirror' do
   end
 
   it 'can add a new gem' do
-    spec = @m.add_gem( { :name => 'sinatra', :version => '1.0' } )
+    spec = @m.add_gem( { :name => 'foo', :version => '1.0.0' } )
     gemfile = File.join( @m.gems_dir,spec.file_name )
     File.exist?( gemfile ).should == true
     specfile = File.join( @m.specifications_dir, spec.full_name + ".gemspec")
