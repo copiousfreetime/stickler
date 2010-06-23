@@ -1,49 +1,33 @@
 require File.expand_path( File.join( File.dirname(__FILE__), "spec_helper.rb" ) )
-require File.expand_path(File.join(File.dirname(__FILE__),"spec_helper.rb"))
-require 'stickler'
+require 'stickler/repository'
 
 describe Stickler::Repository do
 
-  before( :each ) do
+  before do
     @top_dir = File.join( "/tmp/stickler" )
-    @repo = Stickler::Repository.new( 'directory' => @top_dir )
+    @repo = Stickler::Repository.new( @top_dir )
+    @foo_path = File.join( @gems_dir, "foo-1.0.0.gem" )
   end
 
   after( :each ) do
     FileUtils.rm_rf( @top_dir )
   end
 
-
-  describe "#setup" do
-    %w[ gems specifications ].each do |sub_dir|
-      it "creates #{sub_dir} directory" do
-        new_dir = File.join( @top_dir , sub_dir )
-        File.directory?( new_dir ).should == true
-      end
+  %w[ gems specifications ].each do |sub_dir|
+    it "creates #{sub_dir} directory" do
+      new_dir = File.join( @top_dir , sub_dir )
+      File.directory?( new_dir ).should == true
     end
   end
 
-  describe "validity checks" do
-    %w[ gems log specifications dist cache].each do |sub_dir|
-      it "raises error if #{sub_dir} is missing" do
-        FileUtils.rmdir( File.join( @top_dir, sub_dir ) )
-        lambda { Stickler::Console.silent { @repo.valid! } }.should raise_error( Stickler::Repository::Error ) 
-      end
-
-      it "return false if #{sub_dir} is missing" do
-        FileUtils.rmdir( File.join( @top_dir, sub_dir ) )
-        Stickler::Console.silent{ @repo.should_not be_valid }
-      end
-    end
-
-    it "can create a valid directory system" do
-      @repo.should be_valid
-    end
+  it "adds a gem from a .gem file" do
+    @repo.add_gem_from_file( @foo_path )
+    @repo.search_for( Stickler::SpecLite.new( "foo", "1.0.0" ) )
   end
 
-  it "creates a configuration" do
-    @repo.configuration['sources'].size.should == 1
-    @repo.configuration['sources'].first.should == "http://gems.rubyforge.org/"
+  it "raises and error on adding a gem if the gem already exists" do
+    @repo.add_gem_from_file( @foo_path )
+    lambda { @repo.add_gem_from_file( @foo_path ) }.should raise_error( Stickler::Repository::Error, /gem foo-1.0.0 already exists/ )
   end
 end
 

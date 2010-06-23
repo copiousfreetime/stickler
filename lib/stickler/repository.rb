@@ -1,4 +1,9 @@
 require 'stickler/spec_lite'
+require 'stickler/error'
+require 'rubygems/source_index'
+require 'rubygems/format'
+require 'rubygems/platform'
+require 'rubygems/dependency'
 
 module Stickler
   #
@@ -13,6 +18,7 @@ module Stickler
   #
   #
   class Repository
+    class Error < ::Stickler::Error; end
     #
     # the root directory of the repository
     #
@@ -68,8 +74,21 @@ module Stickler
     def add_gem( opts = {} )
       spec  = SpecLite.new( opts[:name], opts[:version], opts[:platform] )
       specs = search_for( spec )
-      raise RepositoryError, "gem #{spec.full_name} already exists" unless specs.empty?
-      return install( specs.first, opts[:body] )
+      raise Error, "gem #{spec.full_name} already exists" unless specs.empty?
+      return install( spec, opts[:body] )
+    end
+
+    #
+    # Add a gem from a filesystem path
+    #
+    def add_gem_from_file( path )
+      spec = specification_from_gem_file( path )
+      opts = { :name => spec.name, :version => spec.version.to_s, :platform => spec.platform }
+      result = nil
+      File.open( path ) do |io|
+        result = add_gem( opts.merge( :body => io ) )
+      end
+      return result
     end
 
 
@@ -82,21 +101,21 @@ module Stickler
     end
 
     def full_path_to_gem( spec )
-      File.join( gem_dir, spec.file_name )
+      File.join( gems_dir, spec.file_name )
     end
 
     def full_path_to_specification( spec )
-      File.join( specification_dir, spec.spec_file_name )
+      File.join( specifications_dir, spec.spec_file_name )
     end
 
 
     def install( spec, io )
-      install_gem( spec, body )
+      install_gem( spec, io )
       install_specification( spec )
     end
 
     def install_gem( spec, io )
-      File.open( full_path_to_gem , "w+" ) do |of|
+      File.open( full_path_to_gem( spec ) , "w+" ) do |of|
         io.each do |str|
           of.write( str )
         end
@@ -104,10 +123,15 @@ module Stickler
     end
 
     def install_specification( spec )
-      format = Gem::Format.from_file_by_path( full_path_to_gem )
-      File.open( full_path_to_specification , "w+" ) do |f|
-        f.write( format.spec.to_ruby )
+      gemspec = specification_from_gem_file( full_path_to_gem( spec ) )
+      File.open( full_path_to_specification( spec ) , "w+" ) do |f|
+        f.write( gemspec.to_ruby )
       end
+    end
+
+    def specification_from_gem_file( path )
+      format = Gem::Format.from_file_by_path( path )
+      return format.spec
     end
   end
 end
