@@ -44,13 +44,13 @@ module Stickler
     end
 
     #
-    # given something that respondes to :name, :version, :platform, 
-    # search for all specs that match
+    # given something that responds to :name, :version, :platform, 
+    # then search for all specs that match 
     #
     def search_for( spec )
       platform = Gem::Platform.new( spec.platform )
       dep      = Gem::Dependency.new( spec.name, spec.version )
-      specs    = local_source_index.search( dep )
+      specs    = source_index.search( dep )
       specs    = specs.find_all { |spec| spec.platform == platform }
       return specs
     end
