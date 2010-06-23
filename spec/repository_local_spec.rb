@@ -1,11 +1,11 @@
 require File.expand_path( File.join( File.dirname(__FILE__), "spec_helper.rb" ) )
-require 'stickler/repository'
+require 'stickler/repository/local'
 
-describe Stickler::Repository do
+describe Stickler::Repository::Local do
 
   before do
     @top_dir = File.join( "/tmp/stickler" )
-    @repo = Stickler::Repository.new( @top_dir )
+    @repo = Stickler::Repository::Local.new( @top_dir )
     @foo_path = File.join( @gems_dir, "foo-1.0.0.gem" )
   end
 
