@@ -1,3 +1,6 @@
+require 'rubygems/platform'
+require 'rubygems/version'
+
 module Stickler
   #
   # A lightweight version of a gemspec that only responds to name, version,
@@ -10,7 +13,7 @@ module Stickler
     attr_reader :version
     attr_reader :platform
 
-    def initialize( name, version, platform )
+    def initialize( name, version, platform = Gem::Platform::RUBY )
       @name = name
       @version = Gem::Version.new( version )
       @platform = Gem::Platform.new( platform )
@@ -18,11 +21,12 @@ module Stickler
 
     def full_name
       if platform == Gem::Platform::RUBY or platform.nil? then
-        "#{name}-#{version}"
+        name_version
       else
-        "#{name}-#{version}-#{platform}"
+        "#{name_version}-#{platform}"
       end
     end
+    alias :to_s :full_name
 
     def file_name
       full_name + ".gem"
@@ -38,10 +42,6 @@ module Stickler
 
     def to_a
       [ name, version, platform.to_s ]
-    end
-
-    def to_s
-      full_name
     end
 
     def =~(other)
