@@ -92,7 +92,6 @@ module Stickler::Repository
     #
     # :call-seq:
     #   repo.push( path_to_gem_file ) -> Stickler::SpecLite
-    #   repo.put( path_to_gem_file ) -> Stickler::SpecLite
     #
     # Push, in the sense of the gem commandline command <tt>gem push</tt>.
     # +path_to_gem_file+ must be a file system location to a .gem file
@@ -105,13 +104,9 @@ module Stickler::Repository
     # If the gem pushed already exists, then a Stickler::Repository::Error is
     # raised.
     #
-    # This is also aliased as *put* to provide a reciprocal for 
-    # the *get* method.
-    #
     def push( path_to_gem_file )
       raise NotImplementedError, not_implemented_msg( :push )
     end
-    alias :put :push
 
     #
     # :call-seq:
@@ -205,7 +200,6 @@ module Stickler::Repository
           get
           open 
           push 
-          put 
           search_for
           source_index 
           specifications_uri

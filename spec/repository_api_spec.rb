@@ -34,7 +34,7 @@ describe Stickler::Repository::Api do
   describe "responds to all the api methods" do
     Stickler::Repository::Api.api_methods.each do |method|
       it "responds to ##{method}" do
-        @stub.respond_to?( method )
+        @stub.respond_to?( method ).should == true
       end
     end
   end
