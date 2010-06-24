@@ -8,7 +8,6 @@ describe Stickler::Repository::Local do
   before do
     @top_dir = File.join( "/tmp/stickler" )
     @repo = Stickler::Repository::Local.new( @top_dir )
-    @foo_path = File.join( @gems_dir, "foo-1.0.0.gem" )
   end
 
   after( :each ) do
@@ -17,12 +16,14 @@ describe Stickler::Repository::Local do
 
   %w[ gems specifications ].each do |sub_dir|
     it "creates #{sub_dir} directory" do
-      new_dir = File.join( @top_dir , sub_dir )
+      new_dir = File.join( @top_dir , sub_dir ) + File::SEPARATOR
       File.directory?( new_dir ).should == true
+      @repo.send( "#{sub_dir}_dir" ).should == new_dir
     end
+
   end
 
-  #it_should_behave_like 'includes Repository::Api'
+  it_should_behave_like 'includes Repository::Api'
   it_should_behave_like 'implements Repository::Api'
 end
 

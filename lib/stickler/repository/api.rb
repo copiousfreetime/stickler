@@ -20,7 +20,8 @@ module Stickler::Repository
     # :call-seq:
     #   repo.gems_uri -> URI
     #
-    # Return the URI to the location holding all the +.gem+ files
+    # Return the URI to the location holding all the +.gem+ files.
+    #
     #
     def gems_uri
       raise NotImplementedError, not_implemented_msg( :gems_uri )

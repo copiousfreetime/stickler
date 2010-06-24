@@ -53,10 +53,24 @@ module Stickler::Repository
     end
 
     #
+    # See Api#uri_from_gem
+    #
+    def uri_for_gem( spec )
+      return self.gems_uri.join( spec.file_name )
+    end
+
+    #
     # See Api#specifications_uri
     #
     def specifications_uri
       @specficiations_uri ||= Addressable::URI.convert_path( specifications_dir )
+    end
+
+    #
+    # See Api#uri_for_specification
+    #
+    def uri_for_specification( spec )
+      return self.specifications_uri.join( spec.spec_file_name )
     end
 
     #
@@ -76,6 +90,13 @@ module Stickler::Repository
       specs    = source_index.search( dep )
       specs    = specs.find_all { |spec| spec.platform == platform }
       return specs
+    end
+
+    #
+    # See Api#delete
+    #
+    def delete( spec )
+      uninstall( spec )
     end
 
     #
@@ -118,7 +139,6 @@ module Stickler::Repository
       File.join( specifications_dir, spec.spec_file_name )
     end
 
-
     def install( spec, io )
       install_gem( spec, io )
       install_specification( spec )
@@ -138,6 +158,24 @@ module Stickler::Repository
         f.write( gemspec.to_ruby )
       end
       return speclite_from_specification( gemspec )
+    end
+
+    def uninstall( spec )
+      uninstall_gem( spec )
+      uninstall_specification( spec )
+    end
+
+    def uninstall_gem( spec )
+      remove_file( full_path_to_gem( spec ) )
+    end
+
+    def uninstall_specification( spec )
+      remove_file( full_path_to_specification( spec ) )
+    end
+
+    def remove_file( path )
+      return false unless File.exist?( path )
+      return true  if File.unlink( path ) > 0
     end
 
     def specification_from_gem_file( path )
