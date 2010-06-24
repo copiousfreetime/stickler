@@ -102,6 +102,9 @@ module Stickler::Repository
     # from the repo using the #get() method.  A direct URI to the 
     # gem may be obtained using the #uri_for() method.
     #
+    # If the gem pushed already exists, then a Stickler::Repository::Error is
+    # raised.
+    #
     # This is also aliased as *put* to provide a reciprocal for 
     # the *get* method.
     #
@@ -192,6 +195,27 @@ module Stickler::Repository
     def open( spec, &block )
       raise NotImplementedError, not_implemented_msg( :open )
     end
+
+    # :stopdoc:
+    def self.api_methods
+      %w[ 
+          add 
+          delete 
+          gems_uri 
+          get
+          open 
+          push 
+          put 
+          search_for
+          source_index 
+          specifications_uri
+          uri 
+          uri_for_gem 
+          uri_for_specification           
+          yank 
+        ]
+    end
+    # :startdoc:
 
     private
     # :stopdoc:
