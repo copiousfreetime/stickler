@@ -5,12 +5,12 @@ require 'rubygems/source_index'
 require 'rubygems/format'
 require 'rubygems/platform'
 require 'rubygems/dependency'
+require 'addressable/uri'
 
 module Stickler::Repository
   #
-  # A local repository of gems.  It is a blend of a Gem::Indexer
-  # repository directory structure and a GEM_PATH directory.
-  # structure.
+  # A local repository of gems.  It implements the Repository::Api
+  # and stores all the gems and specifications local to a root directory.
   #
   # It currently has two subdirectories:
   #
@@ -20,40 +20,55 @@ module Stickler::Repository
   #
   class Local
     class Error < ::Stickler::Repository::Error; end
-    include Api
-    #
+
     # the root directory of the repository
-    #
     attr_reader :root_dir
 
+    # the directory containing the .gem files
+    attr_reader :gems_dir
+   
+    # the directory containing the .gemspec files
+    attr_reader :specifications_dir
+
     def initialize( root_dir )
-      @root_dir = root_dir
+      @root_dir = File.expand_path( root_dir ) + File::SEPARATOR
+      @gems_dir = File.join( @root_dir, 'gems/' )
+      @specifications_dir = File.join( @root_dir, 'specifications/' )
       @source_index = Gem::SourceIndex.new
       setup_dirs
     end
 
+    #
+    # See Api#uri
+    #
+    def uri
+      @uri ||= Addressable::URI.convert_path( root_dir )
+    end
+
     # 
-    # sub-directory holding .gem files
+    # See Api#gems_uri
     #
-    def gems_dir
-      @gems_dir ||= File.join( root_dir, 'gems' )
+    def gems_uri
+      @gems_uri ||= Addressable::URI.convert_path( gems_dir )
     end
 
     #
-    # sub-directory holding .spec files
+    # See Api#specifications_uri
     #
-    def specifications_dir
-      @specficiations_dir ||= File.join( root_dir, 'specifications' )
+    def specifications_uri
+      @specficiations_uri ||= Addressable::URI.convert_path( specifications_dir )
     end
 
+    #
+    # See Api#source_index
+    #
     def source_index
       @source_index.load_gems_in( specifications_dir )
       return @source_index
     end
 
     #
-    # given something that responds to :name, :version, :platform, 
-    # then search for all specs that match 
+    # See Api#search_for
     #
     def search_for( spec )
       platform = Gem::Platform.new( spec.platform )
@@ -64,16 +79,9 @@ module Stickler::Repository
     end
 
     #
-    # Options must contain :name, :version, :body and optionally :platform.
+    # See Api#add
     #
-    # :body follows the same rules as the rack input stream
-    #
-    # If the gem that is to be written to already exists, then an error will be
-    # raised.
-    #
-    # It returns the SpecLite object from the gem file
-    #
-    def add_gem( opts = {} )
+    def add( opts = {} )
       spec  = Stickler::SpecLite.new( opts[:name], opts[:version], opts[:platform] )
       specs = search_for( spec )
       raise Error, "gem #{spec.full_name} already exists" unless specs.empty?
@@ -81,14 +89,14 @@ module Stickler::Repository
     end
 
     #
-    # Add a gem from a filesystem path
+    # See Api#push
     #
-    def add_gem_from_file( path )
+    def push( path )
       spec = specification_from_gem_file( path )
       opts = { :name => spec.name, :version => spec.version.to_s, :platform => spec.platform }
       result = nil
       File.open( path ) do |io|
-        result = add_gem( opts.merge( :body => io ) )
+        result = add( opts.merge( :body => io ) )
       end
       return result
     end
@@ -129,11 +137,16 @@ module Stickler::Repository
       File.open( full_path_to_specification( spec ) , "w+" ) do |f|
         f.write( gemspec.to_ruby )
       end
+      return speclite_from_specification( gemspec )
     end
 
     def specification_from_gem_file( path )
       format = Gem::Format.from_file_by_path( path )
       return format.spec
+    end
+
+    def speclite_from_specification( spec )
+      Stickler::SpecLite.new( spec.name, spec.version.to_s, spec.platform )
     end
   end
 end

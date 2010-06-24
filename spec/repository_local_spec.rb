@@ -20,14 +20,22 @@ describe Stickler::Repository::Local do
     end
   end
 
-  it "adds a gem from a .gem file" do
-    @repo.add_gem_from_file( @foo_path )
+  it "pushes a gem from a .gem file" do
+    @repo.push( @foo_path )
     @repo.search_for( Stickler::SpecLite.new( "foo", "1.0.0" ) )
   end
 
-  it "raises and error on adding a gem if the gem already exists" do
-    @repo.add_gem_from_file( @foo_path )
-    lambda { @repo.add_gem_from_file( @foo_path ) }.should raise_error( Stickler::Repository::Error, /gem foo-1.0.0 already exists/ )
+  it "raises an error when pushing a gem if the gem already exists" do
+    @repo.push( @foo_path )
+    lambda { @repo.push( @foo_path ) }.should raise_error( Stickler::Repository::Error, /gem foo-1.0.0 already exists/ )
+  end
+
+  describe "responds to all the api methods" do
+    Stickler::Repository::Api.api_methods.each do |method|
+      it "responds to ##{method}" do
+        @repo.respond_to?( method ).should == true
+      end
+    end
   end
 end
 
