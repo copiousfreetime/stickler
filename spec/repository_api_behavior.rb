@@ -13,19 +13,22 @@ require 'digest/sha1'
 shared_examples_for "implements Repository::Api" do
   before( :each ) do
     @foo_gem_local_path = File.join( @gems_dir, "foo-1.0.0.gem" )
+    puts @foo_gem_local_path
     @foo_spec = Stickler::SpecLite.new( 'foo', '1.0.0' )
     @foo_digest = Digest::SHA1.hexdigest( IO.read( @foo_gem_local_path ) )
     @missing_spec = Stickler::SpecLite.new( "does_not_exist", "0.1.0" )
   end
 
-  %w[ uri gems_uri specifications_uri ].each do |method|
+  # removed specifications_uri
+  %w[ uri gems_uri ].each do |method|
     it "returns a URI like object from #{method}" do
       result = @repo.send( method )
       [ ::URI, ::Addressable::URI ].include?( result.class ).should == true
     end
   end
 
-  %w[ gem specification ].each do |thing|
+  # removed specification
+  %w[ gem ].each do |thing|
     describe "#uri_for_#{thing}" do
       before( :each ) do
         @repo.push( @foo_gem_local_path )
@@ -36,13 +39,13 @@ shared_examples_for "implements Repository::Api" do
         uri = @repo.send( @method, @foo_spec )
         [ ::URI, ::Addressable::URI ].include?( uri.class ).should == true
       end
-      
+
       it "returns nil for a #{thing} that does not exist" do
         @repo.send( @method, @missing_spec ).should be_nil
       end
     end
   end
-  
+
   it "returns a Gem::SourceIndex for #source_index" do
     idx = @repo.source_index
     idx.should be_kind_of( Gem::SourceIndex )
@@ -94,9 +97,9 @@ shared_examples_for "implements Repository::Api" do
       @repo.search_for( @foo_spec ).should be_empty
     end
 
-    it "does not have the #uri_for_specification" do
-      @repo.uri_for_specification( @foo_spec ).should be_nil
-    end
+    # it "does not have the #uri_for_specification" do
+      # @repo.uri_for_specification( @foo_spec ).should be_nil
+    # end
 
     it "does have the #uri_for_gem" do
       @repo.uri_for_gem( @foo_spec ).should == @response_uri
@@ -128,25 +131,25 @@ shared_examples_for "implements Repository::Api" do
       sha1 = Digest::SHA1.hexdigest( data )
       sha1.should == @foo_digest
     end
-    
+
     it "returns nil if the gem does not exist" do
       @repo.get( @missing_spec ).should be_nil
     end
   end
 
-  describe "#add" do
-    it "adds a new gem via an input stream" do
-      @repo.search_for( @foo_spec ).should be_empty
+  # describe "#add" do
+    # it "adds a new gem via an input stream" do
+      # @repo.search_for( @foo_spec ).should be_empty
 
-      opts = { :name => @foo_spec.name, :version => @foo_spec.version.to_s }
-      File.open( @foo_gem_local_path ) do |f|
-        opts[:body] = f
-        @repo.add( opts )
-      end
+      # opts = { :name => @foo_spec.name, :version => @foo_spec.version.to_s }
+      # File.open( @foo_gem_local_path ) do |f|
+        # opts[:body] = f
+        # @repo.add( opts )
+      # end
 
-      @repo.search_for( @foo_spec ).size.should == 1
-    end
-  end
+      # @repo.search_for( @foo_spec ).size.should == 1
+    # end
+  # end
 
   describe "#open" do
     before( :each ) do

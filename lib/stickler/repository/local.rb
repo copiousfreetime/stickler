@@ -1,10 +1,6 @@
 require 'stickler/spec_lite'
 require 'stickler/repository'
 require 'stickler/repository/api'
-require 'rubygems/source_index'
-require 'rubygems/format'
-require 'rubygems/platform'
-require 'rubygems/dependency'
 require 'addressable/uri'
 
 module Stickler::Repository
@@ -61,21 +57,6 @@ module Stickler::Repository
     end
 
     #
-    # See Api#specifications_uri
-    #
-    def specifications_uri
-      @specficiations_uri ||= Addressable::URI.convert_path( specifications_dir )
-    end
-
-    #
-    # See Api#uri_for_specification
-    #
-    def uri_for_specification( spec )
-      return nil unless specification_file_exist?( spec )
-      return self.specifications_uri.join( spec.spec_file_name ) 
-    end
-
-    #
     # See Api#source_index
     #
     def source_index
@@ -111,7 +92,24 @@ module Stickler::Repository
 
 
     #
-    # See Api#add
+    # :call-seq:
+    #   repo.add( opts = {} ) -> Stickler::SpecLite
+    #
+    # A lower level version of #push.  The hash passed in MUST have the
+    # following keys:
+    #
+    # [:name]     The name of the gem ( i.e. 'stickler' )
+    # [:version]  The version in dotted notation ( i.e. '1.0.2' )
+    # [:body]     An object that responds to +read+ and behaves like IO#read
+    #
+    # The following option is optional, if it is not given, then the platform
+    # of the given gem is assumed to be 'ruby'.
+    #
+    # [:platform] The Gem::Platform compatible string for use if the gem is
+    #             not a pure ruby gem (i.e. 'x86-mswin' or 'java' )
+    #
+    # The *opts[:body]* object will be iterated over using each to store the
+    # object in the repository.
     #
     def add( opts = {} )
       spec  = Stickler::SpecLite.new( opts[:name], opts[:version], opts[:platform] )

@@ -1,7 +1,9 @@
 require 'stickler/mirror'
 module Stickler
-  # The mirror manager, well it manages mirrors.  All mirrors are
-  # in a directory below the manager's root directory
+  #
+  # A Mirror Manager
+  # a Repository::Local
+  #
   class MirrorManager
 
     # The top level directory under which all mirrors are stored
@@ -10,7 +12,7 @@ module Stickler
     # The list of known mirrors keyed by name
     attr_reader :mirrors
 
-    def initialize( root_dir ) 
+    def initialize( root_dir )
       @root_dir  = File.expand_path( root_dir )
       @mirrors   = Hash.new
       if File.directory?( root_dir ) then
