@@ -8,7 +8,7 @@ module Stickler
     attr_reader :source_index
 
     def initialize( app = nil, opts = {} )
-      @default_gem_path     = [ opts[:gem_path] ].flatten
+      @default_gem_path = [ opts[:gem_path] ].flatten
       @source_index = Gem::SourceIndex.new
       super( app )
     end
@@ -28,6 +28,10 @@ module Stickler
     before do
       if spec_dirs.size > 0 then
         source_index.load_gems_in( *spec_dirs )
+
+        # TODO : when rubygems assigns spec_dirs from #load_gems_in remove this work around
+        source_index.spec_dirs = spec_dirs
+
         response["Date"] = spec_dirs.collect do |dir|
           File.stat(dir).mtime
         end.sort.last.to_s
@@ -37,7 +41,7 @@ module Stickler
     end
 
 
-    # some fancy schmacny webpage
+    # some fancy schmancy webpage
     get '/' do
       erb :index
     end
