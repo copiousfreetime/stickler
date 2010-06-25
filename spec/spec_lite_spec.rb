@@ -48,4 +48,8 @@ describe Stickler::SpecLite do
     r = @specs[:ruby] =~ o
     r.should == true
   end
+
+  it "can be compared against another spec" do
+    (@specs[:ruby] =~ @specs[:win]).should == false
+  end
 end
