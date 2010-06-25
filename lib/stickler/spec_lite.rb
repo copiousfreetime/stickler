@@ -41,13 +41,14 @@ module Stickler
     end
 
     def to_a
-      [ name, version, platform.to_s ]
+      [ name, version.to_s, platform.to_s ]
     end
 
     def =~(other)
       other = coerce( other )
-      return (self.name == other.name and
-              self.version == other.version and
+      return (other and 
+              self.name == other.name and
+              self.version.to_s == other.version.to_s and
               self.platform == other.platform )
     end
 

@@ -24,4 +24,28 @@ describe Stickler::SpecLite do
       @specs[platform].send( method ).should == result
     end
   end
+
+  it "has an array format" do
+    @specs[:win].to_a.should == [ 'bar', '1.0.1', 'x86-mswin32' ]
+  end
+
+  it "returns false when compared to something that does not resond to :name, :version or :platform" do
+    x = @specs[:ruby] =~ Object.new
+    x.should == false
+  end
+
+  it "can compare against anything that responds to :name, :version and :platform" do
+    class OSpec
+      attr_accessor :name
+      attr_accessor :version
+      attr_accessor :platform
+    end
+
+    o = OSpec.new
+    o.name = @specs[:ruby].name
+    o.version = @specs[:ruby].version
+    o.platform = @specs[:ruby].platform
+    r = @specs[:ruby] =~ o
+    r.should == true
+  end
 end
