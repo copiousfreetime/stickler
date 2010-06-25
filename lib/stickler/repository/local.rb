@@ -145,8 +145,20 @@ module Stickler::Repository
     # See Api#open
     #
     def open( spec, &block )
+      return nil unless gem_file_exist?( spec )
+      path = full_path_to_gem( spec )
+      f = File.open( path, "rb" )
+      if block_given? then
+        begin
+          yield f
+        ensure
+          f.close
+        end
+      else
+        return f
+      end
+      return nil
     end
-
 
     private
 

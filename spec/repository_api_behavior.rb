@@ -149,13 +149,34 @@ shared_examples_for "implements Repository::Api" do
   end
 
   describe "#open" do
-    it "reads a gem via an output stream" do
+    before( :each ) do
       @repo.push( @foo_gem_local_path )
+    end
+    it "reads a gem via a returned output stream" do
       io = @repo.open( @foo_spec )
       sha1 = Digest::SHA1.hexdigest( io.read )
       sha1.should == @foo_digest
     end
 
+    it "can be called with a block" do
+      sha1 = Digest::SHA1.new
+      @repo.open( @foo_spec ) do |io|
+        sha1 << io.read
+      end
+      sha1.hexdigest.should == @foo_digest
+    end
+
+    it "returns nil if the gem does not exist" do
+      @repo.open( @missing_spec ).should == nil
+    end
+
+    it "does not call the block if the gem does not exist" do
+      called = false
+      @repo.open( @missing_spec ) do |io|
+        called = true
+      end
+      called.should == false
+    end
   end
 
 end
