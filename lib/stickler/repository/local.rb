@@ -56,6 +56,7 @@ module Stickler::Repository
     # See Api#uri_from_gem
     #
     def uri_for_gem( spec )
+      return nil unless gem_file_exist?( spec )
       return self.gems_uri.join( spec.file_name )
     end
 
@@ -70,7 +71,8 @@ module Stickler::Repository
     # See Api#uri_for_specification
     #
     def uri_for_specification( spec )
-      return self.specifications_uri.join( spec.spec_file_name )
+      return nil unless specification_file_exist?( spec )
+      return self.specifications_uri.join( spec.spec_file_name ) 
     end
 
     #
@@ -99,6 +101,15 @@ module Stickler::Repository
       uninstall( spec )
     end
 
+    # 
+    # See Api#yank
+    #
+    def yank( spec )
+      uninstall_specification( spec )
+      return uri_for_gem( spec )
+    end
+
+
     #
     # See Api#add
     #
@@ -120,6 +131,14 @@ module Stickler::Repository
         result = add( opts.merge( :body => io ) )
       end
       return result
+    end
+
+    #
+    # See Api#get
+    #
+    def get( spec )
+      return IO.read( full_path_to_gem( spec ) ) if gem_file_exist?( spec )
+      return nil
     end
 
 
@@ -176,6 +195,14 @@ module Stickler::Repository
     def remove_file( path )
       return false unless File.exist?( path )
       return true  if File.unlink( path ) > 0
+    end
+
+    def gem_file_exist?( spec )
+      File.exist?( full_path_to_gem( spec ) )
+    end
+
+    def specification_file_exist?( spec )
+      File.exist?( full_path_to_specification( spec ) )
     end
 
     def specification_from_gem_file( path )
