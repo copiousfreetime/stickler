@@ -86,6 +86,10 @@ shared_examples_for "implements Repository::Api" do
       [ ::URI, ::Addressable::URI ].include?( @response_uri.class ).should == true
     end
 
+    it "returns nil if the gem to yank does not exist or is already yanked" do
+      @repo.yank( @missing_spec ).should == nil
+    end
+
     it "does not find the gem in a search" do
       @repo.search_for( @foo_spec ).should be_empty
     end
@@ -128,6 +132,30 @@ shared_examples_for "implements Repository::Api" do
     it "returns nil if the gem does not exist" do
       @repo.get( @missing_spec ).should be_nil
     end
+  end
+
+  describe "#add" do
+    it "adds a new gem via an input stream" do
+      @repo.search_for( @foo_spec ).should be_empty
+
+      opts = { :name => @foo_spec.name, :version => @foo_spec.version.to_s }
+      File.open( @foo_gem_local_path ) do |f|
+        opts[:body] = f
+        @repo.add( opts )
+      end
+
+      @repo.search_for( @foo_spec ).size.should == 1
+    end
+  end
+
+  describe "#open" do
+    it "reads a gem via an output stream" do
+      @repo.push( @foo_gem_local_path )
+      io = @repo.open( @foo_spec )
+      sha1 = Digest::SHA1.hexdigest( io.read )
+      sha1.should == @foo_digest
+    end
+
   end
 
 end

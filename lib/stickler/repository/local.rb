@@ -105,7 +105,7 @@ module Stickler::Repository
     # See Api#yank
     #
     def yank( spec )
-      uninstall_specification( spec )
+      uninstall_specification( spec ) if specification_file_exist?( spec )
       return uri_for_gem( spec )
     end
 
@@ -139,6 +139,12 @@ module Stickler::Repository
     def get( spec )
       return IO.read( full_path_to_gem( spec ) ) if gem_file_exist?( spec )
       return nil
+    end
+
+    #
+    # See Api#open
+    #
+    def open( spec, &block )
     end
 
 

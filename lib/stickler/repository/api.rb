@@ -138,6 +138,8 @@ module Stickler::Repository
     # #search_for() method, nor can it's specification be retrieved via the
     # #uri_for_specification() method.
     #
+    # If the gem described by spec does not exist, nil is returned.
+    #
     def yank( spec ) 
       raise NotImplementedError, not_implemented_msg( :yank ) 
     end
@@ -149,6 +151,8 @@ module Stickler::Repository
     # Retrieve the gem matching the spec from the repository.  The bytes
     # returned MUST be something that would be acceptable to be written
     # directly to disk as a .gem file.
+    #
+    # If the gem described by spec does not exist, nil is returned.
     #
     def get( spec )
       raise NotImplementedError, not_implemented_msg( :get )
@@ -187,6 +191,9 @@ module Stickler::Repository
     # the +reader+ object that is returned MUST respond to +read+,  
     # +close+ and +rewind+.   These methods behave like their corresponding
     # IO#read, IO#close and IO#rewind methods.
+    #
+    # If the gem described by spec does not exist, nil is returned. 
+    # If the gem described by spec does not exist, the block is not called.
     #
     def open( spec, &block )
       raise NotImplementedError, not_implemented_msg( :open )
