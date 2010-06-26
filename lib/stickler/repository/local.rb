@@ -1,6 +1,7 @@
 require 'stickler/spec_lite'
 require 'stickler/repository'
 require 'stickler/repository/api'
+require 'stickler/repository/index'
 require 'addressable/uri'
 require 'tempfile'
 
@@ -30,12 +31,15 @@ module Stickler::Repository
     # a temporary directory for odds and ends
     attr_reader :temp_dir
 
+    # the index of the repository
+    attr_reader :index
+
     def initialize( root_dir )
       @root_dir = File.expand_path( root_dir ) + File::SEPARATOR
       @gems_dir = File.join( @root_dir, 'gems/' )
       @specifications_dir = File.join( @root_dir, 'specifications/' )
       @temp_dir = File.join( @root_dir, "tmp/" )
-      @index = Gem::SourceIndex.new
+      @index = ::Stickler::Repository::Index.new( @specifications_dir )
       setup_dirs
     end
 
@@ -62,22 +66,17 @@ module Stickler::Repository
     end
 
     #
-    # The Repository::Index of this repo.
+    # A sorted list of all the specs in the repo
     #
-    def index
-      @index.load_gems_in( specifications_dir )
-      return @index
+    def specs
+      @index.specs
     end
 
     #
     # See Api#search_for
     #
     def search_for( spec )
-      platform = Gem::Platform.new( spec.platform )
-      dep      = Gem::Dependency.new( spec.name, spec.version )
-      specs    = index.search( dep )
-      specs    = specs.find_all { |spec| spec.platform == platform }
-      return specs
+      return index.search( spec )
     end
 
     #
