@@ -124,10 +124,9 @@ module Stickler::Repository
     #
     def push( path )
       spec = specification_from_gem_file( path )
-      opts = { :name => spec.name, :version => spec.version.to_s, :platform => spec.platform }
       result = nil
       File.open( path ) do |io|
-        result = add( opts.merge( :body => io ) )
+        result = add( io )
       end
       return result
     end
