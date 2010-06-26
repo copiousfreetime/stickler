@@ -13,10 +13,9 @@ require 'digest/sha1'
 shared_examples_for "implements Repository::Api" do
   before( :each ) do
     @foo_gem_local_path = File.join( @gems_dir, "foo-1.0.0.gem" )
-    puts @foo_gem_local_path
-    @foo_spec = Stickler::SpecLite.new( 'foo', '1.0.0' )
-    @foo_digest = Digest::SHA1.hexdigest( IO.read( @foo_gem_local_path ) )
-    @missing_spec = Stickler::SpecLite.new( "does_not_exist", "0.1.0" )
+    @foo_spec           = Stickler::SpecLite.new( 'foo', '1.0.0' )
+    @foo_digest         = Digest::SHA1.hexdigest( IO.read( @foo_gem_local_path ) )
+    @missing_spec       = Stickler::SpecLite.new( "does_not_exist", "0.1.0" )
   end
 
   # removed specifications_uri

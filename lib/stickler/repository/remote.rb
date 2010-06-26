@@ -192,7 +192,6 @@ module ::Stickler::Repository
 
     def remote_gem_file_exist?( spec )
       gem_uri = full_uri_to_gem( spec )
-      puts "gem_uri : #{gem_uri.to_s}"
       remote_uri_exist?( gem_uri )
     end
 
