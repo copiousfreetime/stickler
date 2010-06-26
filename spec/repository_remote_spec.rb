@@ -14,12 +14,12 @@ describe Stickler::Repository::Remote do
   describe "Using a live server" do
     before do
       @tmp_dir  = File.join( @spec_dir, "tmp" )
-      %w[ gems specifications ].each { |s| FileUtils.mkdir_p( File.join( @tmp_dir, s ) ) }
+      FileUtils.mkdir_p( @tmp_dir )
 
       @pid_file = File.join( @tmp_dir , "rack.pid" )
       @ru_file  = File.join( @spec_dir, "remote_repo.ru" )
       cmd = "rackup --port 6789 --pid #{@pid_file} --daemonize #{@ru_file}"
-      system cmd
+      #system cmd
 
       tries = 0
       @acc      = ::Resourceful::HttpAccessor.new
@@ -36,9 +36,9 @@ describe Stickler::Repository::Remote do
     end
 
     after do
-      pid = IO.read( @pid_file ).to_i
-      Process.kill( 'KILL', pid )
-      FileUtils.rm_rf( @tmp_dir )
+      #pid = IO.read( @pid_file ).to_i
+      #Process.kill( 'KILL', pid )
+      #FileUtils.rm_rf( @tmp_dir )
     end
 
     it_should_behave_like 'implements Repository::Api'

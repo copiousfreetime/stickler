@@ -1,7 +1,6 @@
 require File.expand_path( File.join( File.dirname(__FILE__), "spec_helper.rb" ) )
 
 require 'stickler/web'
-require 'rubygems/source_index'
 require 'rubygems/server'
 
 describe 'Stickler::Web' do

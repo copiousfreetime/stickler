@@ -7,6 +7,6 @@ coverage
 *.swo
 .*.swp
 announcement.txt
-spec/mm-tmp
+spec/tmp
 version.txt
 *.pid

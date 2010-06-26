@@ -14,21 +14,21 @@ describe Stickler::Repository::Api do
     @spec = Stickler::SpecLite.new( "foo", "1.0.0" )
   end
 
-  %w[ uri gems_uri specifications_uri source_index ].each do |method|
+  %w[ uri gems_uri ].each do |method|
     it "raises an error when calling unimplmented method #{method}" do
       lambda { @repo.send( method ) }.should raise_error( NotImplementedError, /\APlease implement .*##{method}\Z/ )
     end
   end
 
-  %w[ uri_for_gem uri_for_specification search_for delete yank get open ].each do |method|
+  %w[ uri_for_gem search_for delete yank get open ].each do |method|
     it "raises an error when calling unimplmented method #{method} taking a spec" do
       lambda { @repo.send( method, @spec ) }.should raise_error( NotImplementedError, /\APlease implement .*##{method}\Z/ )
     end
   end
 
-  %w[ add push ].each do |method|
+  %w[ push ].each do |method|
     it "raises an error when calling unimplmented method #{method} taking some other object" do
-      lambda { @repo.send( method, @spec ) }.should raise_error( NotImplementedError, /\APlease implement .*##{method}\Z/ )
+      lambda { @repo.send( method, Object.new ) }.should raise_error( NotImplementedError, /\APlease implement .*##{method}\Z/ )
     end
   end
 

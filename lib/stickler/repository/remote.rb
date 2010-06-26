@@ -13,9 +13,10 @@ module ::Stickler::Repository
     attr_reader :http
 
     def initialize( repo_uri )
-      @uri          = Addressable::URI.parse( ensure_trailing_slash( repo_uri ) )
-      @http         = ::Resourceful::HttpAccessor.new( :cache_manager => Resourceful::InMemoryCacheManager.new )
-      @source_index = nil
+      @uri        = Addressable::URI.parse( ensure_trailing_slash( repo_uri ) )
+      @http       = Resourceful::HttpAccessor.new( :cache_manager => Resourceful::InMemoryCacheManager.new ,
+                                                   :logger => Resourceful::StdOutLogger.new)
+      @specs_list = nil
     end
 
     #
@@ -40,10 +41,10 @@ module ::Stickler::Repository
     end
 
     #
-    # See Api#source_index
+    # The array of specs from upstream
     #
-    def source_index
-      Marshal.load( download_source_index )
+    def specs_list
+      Marshal.load( download_specs_list )
     end
 
     #
@@ -51,8 +52,8 @@ module ::Stickler::Repository
     #
     def search_for( spec )
      found = []
-      source_index.each do |name, version, platform|
-        up_spec = SpecLite.new( name, version, platform )
+      specs_list.each do |name, version, platform|
+        up_spec = Stickler::SpecLite.new( name, version, platform )
         found << up_spec if spec =~ up_spec
       end
       return found
@@ -71,11 +72,12 @@ module ::Stickler::Repository
     #
     def push( path )
       spec = speclite_from_gem_file( path )
-      raise Stickler::Repository::Error, "it already exists" if remote_gem_file_exist?( spec )
+      raise Stickler::Repository::Error, "gem #{spec.full_name} already exists in remote repository" if remote_gem_file_exist?( spec )
       begin
         push_resource.post( IO.read( path ) )
       rescue Resourceful::UnsuccessfulHttpRequestError => e
-        raise Stickler::Repository::Error, "Failure pushing: #{e.inspect}"
+        msg = "Failure pushing #{path} to remote repository : response code => #{e.http_response.code}, response message => '#{e.http_response.body}'"
+        raise Stickler::Repository::Error, msg
       end
       return spec
     end
@@ -86,9 +88,10 @@ module ::Stickler::Repository
     def yank( spec )
       return nil unless remote_gem_file_exist?( spec )
       begin
-        form_data = Resourcefule::URLEncodedFormData.new
+        form_data = Resourceful::UrlencodedFormData.new
         form_data.add( "gem_name", spec.name )
-        form_data.add( "version", spec.version )
+        form_data.add( "version", spec.version.to_s )
+        puts "form_data : #{form_data.read}"
         yank_resource.request( :delete, form_data.read, {'Content-Type' => form_data.content_type } )
       rescue Resourceful::UnsuccessfulHttpRequestError => e
         raise Stickler::Repository::Error, "Failure yanking: #{e.inspect}"
@@ -102,6 +105,7 @@ module ::Stickler::Repository
       return false unless remote_gem_file_exist?( spec )
       begin
         gem_resource( spec ).delete
+        return true
       rescue Resourceful::UnsuccessfulHttpRequestError => e
         return false
       end
@@ -141,12 +145,12 @@ module ::Stickler::Repository
       gems_uri.join( spec.file_name )
     end
 
-    def source_index_uri
+    def specs_list_uri
       Addressable::URI.join( uri, "specs.#{Gem.marshal_version}.gz" )
     end
 
-    def source_index_resource
-      @source_index_resource ||= @http.resource( source_index_uri )
+    def specs_list_resource
+      @specs_list_resource ||= @http.resource( specs_list_uri )
     end
 
     def push_uri
@@ -169,13 +173,12 @@ module ::Stickler::Repository
       @http.resource( full_uri_to_gem( spec ) )
     end
 
-    def download_source_index
-      download_gzipped_resource( source_index_resource )
+    def download_specs_list
+      download_gzipped_resource( specs_list_resource )
     end
 
     def download_gzipped_resource( resource )
-      resp = download( resource )
-      Gem.gunzip( resp.body )
+      Gem.gunzip( download_resource( resource ) )
     end
 
     def download_gem( spec )
@@ -183,8 +186,12 @@ module ::Stickler::Repository
     end
 
     def download_uri( uri )
+      download_resource( http.resource( uri ) )
+    end
+
+    def download_resource( resource )
       begin
-        http.resource( uri ).get
+        resource.get.body
       rescue Resourceful::UnsuccessfulHttpRequestError => e
         return false
       end

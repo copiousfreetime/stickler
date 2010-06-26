@@ -2,6 +2,7 @@ require 'stickler/spec_lite'
 require 'stickler/repository'
 require 'stickler/repository/api'
 require 'addressable/uri'
+require 'tempfile'
 
 module Stickler::Repository
   #
@@ -26,11 +27,15 @@ module Stickler::Repository
     # the directory containing the .gemspec files
     attr_reader :specifications_dir
 
+    # a temporary directory for odds and ends
+    attr_reader :temp_dir
+
     def initialize( root_dir )
       @root_dir = File.expand_path( root_dir ) + File::SEPARATOR
       @gems_dir = File.join( @root_dir, 'gems/' )
       @specifications_dir = File.join( @root_dir, 'specifications/' )
-      @source_index = Gem::SourceIndex.new
+      @temp_dir = File.join( @root_dir, "tmp/" )
+      @index = Gem::SourceIndex.new
       setup_dirs
     end
 
@@ -57,11 +62,11 @@ module Stickler::Repository
     end
 
     #
-    # See Api#source_index
+    # The Repository::Index of this repo.
     #
-    def source_index
-      @source_index.load_gems_in( specifications_dir )
-      return @source_index
+    def index
+      @index.load_gems_in( specifications_dir )
+      return @index
     end
 
     #
@@ -70,7 +75,7 @@ module Stickler::Repository
     def search_for( spec )
       platform = Gem::Platform.new( spec.platform )
       dep      = Gem::Dependency.new( spec.name, spec.version )
-      specs    = source_index.search( dep )
+      specs    = index.search( dep )
       specs    = specs.find_all { |spec| spec.platform == platform }
       return specs
     end
@@ -93,29 +98,25 @@ module Stickler::Repository
 
     #
     # :call-seq:
-    #   repo.add( opts = {} ) -> Stickler::SpecLite
+    #   repo.add( io ) -> Stickler::SpecLite
     #
-    # A lower level version of #push.  The hash passed in MUST have the
-    # following keys:
+    # A lower level version of #push.  The item passed in is an IO like object
+    # that contains the binary stream that is a .gem file.  IO must respond to
+    # #read and #rewind.
     #
-    # [:name]     The name of the gem ( i.e. 'stickler' )
-    # [:version]  The version in dotted notation ( i.e. '1.0.2' )
-    # [:body]     An object that responds to +read+ and behaves like IO#read
-    #
-    # The following option is optional, if it is not given, then the platform
-    # of the given gem is assumed to be 'ruby'.
-    #
-    # [:platform] The Gem::Platform compatible string for use if the gem is
-    #             not a pure ruby gem (i.e. 'x86-mswin' or 'java' )
-    #
-    # The *opts[:body]* object will be iterated over using each to store the
-    # object in the repository.
-    #
-    def add( opts = {} )
-      spec  = Stickler::SpecLite.new( opts[:name], opts[:version], opts[:platform] )
-      specs = search_for( spec )
+    def add( io )
+      # spooling to a temp file because Gem::Format.from_io() closes the io
+      # stream it is sent.  Why it does this, I do not know.
+      tempfile = Tempfile.new(  "uploaded-gem.", temp_dir )
+      tempfile.write( io.read )
+      format    = Gem::Format.from_file_by_path( tempfile.path )
+      spec      = Stickler::SpecLite.new( format.spec.name, format.spec.version, format.spec.platform )
+      specs     = search_for( spec )
       raise Error, "gem #{spec.full_name} already exists" unless specs.empty?
-      return install( spec, opts[:body] )
+      tempfile.rewind
+      return install( spec, tempfile )
+    ensure
+      tempfile.close!
     end
 
     #
@@ -161,7 +162,7 @@ module Stickler::Repository
     private
 
     def setup_dirs
-      [ root_dir, specifications_dir, gems_dir ].each do |dir|
+      [ root_dir, specifications_dir, gems_dir, temp_dir ].each do |dir|
         FileUtils.mkdir_p( dir ) unless File.directory?( dir )
       end
     end

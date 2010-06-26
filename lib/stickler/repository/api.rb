@@ -40,17 +40,6 @@ module Stickler::Repository
 
     #
     # :call-seq:
-    #   repo.source_index -> Gem::SourceIndex
-    #
-    # Return a Gem::SourceIndex object that can be used to query the
-    # repository
-    #
-    def source_index
-      raise NotImplementedError, not_implemented_msg( :source_index )
-    end
-
-    #
-    # :call-seq:
     #   repo.search_for( spec ) -> Array
     #
     # +match+ MUST be an object that responds to +name+, +version+ and
@@ -160,7 +149,6 @@ module Stickler::Repository
           open
           push
           search_for
-          source_index
           uri
           uri_for_gem
           yank

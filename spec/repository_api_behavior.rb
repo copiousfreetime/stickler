@@ -45,10 +45,10 @@ shared_examples_for "implements Repository::Api" do
     end
   end
 
-  it "returns a Gem::SourceIndex for #source_index" do
-    idx = @repo.source_index
-    idx.should be_kind_of( Gem::SourceIndex )
-  end
+  # it "returns a Gem::SourceIndex for #source_index" do
+    # idx = @repo.source_index
+    # idx.should be_kind_of( Gem::SourceIndex )
+  # end
 
   describe "#push" do
     it "pushes a gem from a .gem file" do

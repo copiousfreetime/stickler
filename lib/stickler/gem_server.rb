@@ -38,6 +38,7 @@ module Stickler
       else
         puts "No spec dirs yet"
       end
+      headers['Cache-Control'] = 'no-cache'
     end
 
 
@@ -77,10 +78,6 @@ module Stickler
       sorted_text( latest_specs.collect { |spec| spec.full_name } )
     end
 
-    get %r{\A/gems/:gemfile\Z} do
-      puts "Finding gem #{params[:gemfile]} ?"
-    end
-
     #
     # Match a single gem spec request, returning in Marshal format or the deprecated
     # yaml format.  This Regex is from 'Gem::Server' with a slight alteration
@@ -107,10 +104,14 @@ module Stickler
     #
     get %r{\A/gems/(.*?)-([0-9.]+)(-.*?)?\.gem\Z} do
       name, version, platform = *params[:captures]
-      spec = find_spec_for( name, version, platform )
-      full_path = File.join( spec.installation_path, 'gems', spec.file_name )
-      content_type 'application/x-tar'
-      IO.read( full_path )
+      spec = Stickler::SpecLite.new( name, version, platform )
+      full_path = File.join(  'gems', spec.file_name )
+      if File.exist?( full_path ) then
+        content_type 'application/x-tar'
+        IO.read( full_path )
+      else
+        error( 404, "Gem #{spec.file_name} is not found " )
+      end
     end
 
     def find_spec_for( name, version, platform )
