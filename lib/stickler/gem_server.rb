@@ -108,9 +108,9 @@ module Stickler
       full_path = File.join(  'gems', spec.file_name )
       if File.exist?( full_path ) then
         content_type 'application/x-tar'
-        IO.read( full_path )
+        send_file( full_path )
       else
-        error( 404, "Gem #{spec.file_name} is not found " )
+        not_found( "Gem #{spec.file_name} is not found " )
       end
     end
 
