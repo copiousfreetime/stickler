@@ -6,18 +6,14 @@
     <tr>
       <th>Gem name</th>
       <th>Version</th>
-      <th>Homepage</th>
-      <th>Author(s)</th>
     </tr>
   </thead>
   <tfoot></tfoot>
   <tbody>
-<% source_index.gems.values.sort_by { |spec| spec.full_name }.each_with_index do |spec, idx| %>
+<% @repo.specs.sort_by { |spec| spec.full_name }.each_with_index do |spec, idx| %>
   <tr class="<%= %w[ red grey ][idx % 2]%>">
     <td><a href="/gems/<%= spec.file_name %>"><%= spec.name %></a></td>
     <td align="right"><%= spec.version %></td>
-    <td><a href="<%= spec.homepage %>"><%= spec.homepage %></a></td>
-    <td><%= [ spec.author ].flatten.join(", ") %></td>
   </tr>
 <% end %>
 </table>

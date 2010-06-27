@@ -66,10 +66,24 @@ module Stickler::Repository
     end
 
     #
-    # A sorted list of all the specs in the repo
+    # A list of all the specs in the repo
     #
     def specs
       @index.specs
+    end
+
+    #
+    # A list of just the latests specs in the repo
+    #
+    def latest_specs
+      @index.latest_specs
+    end
+
+    #
+    # The last time this index was modified
+    #
+    def last_modified_time
+      @index.last_modified_time
     end
 
     #

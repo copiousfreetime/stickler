@@ -6,7 +6,8 @@ require 'stringio'
 module ::Stickler::Repository
   #
   # A Repository::Api implementation that retrieves all is data from an HTTP
-  # based remote location.
+  # based remote location.  It utilizes the Modern gem server api and the gem
+  # cutter api (push/yank/unyank).  The legacy gem server api is not utilized.
   #
   class Remote
     # the http client

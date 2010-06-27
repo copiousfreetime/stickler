@@ -26,7 +26,7 @@ describe 'Stickler::Web' do
     gem_dir = @gem_dir
     ::Rack::Builder.new do
       use ::Stickler::GemServerDeflater
-      use ::Stickler::GemServer, :gem_path => gem_dir
+      use ::Stickler::GemServer, :repo_root => gem_dir
       run ::Sinatra::Base
     end
   end
@@ -70,14 +70,11 @@ describe 'Stickler::Web' do
 
   end
 
-  [ "/yaml",
+  legacy_urls = [ 
+    "/yaml",
     "/yam.Z",
     "/Marshal.#{Gem.marshal_version}",
     "/Marshal.#{Gem.marshal_version}.Z",
-    "/specs.#{Gem.marshal_version}",
-    "/specs.#{Gem.marshal_version}.gz",
-    "/latest_specs.#{Gem.marshal_version}",
-    "/latest_specs.#{Gem.marshal_version}.gz",
     "/quick/index",
     "/quick/index.rz",
     "/quick/latest_index",
@@ -87,11 +84,21 @@ describe 'Stickler::Web' do
     "/quick/Marshal.#{Gem.marshal_version}/bar-1.0.0.gemspec.rz",
     "/quick/bar-1.0.0.gemspec.rz",
     "/quick/does-not-exist-1.2.0.gemspec.rz"
-  ].each do |url|
+  ]
 
-      it "serves indicies from #{url}" do
-        should_match_webrick_behavior url
-      end
+  modern_urls = [
+    "/specs.#{Gem.marshal_version}",
+    "/specs.#{Gem.marshal_version}.gz",
+    "/latest_specs.#{Gem.marshal_version}",
+    "/latest_specs.#{Gem.marshal_version}.gz",
+  ]
+  modern_urls.each do |url|
+    it "serves a modern gemserver index item from #{url}" do
+      should_match_webrick_behavior url
+    end
+  end
 
+  it "should serve up /specs.4.8" do
+    should_match_webrick_behavior "/specs.#{Gem.marshal_version}"
   end
 end    

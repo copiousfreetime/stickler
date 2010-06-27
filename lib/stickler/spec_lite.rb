@@ -44,6 +44,13 @@ module Stickler
       [ name, version.to_s, platform.to_s ]
     end
 
+    # 
+    # Convert to the array format used by rubygems itself
+    #
+    def to_rubygems_a
+      [ name, version, platform.to_s ]
+    end
+
     def =~(other)
       other = coerce( other )
       return (other and 

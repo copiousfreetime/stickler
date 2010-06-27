@@ -15,8 +15,10 @@ module Stickler::Repository
     # The list of specs in the index
     attr_reader :specs
 
-    # The diretory the specs live
+    # The directory the specs live
     attr_reader :spec_dir
+
+    # 
 
     def initialize( spec_dir )
       @specs = []
@@ -29,6 +31,20 @@ module Stickler::Repository
       return @specs
     end
 
+    def latest_specs
+      latest = {}
+      specs.each do |s|
+        if old_spec = latest[s.name] then
+          if old_spec.version < s.version then
+            latest[s.name] = s
+          end
+        else
+          latest[s.name] = s
+        end
+      end
+      latest.values
+    end
+
     def load_specs
       load_specs_in_dir( self.spec_dir )
     end
@@ -38,6 +54,10 @@ module Stickler::Repository
       # return true unless @last_modified_time
       # current_modified_time = File.stat( self.spec_dir ).mtime
       # return (current_modified_time > @last_modified_time )
+    end
+
+    def last_modified_time
+      File.stat( self.spec_dir ).mtime
     end
 
     def spec_dir=( d )
