@@ -11,12 +11,10 @@ module Stickler
     def initialize( app, options = {} )
       @app = app
       @mirror = Repository::Mirror.new( options[:mirror_root] )
-      puts "Mirror manager server with root dir #{options[:mirror_root]}"
       super( app )
     end
 
     def manage( params )
-      puts "MirrorManager called #{params.inspect}"
       host = params[:source]
       spec = Stickler::SpecLite.new( params[:name], params[:version], params[:platform] )
 
