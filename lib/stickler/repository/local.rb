@@ -122,10 +122,14 @@ module Stickler::Repository
       # stream it is sent.  Why it does this, I do not know.
       tempfile = Tempfile.new(  "uploaded-gem.", temp_dir )
       tempfile.write( io.read )
+      tempfile.rewind
+
       format    = Gem::Format.from_file_by_path( tempfile.path )
       spec      = Stickler::SpecLite.new( format.spec.name, format.spec.version, format.spec.platform )
       specs     = search_for( spec )
+
       raise Error, "gem #{spec.full_name} already exists" unless specs.empty?
+
       tempfile.rewind
       return install( spec, tempfile )
     ensure

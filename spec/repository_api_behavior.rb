@@ -45,11 +45,6 @@ shared_examples_for "implements Repository::Api" do
     end
   end
 
-  # it "returns a Gem::SourceIndex for #source_index" do
-    # idx = @repo.source_index
-    # idx.should be_kind_of( Gem::SourceIndex )
-  # end
-
   describe "#push" do
     it "pushes a gem from a .gem file" do
       @repo.push( @foo_gem_local_path )
@@ -96,10 +91,6 @@ shared_examples_for "implements Repository::Api" do
       @repo.search_for( @foo_spec ).should be_empty
     end
 
-    # it "does not have the #uri_for_specification" do
-      # @repo.uri_for_specification( @foo_spec ).should be_nil
-    # end
-
     it "does have the #uri_for_gem" do
       @repo.uri_for_gem( @foo_spec ).should == @response_uri
     end
@@ -135,20 +126,6 @@ shared_examples_for "implements Repository::Api" do
       @repo.get( @missing_spec ).should be_nil
     end
   end
-
-  # describe "#add" do
-    # it "adds a new gem via an input stream" do
-      # @repo.search_for( @foo_spec ).should be_empty
-
-      # opts = { :name => @foo_spec.name, :version => @foo_spec.version.to_s }
-      # File.open( @foo_gem_local_path ) do |f|
-        # opts[:body] = f
-        # @repo.add( opts )
-      # end
-
-      # @repo.search_for( @foo_spec ).size.should == 1
-    # end
-  # end
 
   describe "#open" do
     before( :each ) do

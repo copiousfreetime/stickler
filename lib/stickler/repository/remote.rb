@@ -14,9 +14,9 @@ module ::Stickler::Repository
     attr_reader :http
 
     def initialize( repo_uri )
-      @uri        = Addressable::URI.parse( ensure_trailing_slash( repo_uri ) )
-      @http       = Resourceful::HttpAccessor.new( :cache_manager => Resourceful::InMemoryCacheManager.new )
-                                                   #:logger => Resourceful::StdOutLogger.new)
+      @uri        = Addressable::URI.parse( ensure_http( ensure_trailing_slash( repo_uri ) ) )
+      @http       = Resourceful::HttpAccessor.new( :cache_manager => Resourceful::InMemoryCacheManager.new,
+                                                   :logger => Resourceful::StdOutLogger.new )
       @specs_list = nil
     end
 
@@ -118,8 +118,9 @@ module ::Stickler::Repository
     def open( spec, &block )
       return nil unless remote_gem_file_exist?( spec )
       begin
-        resp = gem_resource( spec ).get
-        io = StringIO.new( resp.body, "rb" )
+        data = download_resource( gem_resource( spec ) )
+        io = StringIO.new( data , "rb" )
+        puts "got data from response #{io.length}"
         if block_given? then
           begin
             yield io
@@ -139,6 +140,11 @@ module ::Stickler::Repository
 
     def ensure_trailing_slash( uri )
       uri += '/' unless uri =~ %r{/\Z}
+      return uri
+    end
+
+    def ensure_http( uri )
+      uri = "http://#{uri}" unless uri =~ %r{/Ahttp(s)?://}
       return uri
     end
 
@@ -205,7 +211,11 @@ module ::Stickler::Repository
 
     def remote_uri_exist?( uri )
       begin
-        http.resource( uri ).head.successful?
+        rc = http.resource( uri ).head( 'Cache-Control' => 'no-store' ).successful?
+        # FIXME: bug in Resourceful that uses cached HEAD responses
+        #        to satisfy later GET requests.
+        http.cache_manager.invalidate( uri )
+        return rc
       rescue Resourceful::UnsuccessfulHttpRequestError => e
         return false
       end
