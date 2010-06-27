@@ -31,9 +31,6 @@ module Stickler
       erb :index
     end
 
-    get "/specs-now" do
-      @repo.specs.to_yaml
-    end
     get %r{\A/specs.#{Gem.marshal_version}(\.gz)?\Z} do |gzip|
       env['stickler.compress'] = 'gzip' if gzip
       marshalled_specs( @repo.specs )
