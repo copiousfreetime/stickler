@@ -15,8 +15,8 @@ module ::Stickler::Repository
 
     def initialize( repo_uri )
       @uri        = Addressable::URI.parse( ensure_http( ensure_trailing_slash( repo_uri ) ) )
-      @http       = Resourceful::HttpAccessor.new( :cache_manager => Resourceful::InMemoryCacheManager.new,
-                                                   :logger => Resourceful::StdOutLogger.new )
+      @http       = Resourceful::HttpAccessor.new( :cache_manager => Resourceful::InMemoryCacheManager.new )
+#                                                   :logger => Resourceful::StdOutLogger.new )
       @specs_list = nil
     end
 
@@ -75,7 +75,7 @@ module ::Stickler::Repository
       spec = speclite_from_gem_file( path )
       raise Stickler::Repository::Error, "gem #{spec.full_name} already exists in remote repository" if remote_gem_file_exist?( spec )
       begin
-        push_resource.post( IO.read( path ) )
+        resp = push_resource.post( IO.read( path ) )
       rescue Resourceful::UnsuccessfulHttpRequestError => e
         msg = "Failure pushing #{path} to remote repository : response code => #{e.http_response.code}, response message => '#{e.http_response.body}'"
         raise Stickler::Repository::Error, msg
@@ -120,7 +120,6 @@ module ::Stickler::Repository
       begin
         data = download_resource( gem_resource( spec ) )
         io = StringIO.new( data , "rb" )
-        puts "got data from response #{io.length}"
         if block_given? then
           begin
             yield io
@@ -144,7 +143,7 @@ module ::Stickler::Repository
     end
 
     def ensure_http( uri )
-      uri = "http://#{uri}" unless uri =~ %r{/Ahttp(s)?://}
+      uri = "http://#{uri}" unless uri =~ %r{\Ahttp(s)?://}
       return uri
     end
 
@@ -211,10 +210,9 @@ module ::Stickler::Repository
 
     def remote_uri_exist?( uri )
       begin
-        rc = http.resource( uri ).head( 'Cache-Control' => 'no-store' ).successful?
         # FIXME: bug in Resourceful that uses cached HEAD responses
         #        to satisfy later GET requests.
-        http.cache_manager.invalidate( uri )
+        rc = http.resource( uri ).head( 'Cache-Control' => 'no-store' ).successful?
         return rc
       rescue Resourceful::UnsuccessfulHttpRequestError => e
         return false
