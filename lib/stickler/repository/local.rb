@@ -171,16 +171,17 @@ module Stickler::Repository
       return nil
     end
 
+    def full_path_to_gem( spec )
+      File.join( gems_dir, spec.file_name )
+    end
+
+
     private
 
     def setup_dirs
       [ root_dir, specifications_dir, gems_dir, temp_dir ].each do |dir|
         FileUtils.mkdir_p( dir ) unless File.directory?( dir )
       end
-    end
-
-    def full_path_to_gem( spec )
-      File.join( gems_dir, spec.file_name )
     end
 
     def full_path_to_specification( spec )

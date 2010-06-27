@@ -47,7 +47,7 @@ module Stickler
     get %r{\A/gems/(.*?)-([0-9.]+)(-.*?)?\.gem\Z} do
       name, version, platform = *params[:captures]
       spec = Stickler::SpecLite.new( name, version, platform )
-      full_path = @repo.gem_filename( spec )
+      full_path = @repo.full_path_to_gem( spec )
       if full_path then
         content_type 'application/x-tar'
         send_file( full_path )

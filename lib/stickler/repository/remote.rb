@@ -15,8 +15,8 @@ module ::Stickler::Repository
 
     def initialize( repo_uri )
       @uri        = Addressable::URI.parse( ensure_trailing_slash( repo_uri ) )
-      @http       = Resourceful::HttpAccessor.new( :cache_manager => Resourceful::InMemoryCacheManager.new ,
-                                                   :logger => Resourceful::StdOutLogger.new)
+      @http       = Resourceful::HttpAccessor.new( :cache_manager => Resourceful::InMemoryCacheManager.new )
+                                                   #:logger => Resourceful::StdOutLogger.new)
       @specs_list = nil
     end
 
@@ -92,8 +92,8 @@ module ::Stickler::Repository
         form_data = Resourceful::UrlencodedFormData.new
         form_data.add( "gem_name", spec.name )
         form_data.add( "version", spec.version.to_s )
-        puts "form_data : #{form_data.read}"
         yank_resource.request( :delete, form_data.read, {'Content-Type' => form_data.content_type } )
+        return full_uri_to_gem( spec )
       rescue Resourceful::UnsuccessfulHttpRequestError => e
         raise Stickler::Repository::Error, "Failure yanking: #{e.inspect}"
       end

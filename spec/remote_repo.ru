@@ -8,6 +8,6 @@ gem_dir = File.join( File.expand_path( File.dirname( __FILE__ ) ), "tmp" )
 
 use ::Stickler::GemServerDeflater
 use ::Stickler::GemCutterApiServer, :repo_root => gem_dir
-use ::Stickler::GemServer, :gem_path => gem_dir
+use ::Stickler::GemServer, :repo_root => gem_dir
 run ::Sinatra::Base
 
