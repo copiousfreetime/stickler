@@ -1,5 +1,5 @@
-require 'stickler/rack'
-module Stickler::Rack
+require 'stickler/middleware'
+module Stickler::Middleware
   module Helpers
     #
     # set what, if any kind of compression to use on the response This is a Gem

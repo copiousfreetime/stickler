@@ -1,7 +1,7 @@
 require 'rack/utils'
-
-module Stickler
-  class GemServerDeflater
+require 'stickler/middleware'
+module Stickler::Middleware
+  class Compression
     def initialize( app )
       @app = app 
     end

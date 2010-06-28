@@ -1,14 +1,14 @@
-require File.expand_path( File.join( File.dirname(__FILE__), "spec_helper.rb" ) )
+require File.expand_path( File.join( File.dirname(__FILE__), "..", "spec_helper.rb" ) )
 require File.expand_path( File.join( File.dirname(__FILE__), "modern_gem_server_behavior.rb" ) )
 
-require 'stickler/rack/index'
-require 'stickler/gem_server_deflater'
+require 'stickler/middleware/index'
+require 'stickler/middleware/compression'
 
 describe Stickler::Rack::Index do
   def app
     ::Rack::Builder.new do
-      use ::Stickler::GemServerDeflater
-      use ::Stickler::Rack::Index
+      use ::Stickler::Middleware::Compression
+      use ::Stickler::Middleware::Index
       run ::Sinatra::Base
     end
   end
