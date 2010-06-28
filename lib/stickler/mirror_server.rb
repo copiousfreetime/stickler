@@ -2,8 +2,11 @@ require 'sinatra/base'
 require 'stickler/repository/mirror'
 
 module Stickler
+  #
+  # A Mirror server keeps gems from one or more upstream gem servers in local
+  # repositories.
+  #
   class MirrorServer < ::Sinatra::Base
-
     # The root directory all local mirrors of upstream repos will be stored.
     # Each mirror will have a directory within the mirror_root
     attr_reader :mirror_root

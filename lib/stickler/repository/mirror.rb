@@ -30,8 +30,6 @@ module Stickler::Repository
     # Mirror the gem described by spec on the +host+.  If no +host+
     # is given, it is assumed to be http://rubygems.org/.
     #
-    # 
-    #
     def mirror( host, spec )
       specs = @local_repo.search_for( spec )
       raise Error, "gem #{spec.full_name} already exists" unless specs.empty?
