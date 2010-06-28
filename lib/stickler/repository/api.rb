@@ -1,5 +1,6 @@
 require 'stickler/repository'
 require 'stickler/spec_lite'
+
 module Stickler::Repository
   #
   # The API that all Stickler Repository classes MUST implement.
