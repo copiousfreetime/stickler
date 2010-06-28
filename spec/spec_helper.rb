@@ -10,6 +10,8 @@ Spec::Runner.configure do |config|
     @specifications_dir = File.join( @gem_root, "specifications" )
     @gems_dir           = File.join( @gem_root, "gems" )
   end
+
+
 end
 
 

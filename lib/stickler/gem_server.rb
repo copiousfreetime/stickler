@@ -6,19 +6,53 @@ module Stickler
   # listed in the Gem::Server class.  This middleware will respond to requests
   # that are issued by 'gem --remote-install'
   #
-  # * "/specs.#{Gem.marshal_version}.gz" - specs name/version/platform index
-  # * "/latest_specs.#{Gem.marshal_version}.gz" - only the latest name/version/platform 
-  # * "/gems/<gem-version-platform>.gem - direct access to the gem files
+  # <b>/specs.#{Gem.marhsal_version}.gz</b>::         The [ name, version, platform ] index
+  #                                                   of *all* the gems in the
+  #                                                   entire repository
+  #
+  # <b>/latest_specs.#{Gem.marshal_version}.gz</b>::  The [ name, version, # platform ] index
+  #                                                   of the <b>most recent</b> version of each
+  #                                                   gem in the repository.
+  #
+  # <b>/gems/<gem-version-platform>.gem::             The direct download url of
+  #                                                   a gem in the repository
   #
   # It utilizies a Stickler::Repository::Local, and then :repo_root option
   # is passed directoy to it.
   #
+  # A GemServer can be used in a stack with other GemServer's that are serving
+  # other repositories or a GemServer derivative class.  In this case, since
+  # all the GemServer's could respond to the /specs
+  #
+  # A GemServer may also not have a repository attached to it.  In this case
+  # it returns empty indexes for <b>/specs</b> and <b>/latest_specs</b> urls
+  # and 404's for anything else.
+  #
+  # == Options
+  #
+  # <b>:serve_indexes</b>::     +true+ or +false+ it defaults to +true+.  This
+  #                             option is used when GemServer is used in a stack
+  #                             with other GemServer middlewares.  In this case,
+  #                             all of the GemServer middlewares should set
+  #                             <b>:serve_indexes => false</b> except for the
+  #                             bottom one.  It should set <b>:serve_indexes
+  #                             => true</b>.  This allows all the GemServer
+  #                             middlewares to cooperatively respond to the
+  #                             <b>/specs</b> and </b>/latests_specs</b> urls.
+  #
+  # <b>:repo_root</b>:;         The path that is to be the root of the
+  #                             Repository instance managed by this server.
+  #
   # == Usage
   #
   #   use Stickler::GemServer, :repo_root => '/path/to/repository'
+  #
   class GemServer < ::Sinatra::Base
     def initialize( app = nil, opts = {} )
-      @repo = Repository::Local.new( opts[:repo_root ] )
+      @repo_root = opts[:repo_root]
+      @repo      = @repo_root ? Repository::Local
+      @repo            = opts.has_key?(:repo_root)     ? opts[:repo_root]
+      @append_to_index = opts.has_key?(:serve_indexes) ? opts[:serve_indexes] : false
       super( app )
     end
 
@@ -56,15 +90,5 @@ module Stickler
       end
     end
 
-    # Convert to the array format used by gem servers
-    # everywhere
-    def marshalled_specs( specs )
-      marshal( specs.collect { |s| s.to_rubygems_a } )
-    end
-
-    def marshal( data )
-      content_type 'application/octet-stream'
-      ::Marshal.dump( data )
-    end
   end
 end

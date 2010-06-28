@@ -13,13 +13,13 @@ module Stickler
       headers = ::Rack::Utils::HeaderHash.new( headers )
       stream  = body
 
-      if compress_method = env['stickler.compress'] then
+      if compress_method = env['stickler.compression'] then
         headers.delete('Content-Length')
         case compress_method
-        when 'gzip'
+        when :gzip
           headers['Content-Type'] = 'application/x-gzip'
           stream = Gem.gzip( body.first )
-        when 'deflate'
+        when :deflate
           headers['Content-Type'] = 'application/x-deflate'
           stream = Gem.deflate( body.first )
         end
