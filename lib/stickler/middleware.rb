@@ -1,4 +1,4 @@
 module Stickler
-  module Rack
+  module Middleware
   end
 end

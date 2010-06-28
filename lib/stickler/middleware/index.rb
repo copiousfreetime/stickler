@@ -56,6 +56,10 @@ module Stickler::Rack
       super( app )
     end
 
+    get '/' do
+      erb :index
+    end
+
     #
     # Respond to the requests for the <b>all gems</b> index
     #
