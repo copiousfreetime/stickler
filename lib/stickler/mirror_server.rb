@@ -6,11 +6,14 @@ module Stickler
 
     # The root directory all local mirrors of upstream repos will be stored.
     # Each mirror will have a directory within the mirror_root
-    attr_reader :mirror
+    attr_reader :mirror_root
+
+    # The mirror repository
+    attr_reader :repo
 
     def initialize( app, options = {} )
-      @app = app
-      @mirror = Repository::Mirror.new( options[:mirror_root] )
+      @app  = app
+      @repo = Repository::Mirror.new( options[:mirror_root] )
       super( app )
     end
 
@@ -19,7 +22,7 @@ module Stickler
       spec = Stickler::SpecLite.new( params[:name], params[:version], params[:platform] )
 
       begin
-        if spec = mirror.mirror( host , spec ) then
+        if spec = @repo.mirror( host , spec ) then
           status 201
           response["Location"] = "/gems/#{spec.file_name}"
           nil
