@@ -16,13 +16,13 @@ module Stickler::Repository
     extend Forwardable
 
     def initialize( root_dir )
-      @root_dir = root_dir
-      @local_repo = ::Stickler::Repository::Local.new( @root_dir )
+      @local_repo = ::Stickler::Repository::Local.new( root_dir )
       @remote_repos = {}
     end
     def_delegators :@local_repo, :uri, :gems_uri, :uri_for_gem, :search_for, 
                                  :push, :delete, :get, :open, 
-                                 :last_modified_time, :full_path_to_gem
+                                 :specs, :latest_specs, :root_dir,
+                                 :last_modified_time, :full_path_to_gem 
 
     #
     # :call-seq:

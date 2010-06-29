@@ -64,6 +64,7 @@ module Stickler::Middleware
     end
 
     get '/' do
+      append_specs
       if @serve_indexes then 
         erb :index
       else
