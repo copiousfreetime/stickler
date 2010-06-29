@@ -19,6 +19,7 @@ describe Stickler::Repository::Remote do
       @pid_file = File.join( @tmp_dir , "rack.pid" )
       @ru_file  = File.join( @spec_dir, "remote_repo.ru" )
       cmd = "rackup --port 6789 --pid #{@pid_file} --daemonize #{@ru_file}"
+      puts cmd
       system cmd
 
       tries = 0

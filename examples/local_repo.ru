@@ -1,3 +1,7 @@
+#-----------------------------------------------------------------------
+# Example rackup file for serving up a single repository.  This repository
+# will respond to index and gem requests.
+#-----------------------------------------------------------------------
 $:.unshift File.expand_path( File.join( File.dirname(__FILE__), "..", "lib" ) )
 
 require 'stickler/middleware/compression'

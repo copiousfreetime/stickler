@@ -1,23 +1,19 @@
 require 'sinatra/base'
+require 'stickler/middleware/index'
 require 'stickler/repository/mirror'
 
-module Stickler
+module Stickler::Middleware
   #
   # A Mirror server keeps gems from one or more upstream gem servers in local
   # repositories.
   #
-  class MirrorServer < ::Sinatra::Base
-    # The root directory all local mirrors of upstream repos will be stored.
-    # Each mirror will have a directory within the mirror_root
-    attr_reader :mirror_root
-
+  class Mirror < ::Stickler::Middleware::Index
     # The mirror repository
     attr_reader :repo
 
     def initialize( app, options = {} )
-      @app  = app
-      @repo = Repository::Mirror.new( options[:mirror_root] )
       super( app )
+      @repo = ::Stickler::Repository::Mirror.new( options[:repo_root] )
     end
 
     def manage( params )
@@ -32,7 +28,7 @@ module Stickler
         else
           not_found "Unable to find gem [#{spec.full_name}] at source #{host}"
         end
-      rescue Stickler::Repository::Mirror::Error => e
+      rescue ::Stickler::Repository::Mirror::Error => e
         error( 409, e.message )
       end
     end
