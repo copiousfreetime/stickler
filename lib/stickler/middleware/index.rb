@@ -67,7 +67,7 @@ module Stickler::Middleware
       if @serve_indexes then 
         erb :index
       else
-        not_found
+        pass
       end
     end
 
