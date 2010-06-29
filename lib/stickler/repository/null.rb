@@ -5,15 +5,15 @@ module Stickler::Repository
   # A null repository.  It is in most respecs like a Repository::Local that has
   # nothing in it.
   #
-  # The response to +repo_root+ is set by default to be the class name, or
+  # The response to +root_dir+ is set by default to be the class name, or
   # whatever is passed to the initializer.
   #
   class Null
     # the root directory of the repository, this is set in the constructor
-    attr_reader :repo_root
+    attr_reader :root_dir
 
-    def initialize( repo_root = self.class.name )
-      @repo_root = repo_root
+    def initialize( root_dir = self.class.name )
+      @root_dir = root_dir
     end
 
     def empty_string( junk = "" )
