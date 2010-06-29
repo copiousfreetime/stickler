@@ -10,7 +10,7 @@
   </thead>
   <tfoot></tfoot>
   <tbody>
-<% @repo.specs.sort_by { |spec| spec.full_name }.each_with_index do |spec, idx| %>
+<% specs.sort_by { |spec| spec.full_name }.each_with_index do |spec, idx| %>
   <tr class="<%= %w[ red grey ][idx % 2]%>">
     <td><a href="/gems/<%= spec.file_name %>"><%= spec.name %></a></td>
     <td align="right"><%= spec.version %></td>
