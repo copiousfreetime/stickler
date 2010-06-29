@@ -52,4 +52,11 @@ describe Stickler::SpecLite do
   it "can be compared against another spec" do
     (@specs[:ruby] =~ @specs[:win]).should == false
   end
+
+  it "can be sorted" do
+    list = @specs.values
+    alib = Stickler::SpecLite.new( 'alib', '4.2' )
+    list << alib
+    list.sort.should == [ alib, @specs[:win], @specs[:ruby] ]
+  end
 end

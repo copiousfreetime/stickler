@@ -9,6 +9,8 @@ module Stickler
   # encapsulates that.
   #
   class SpecLite
+    include Comparable
+
     attr_reader :name
     attr_reader :version
     attr_reader :platform
@@ -51,6 +53,22 @@ module Stickler
       [ name, version, platform.to_s ]
     end
 
+    #
+    # Lets be comparable!
+    #
+    def <=>(other)
+      return 0 if other.object_id == self.object_id
+      other = coerce( other )
+      [ :name, :version, :platform ].each do |method|
+        result = ( self.send( method ).<=>( other.send( method ) ) )
+        return result unless 0 == result
+      end
+      return 0
+    end
+
+    #
+    # See if another Spec is the same as this spec
+    #
     def =~(other)
       other = coerce( other )
       return (other and 
