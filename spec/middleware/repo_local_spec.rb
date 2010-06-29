@@ -2,10 +2,10 @@ require File.expand_path( File.join( File.dirname(__FILE__), "..", "spec_helper.
 require File.expand_path( File.join( File.dirname(__FILE__), "modern_gem_server_behavior.rb" ) )
 require File.expand_path( File.join( File.dirname(__FILE__), "legacy_gem_server_behavior.rb" ) )
 
-require 'stickler/middleware/repo_local'
+require 'stickler/middleware/local'
 require 'stickler/middleware/compression'
 
-describe ::Stickler::Middleware::RepoLocal do
+describe ::Stickler::Middleware::Local do
   def app
     gem_dir = @gem_dir
     ::Rack::Builder.new do
