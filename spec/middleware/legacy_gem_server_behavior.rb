@@ -16,9 +16,7 @@ shared_examples_for "legacy gem server indexes" do
     "/quick/index.rz",
     "/quick/latest_index",
     "/quick/latest_index.rz",
-    "/quick/Marshal.#{Gem.marshal_version}/foo-1.0.0.gemspec.rz",
     "/quick/foo-1.0.0.gemspec.rz",
-    "/quick/Marshal.#{Gem.marshal_version}/bar-1.0.0.gemspec.rz",
     "/quick/bar-1.0.0.gemspec.rz",
     "/quick/does-not-exist-1.2.0.gemspec.rz"
   ]

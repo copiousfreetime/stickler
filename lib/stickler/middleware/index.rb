@@ -2,6 +2,7 @@ require 'sinatra'
 require 'stickler/middleware'
 require 'stickler/middleware/helpers'
 require 'stickler/repository/null'
+require 'stickler/spec_lite'
 
 module Stickler::Middleware
   # Index is a Rack middleware that passes all requests through except for those
@@ -112,6 +113,22 @@ module Stickler::Middleware
       if full_path then
         content_type 'application/x-tar'
         send_file( full_path )
+      else
+        pass
+      end
+    end
+
+    #
+    # Serve up a gemspec.  This is really only used by the child classes.
+    # an Index instance will never have any gemspecs to return
+    #
+    get %r{\A/quick/Marshal.#{Gem.marshal_version}/(.*?)-([0-9.]+)(-.*?)?\.gemspec\.rz\Z} do
+      name, version, platform, with_compression = *params[:captures]
+      spec = Stickler::SpecLite.new( name, version, platform )
+      full_path = @repo.full_path_to_specification( spec )
+      if full_path then
+        self.compression = :deflate # always compressed
+        marshal( eval( IO.read( full_path ) ) )
       else
         pass
       end

@@ -22,7 +22,8 @@ module Stickler::Repository
     def_delegators :@local_repo, :uri, :gems_uri, :uri_for_gem, :search_for, 
                                  :push, :delete, :get, :open, 
                                  :specs, :latest_specs, :root_dir,
-                                 :last_modified_time, :full_path_to_gem 
+                                 :last_modified_time, :full_path_to_gem,
+                                 :full_path_to_specification
 
     #
     # :call-seq:

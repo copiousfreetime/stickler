@@ -14,12 +14,12 @@ describe Stickler::Middleware::Index do
   end
 
   before do
-    @gem_dir = File.expand_path( File.join( File.dirname( __FILE__ ), "tmp" ) )
-    FileUtils.mkdir_p( File.join( @gem_dir, "specifications" ))
+    @webrick_gem_dir = File.expand_path( File.join( File.dirname( __FILE__ ), "tmp" ) )
+    FileUtils.mkdir_p( File.join( @webrick_gem_dir , "specifications" ))
   end
 
   after do
-    FileUtils.rm_rf( @gem_dir )
+    FileUtils.rm_rf( @webrick_gem_dir )
   end
 
   it_should_behave_like "modern gem server indexes"

@@ -5,10 +5,11 @@
 $:.unshift File.expand_path( File.join( File.dirname(__FILE__), "..", "lib" ) )
 
 require 'stickler/middleware/compression'
-require 'stickler/middleware/repo_local'
+require 'stickler/middleware/local'
 
-gem_dir = File.join( File.expand_path( File.dirname( __FILE__ ) ), "data" )
+gem_dir = File.expand_path( File.join( File.dirname( __FILE__ ), *%w[ .. spec data ]))
 
+puts gem_dir
 use ::Stickler::Middleware::Compression
-use ::Stickler::Middleware::RepoLocal, :repo_root => gem_dir
+use ::Stickler::Middleware::Local, :repo_root => gem_dir
 run ::Sinatra::Base

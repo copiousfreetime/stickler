@@ -179,6 +179,9 @@ module Stickler::Repository
       File.join( gems_dir, spec.file_name )
     end
 
+    def full_path_to_specification( spec )
+      File.join( specifications_dir, spec.spec_file_name )
+    end
 
     private
 
@@ -186,10 +189,6 @@ module Stickler::Repository
       [ root_dir, specifications_dir, gems_dir, temp_dir ].each do |dir|
         FileUtils.mkdir_p( dir ) unless File.directory?( dir )
       end
-    end
-
-    def full_path_to_specification( spec )
-      File.join( specifications_dir, spec.spec_file_name )
     end
 
     def install( spec, io )

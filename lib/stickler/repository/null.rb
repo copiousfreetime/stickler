@@ -32,6 +32,7 @@ module Stickler::Repository
     alias :open :nilish
     alias :uri_for_gem :nilish
     alias :full_path_to_gem :nilish
+    alias :full_path_to_specification :nilish
 
     def last_modified_time
       Time.now

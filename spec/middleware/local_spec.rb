@@ -7,16 +7,16 @@ require 'stickler/middleware/compression'
 
 describe ::Stickler::Middleware::Local do
   def app
-    gem_dir = @gem_dir
+    repo_root = @sinatra_gem_dir 
     ::Rack::Builder.new do
       use ::Stickler::Middleware::Compression
-      use ::Stickler::Middleware::Local, :repo_root => gem_dir
+      use ::Stickler::Middleware::Local, :repo_root => repo_root
       run ::Sinatra::Base
     end
   end
 
   before do
-    @gem_dir      = File.join( @spec_dir, "data" )
+    @sinatra_gem_dir = @webrick_gem_dir = @gem_root
   end
 
   it_should_behave_like "modern gem server indexes"

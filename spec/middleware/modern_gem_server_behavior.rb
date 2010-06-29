@@ -10,6 +10,8 @@ shared_examples_for "modern gem server indexes" do
   "/specs.#{Gem.marshal_version}.gz",
   "/latest_specs.#{Gem.marshal_version}",
   "/latest_specs.#{Gem.marshal_version}.gz",
+  "/quick/Marshal.#{Gem.marshal_version}/foo-1.0.0.gemspec.rz",
+  "/quick/Marshal.#{Gem.marshal_version}/bar-1.0.0.gemspec.rz",
   ]
 
   MODERN_URLS.each do |url|

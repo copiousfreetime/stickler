@@ -4,9 +4,9 @@ require 'rubygems/server'
 shared_examples_for "common gem server before after" do
 
   before do
-    @spec_dir     = File.join( @gem_dir, "specifications" )
+    @webrick_spec_dir     = File.join( @webrick_gem_dir, "specifications" )
 
-    @webrick           = ::Gem::Server.new(@gem_dir,4567,false)
+    @webrick           = ::Gem::Server.new(@webrick_gem_dir,4567,false)
     @underlying_server = @webrick.instance_variable_get("@server")
     @webrick_thread    = Thread.new( @webrick ) do |webrick|
       webrick.run
@@ -58,6 +58,8 @@ shared_examples_for "common gem server before after" do
         :body =>            last_response.body
       }.should == verify_webrick
     else
+      puts "webrick: #{verify_webrick[:body]}"
+      #puts "sinatra: #{last_response.body}"
       last_response.status.should == verify_webrick[:status]
     end
 
