@@ -31,7 +31,7 @@ module Stickler::Middleware
     def initialize( app = nil, opts = {} )
       super( app, opts )
       # overwrite the repo that is set in the parent
-      @repo      = Repository::Local.new( opts[:repo_root] )
+      @repo      = ::Stickler::Repository::Local.new( opts[:repo_root] )
     end
 
     before do

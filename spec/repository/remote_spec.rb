@@ -1,5 +1,5 @@
-require File.expand_path( File.join( File.dirname(__FILE__), "spec_helper.rb" ) )
-require File.expand_path( File.join( File.dirname(__FILE__), "repository_api_behavior.rb" ) )
+require File.expand_path( File.join( File.dirname(__FILE__), "..", "spec_helper.rb" ) )
+require File.expand_path( File.join( File.dirname(__FILE__), "api_behavior.rb" ) )
 
 require 'stickler/repository/remote'
 

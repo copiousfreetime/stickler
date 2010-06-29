@@ -1,7 +1,7 @@
 require File.expand_path( File.join( File.dirname(__FILE__), "..", "spec_helper.rb" ) )
 require File.expand_path( File.join( File.dirname(__FILE__), "common_gem_server_helpers.rb" ) )
 
-shared_examples_for "modern gemserver indexes" do
+shared_examples_for "modern gem server indexes" do
 
   it_should_behave_like "common gem server before after"
 
@@ -13,7 +13,7 @@ shared_examples_for "modern gemserver indexes" do
   ]
 
   MODERN_URLS.each do |url|
-    it "serves a modern gemserver index item from #{url}" do
+    it "serves a modern gem server index item from #{url}" do
       should_match_webrick_behavior url
     end
   end

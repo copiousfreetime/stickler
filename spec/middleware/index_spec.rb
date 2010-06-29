@@ -4,7 +4,7 @@ require File.expand_path( File.join( File.dirname(__FILE__), "modern_gem_server_
 require 'stickler/middleware/index'
 require 'stickler/middleware/compression'
 
-describe Stickler::Rack::Index do
+describe Stickler::Middleware::Index do
   def app
     ::Rack::Builder.new do
       use ::Stickler::Middleware::Compression
@@ -22,5 +22,5 @@ describe Stickler::Rack::Index do
     FileUtils.rm_rf( @gem_dir )
   end
 
-  it_should_behave_like "modern gemserver indexes"
+  it_should_behave_like "modern gem server indexes"
 end

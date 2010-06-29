@@ -58,8 +58,6 @@ shared_examples_for "common gem server before after" do
         :body =>            last_response.body
       }.should == verify_webrick
     else
-      puts
-      puts last_response.inspect
       last_response.status.should == verify_webrick[:status]
     end
 

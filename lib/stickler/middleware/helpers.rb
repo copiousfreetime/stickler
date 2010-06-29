@@ -25,7 +25,7 @@ module Stickler::Middleware
     # values in this variable in generating the responses to gem index requests
     #
     # env['stickler.specs'] is a Hash itself, the key being the return value of
-    # +repo_root+ from the Class it is included in, the value for each key is
+    # +root_dir+ from the Class it is included in, the value for each key is
     # the Array of SpecLite's.
     #
     #
@@ -42,7 +42,7 @@ module Stickler::Middleware
       # <tt>#specs_by_repo</tt>
       #
       def specs
-        [ specs_by_repo.values ].flatten
+        [ specs_by_repo.values ].flatten.sort
       end
 
       #
@@ -62,10 +62,10 @@ module Stickler::Middleware
       #
       # The Class that includes this module and wants to use +append_specs+
       # MUST have a +repo+ method. The +repo+ method must +respond_to+ both
-      # +repo_root+ and +specs+.
+      # +root_dir+ and +specs+.
       #
       def append_specs
-        append_spec( self.repo.repo_root, self.repo.specs )
+        append_spec( self.repo.root_dir, self.repo.specs )
       end
 
       #
@@ -74,10 +74,10 @@ module Stickler::Middleware
       #
       # The Class that includes this module and wants to use +append_specs+ MUST
       # have a +repo+ method. The +repo+ method must +respond_to+ both
-      # +repo_root+ and +specs+.
+      # +root_dir+ and +specs+.
       #
       def append_latest_specs
-        append_spec( self.repo.repo_root, self.repo.latest_specs )
+        append_spec( self.repo.root_dir, self.repo.latest_specs )
       end
     end
   end

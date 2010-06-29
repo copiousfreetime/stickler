@@ -5,6 +5,6 @@ require 'stickler/rack/index'
 
 gem_dir = File.join( File.expand_path( File.dirname( __FILE__ ) ), "tmp" )
 
-use ::Stickler::GemServerDeflater
-use ::Stickler::Rack::Index
+use ::Stickler::Middleware::Compression
+use ::Stickler::Middleware::Index, :repo_root => gem_dir
 run ::Sinatra::Base

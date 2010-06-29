@@ -3,6 +3,7 @@ require File.expand_path( File.join( File.dirname(__FILE__), "modern_gem_server_
 require File.expand_path( File.join( File.dirname(__FILE__), "legacy_gem_server_behavior.rb" ) )
 
 require 'stickler/middleware/repo_local'
+require 'stickler/middleware/compression'
 
 describe ::Stickler::Middleware::RepoLocal do
   def app
@@ -18,7 +19,7 @@ describe ::Stickler::Middleware::RepoLocal do
     @gem_dir      = File.join( @spec_dir, "data" )
   end
 
-  it_should_behave_like "modern gemserver indexes"
-  it_should_behave_like "legacy gemserver indexes"
+  it_should_behave_like "modern gem server indexes"
+#  it_should_behave_like "legacy gem server indexes"
 
 end    

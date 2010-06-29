@@ -39,12 +39,12 @@ module Stickler::Middleware
   #
   # == Usage
   #
-  # use Stickler::Rack::Index, :serve_indexes => true
-  # use Stickler::Rack::Index, :serve_indexes => false
+  # use Stickler::Middleware::Index, :serve_indexes => true
+  # use Stickler::Middleware::Index, :serve_indexes => false
   #
   class Index < ::Sinatra::Base
-    include Stickler::Rack::Helpers::Compression
-    include Stickler::Rack::Helpers::Specs
+    include Stickler::Middleware::Helpers::Compression
+    include Stickler::Middleware::Helpers::Specs
 
     # The respository of the Index is a Repository::Null
     attr_reader :repo
@@ -64,14 +64,16 @@ module Stickler::Middleware
     # Respond to the requests for the <b>all gems</b> index
     #
     get %r{\A/specs.#{Gem.marshal_version}(\.gz)?\Z} do |with_compression|
-      serve_indexes( with_compression ) #|| append_specs
+      append_specs
+      serve_indexes( with_compression )
     end
 
     #
     # Respond to the requests for the <b>latest gems</b> index
     #
     get %r{\A/latest_specs.#{Gem.marshal_version}(\.gz)?\Z} do |with_compression|
-      serve_indexes( with_compression ) #|| append_latest_specs
+      append_latest_specs
+      serve_indexes( with_compression )
     end
 
     #
@@ -83,7 +85,7 @@ module Stickler::Middleware
         self.compression = to_compression_flag( with_compression )
         return marshalled_specs( specs )
       else
-        return false
+        return not_found( "No indexes found here" )
       end
     end
 

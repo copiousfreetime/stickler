@@ -24,7 +24,7 @@ shared_examples_for "legacy gem server indexes" do
   ]
 
   LEGACY_URLS.each do |url|
-    it "serves a legacy gemserver index item from #{url}" do
+    it "serves a legacy gem server index item from #{url}" do
       should_match_webrick_behavior url
     end
   end
