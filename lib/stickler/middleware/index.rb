@@ -94,7 +94,7 @@ module Stickler::Middleware
         self.compression = to_compression_flag( with_compression )
         return marshalled_specs( specs )
       else
-        return not_found( "No indexes found here" )
+        pass
       end
     end
 
@@ -110,7 +110,7 @@ module Stickler::Middleware
         content_type 'application/x-tar'
         send_file( full_path )
       else
-        not_found( "Gem #{spec.file_name} is not found " )
+        pass
       end
     end
 

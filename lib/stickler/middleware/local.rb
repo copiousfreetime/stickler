@@ -25,7 +25,7 @@ module Stickler::Middleware
   #   use Stickler::Middleware::Local, :repo_root => '/path/to/repository'
   #
   #   use Stickler::Middleware::Local, :repo_root => '/path/to/repository',
-  #                                        :serve_indexes => true
+  #                                    :serve_indexes => true
   #
   class Local < Index
     def initialize( app = nil, opts = {} )

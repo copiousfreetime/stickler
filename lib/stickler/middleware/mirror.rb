@@ -7,9 +7,23 @@ module Stickler::Middleware
   # A Mirror server keeps gems from one or more upstream gem servers in local
   # repositories.
   #
+  # == Options
+  #
+  # <b>:serve_indexes</b>::   the same as the Index middleware
+  #
+  # <b>:repo_root</b>::       The path that is to be the root of the
+  #                           Repository instance managed by this server.
+  #
+  # The <b>:repo_root</b> option is required.
+  #
+  # == Usage
+  #
+  #   use Stickler::Middleware::Mirror, :repo_root => '/path/to/repository'
+  #
+  #   use Stickler::Middleware::Mirror, :repo_root => '/path/to/repository',
+  #                                     :serve_indexes => true
+  #
   class Mirror < ::Stickler::Middleware::Index
-    # The mirror repository
-    attr_reader :repo
 
     def initialize( app, options = {} )
       super( app )
