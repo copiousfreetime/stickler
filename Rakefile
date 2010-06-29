@@ -19,7 +19,7 @@ Bones {
   history_file   'HISTORY.rdoc'
   rubyforge.name 'copiousfreetime'
 
-  spec.opts << "--color"
+  spec.opts << "--color" << "--format specdoc"
 
   depend_on 'sinatra', '~> 1.0.0'
   depend_on 'addressable', '~> 2.1.2'
