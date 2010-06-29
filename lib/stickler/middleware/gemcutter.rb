@@ -1,15 +1,18 @@
 require 'sinatra/base'
+require 'stickler/middleware'
 require 'stickler/repository/local'
 
-module Stickler
+module Stickler::Middleware
   # 
-  # A piece of middle ware to implement a small section of the gem cutter api
+  # A rack middleware for implementing the gemcutter api
   #
-  class GemCutterApiServer < ::Sinatra::Base
+  class Gemcutter < ::Stickler::Middleware::Index
+    include Stickler::Middleware::Helpers::Compression
+    include Stickler::Middleware::Helpers::Specs
+
     def initialize( app = nil, options = {}  )
-      @app = app
+      super( app, options )
       @repo = Stickler::Repository::Local.new( options[:repo_root] )
-      super( app )
     end
 
     post '/api/v1/gems' do
