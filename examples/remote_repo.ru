@@ -10,6 +10,6 @@ require 'stickler/middleware/compression'
 gem_dir = File.join( File.expand_path( File.dirname( __FILE__ ) ), "tmp" )
 
 use ::Stickler::Middleware::Compression
-use ::Stickler::Middleware::GemCutter, :repo_root => gem_dir
+use ::Stickler::Middleware::Gemcutter, :repo_root => gem_dir
 run ::Sinatra::Base
 

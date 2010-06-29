@@ -1,5 +1,6 @@
 require 'sinatra/base'
 require 'stickler/middleware'
+require 'stickler/middleware/index'
 require 'stickler/repository/local'
 
 module Stickler::Middleware
