@@ -11,7 +11,7 @@ $:.unshift File.expand_path( File.join( File.dirname(__FILE__), "..", "lib" ) )
 require 'stickler/middleware/gemcutter'
 require 'stickler/middleware/compression'
 
-gem_dir = File.join( File.expand_path( File.dirname( __FILE__ ) ), "tmp" )
+gem_dir = File.join( File.expand_path( File.dirname( __FILE__ ) ), "..", "spec", "tmp" )
 
 use ::Stickler::Middleware::Compression
 use ::Stickler::Middleware::Gemcutter, :repo_root => gem_dir

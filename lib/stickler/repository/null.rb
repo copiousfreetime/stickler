@@ -31,6 +31,11 @@ module Stickler::Repository
     alias :get :nilish
     alias :open :nilish
     alias :uri_for_gem :nilish
+    alias :full_path_to_gem :nilish
+
+    def last_modified_time
+      Time.now
+    end
 
     def empty_array( junk = nil )
       []

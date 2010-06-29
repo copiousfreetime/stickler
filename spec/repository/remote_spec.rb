@@ -19,7 +19,7 @@ describe Stickler::Repository::Remote do
       @pid_file = File.join( @tmp_dir , "rack.pid" )
       @ru_file  = File.expand_path( File.join( @spec_dir, "..", "examples", "gemcutter_repo.ru" ) )
       cmd = "rackup --port 6789 --pid #{@pid_file} --daemonize #{@ru_file}"
-      puts cmd
+      #puts cmd
       system cmd
 
       tries = 0
@@ -39,6 +39,7 @@ describe Stickler::Repository::Remote do
     after do
       pid = IO.read( @pid_file ).to_i
       Process.kill( 'KILL', pid )
+      #FileUtils.rm_rf( @tmp_dir, :verbose => true )
       FileUtils.rm_rf( @tmp_dir )
     end
 

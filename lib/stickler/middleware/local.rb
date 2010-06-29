@@ -34,24 +34,5 @@ module Stickler::Middleware
       @repo      = ::Stickler::Repository::Local.new( opts[:repo_root] )
     end
 
-    before do
-      response["Date"] = @repo.last_modified_time.rfc2822
-      cache_control( 'no-cache' )
-    end
-
-    #
-    # Actually serve up the gem
-    #
-    get %r{\A/gems/(.*?)-([0-9.]+)(-.*?)?\.gem\Z} do
-      name, version, platform = *params[:captures]
-      spec = Stickler::SpecLite.new( name, version, platform )
-      full_path = @repo.full_path_to_gem( spec )
-      if full_path then
-        content_type 'application/x-tar'
-        send_file( full_path )
-      else
-        not_found( "Gem #{spec.file_name} is not found " )
-      end
-    end
   end
 end

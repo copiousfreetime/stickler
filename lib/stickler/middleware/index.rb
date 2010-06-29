@@ -56,8 +56,17 @@ module Stickler::Middleware
       super( app )
     end
 
+    before do
+      response["Date"] = @repo.last_modified_time.rfc2822
+      cache_control( 'no-cache' )
+    end
+
     get '/' do
-      erb :index
+      if @serve_indexes then 
+        erb :index
+      else
+        not_found
+      end
     end
 
     #
@@ -86,6 +95,22 @@ module Stickler::Middleware
         return marshalled_specs( specs )
       else
         return not_found( "No indexes found here" )
+      end
+    end
+
+    #
+    # Actually serve up the gem.  This is really only used by the child classes.
+    # an Index instance will never have any gems to return.
+    #
+    get %r{\A/gems/(.*?)-([0-9.]+)(-.*?)?\.gem\Z} do
+      name, version, platform = *params[:captures]
+      spec = Stickler::SpecLite.new( name, version, platform )
+      full_path = @repo.full_path_to_gem( spec )
+      if full_path then
+        content_type 'application/x-tar'
+        send_file( full_path )
+      else
+        not_found( "Gem #{spec.file_name} is not found " )
       end
     end
 
