@@ -110,7 +110,7 @@ module Stickler::Middleware
       name, version, platform = *params[:captures]
       spec = Stickler::SpecLite.new( name, version, platform )
       full_path = @repo.full_path_to_gem( spec )
-      if full_path then
+      if full_path and File.exist?( full_path )then
         content_type 'application/x-tar'
         send_file( full_path )
       else
@@ -126,7 +126,7 @@ module Stickler::Middleware
       name, version, platform, with_compression = *params[:captures]
       spec = Stickler::SpecLite.new( name, version, platform )
       full_path = @repo.full_path_to_specification( spec )
-      if full_path then
+      if full_path and File.exist?( full_path ) then
         self.compression = :deflate # always compressed
         marshal( eval( IO.read( full_path ) ) )
       else
