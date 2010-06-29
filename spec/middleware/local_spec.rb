@@ -10,7 +10,7 @@ describe ::Stickler::Middleware::Local do
     gem_dir = @gem_dir
     ::Rack::Builder.new do
       use ::Stickler::Middleware::Compression
-      use ::Stickler::Middleware::RepoLocal, :repo_root => gem_dir
+      use ::Stickler::Middleware::Local, :repo_root => gem_dir
       run ::Sinatra::Base
     end
   end
