@@ -21,7 +21,8 @@ module Stickler::Repository
       @remote_repos = {}
     end
     def_delegators :@local_repo, :uri, :gems_uri, :uri_for_gem, :search_for, 
-                                 :push, :delete, :get, :open
+                                 :push, :delete, :get, :open, 
+                                 :last_modified_time, :full_path_to_gem
 
     #
     # :call-seq:
