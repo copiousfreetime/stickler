@@ -9,8 +9,8 @@ describe ::Stickler::Repository::Null do
     @repo = ::Stickler::Repository::Null.new
   end
 
-  it "sets the repo_root to the class name" do
-    @repo.repo_root.should == "Stickler::Repository::Null"
+  it "sets the root_dir to the class name" do
+    @repo.root_dir.should == "Stickler::Repository::Null"
   end
 
   it_should_behave_like 'includes Repository::Api'
