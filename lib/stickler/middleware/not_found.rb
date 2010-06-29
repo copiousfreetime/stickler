@@ -1,10 +1,12 @@
 require 'stickler/middleware'
 module Stickler::Middleware
   #
-  # Idea completely taken from rack-contrib
+  # Idea completely taken from rack-contrib, it can function as a middleware
+  # also, and in that case, completely swallows all requests and returns the
+  # 4040 page.
   #
   class NotFound
-    def initialize
+    def initialize( app = nil )
       @body = <<-_
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
