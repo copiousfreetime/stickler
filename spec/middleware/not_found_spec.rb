@@ -1,0 +1,25 @@
+require File.expand_path( File.join( File.dirname(__FILE__), "..", "spec_helper.rb" ) )
+require 'stickler/middleware/not_found'
+
+describe ::Stickler::Middleware::NotFound do
+  def app
+    ::Stickler::Middleware::NotFound.new
+  end
+
+  before do
+    get "/"
+  end
+
+  it "should respond to a 404 on everything"  do
+    get '/'
+    last_response.status.should == 404
+  end
+
+  it "should return a 'text/html' page" do
+    last_response.content_type.should == 'text/html'
+  end
+
+  it "should say to go look somewhere else" do
+    last_response.body.should =~ /Not Found/m
+  end
+end
