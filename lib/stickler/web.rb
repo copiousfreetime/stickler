@@ -14,6 +14,6 @@ module Stickler
     use Stickler::Middleware::Gemcutter, :serve_indexes => false
     use Stickler::Middleware::Mirror,    :serve_indexes => false
     use Stickler::Middleware::Index,     :serve_indexes => true
-    run Stickler::Middleware::NotFound
+    use Stickler::Middleware::NotFound
   end
 end
