@@ -49,6 +49,8 @@ module Stickler::Middleware
     # The respository of the Index is a Repository::Null
     attr_reader :repo
 
+    set :view, File.expand_path( File.join( File.dirname( __FILE__ ), *%w[ .. .. .. views ] ) )
+
     def initialize( app, opts = {} )
       @app           = app
       @repo          = ::Stickler::Repository::Null.new
