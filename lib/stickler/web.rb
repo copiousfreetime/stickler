@@ -1,19 +1,32 @@
+require 'stickler/error'
 require 'stickler/middleware/compression'
 require 'stickler/middleware/gemcutter'
 require 'stickler/middleware/mirror'
 require 'stickler/middleware/index'
-require 'rack/cascade'
+require 'stickler/middleware/not_found'
 
 module Stickler
-  class Web < ::Sinatra::Base
+  class Web
 
-    disable :sessions
-    enable  :logging, :dump_errors, :clean_trace
+    # The directory holding all the repositories
+    attr_reader :stickler_root
 
-    use Stickler::Middleware::Compression
-    use Stickler::Middleware::Gemcutter, :serve_indexes => false
-    use Stickler::Middleware::Mirror,    :serve_indexes => false
-    use Stickler::Middleware::Index,     :serve_indexes => true
-    use Stickler::Middleware::NotFound
-  end
+    def initialize( stickler_root )
+      @stickler_root = File.expand_path( stickler_root )
+      raise ::Stickler::Error, "Stickler root directory '#{@stickler_root}' must already exist" unless File.directory?( @stickler_root )
+      raise ::Stickler::Error, "Stickler root directory '#{@stickler_root}' must be writable" unless File.writable?( @stickler_root )
+    end
+
+    def app
+      root = self.stickler_root
+      Rack::Builder.new do
+        use Stickler::Middleware::Compression
+        use Stickler::Middleware::Gemcutter, :serve_indexes => false, :repo_root => File.join( root, "gemcutter" )
+        use Stickler::Middleware::Mirror,    :serve_indexes => false, :repo_root => File.join( root, "mirror" )
+        use Stickler::Middleware::Index,     :serve_indexes => true
+        use Stickler::Middleware::NotFound
+        run Sinatra::Base
+      end
+    end
+ end
 end

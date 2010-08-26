@@ -1,0 +1,106 @@
+#!/bin/env ruby
+
+require 'stickler'
+require 'trollop'
+
+SUB_COMMANDS = %w[ start stop ]
+exec_name = File.basename( $0 )
+
+#----------------------------------------------------------------------
+# parse through the top level global options, this is intercept
+# --version and --help
+#----------------------------------------------------------------------
+global_options = Trollop::options do
+  version "Stickler #{Stickler::VERSION}"
+  banner <<-_
+Stickler server control
+
+  Usage: #{exec_name} #{SUB_COMMANDS.join("|")} [options] /path/to/stickler/root
+
+  Examples:
+    #{exec_name} start /var/lib/stickler
+    #{exec_name} stop --pid /var/run/stickler
+
+  Options:
+_
+  stop_on SUB_COMMANDS
+end
+
+#----------------------------------------------------------------------
+# sub command processing
+#----------------------------------------------------------------------
+cmd = ARGV.shift
+Trollop::die "unknown sub command #{cmd.inspect}" unless SUB_COMMANDS.include?( cmd )
+
+#----------------------------------------------------------------------
+# All for the display of a default
+#----------------------------------------------------------------------
+DEFAULT_HANDLERS = %w[ thin mongrel webrick ]
+def rack_handler( handlers = DEFAULT_HANDLERS )
+  handlers = Array( handlers )
+  handlers.each do |name|
+    begin
+      klass = Rack::Handler.get( name.downcase )
+      return klass.name.gsub(/.*::/, '').downcase
+    rescue LoadError
+    rescue NameError
+    end
+  end
+  Trollop::die "No Server handler (#{handlers.join(",")}) found."
+end
+
+#----------------------------------------------------------------------
+# option parsing of the sub command, all subcommands have the same
+# options
+#----------------------------------------------------------------------
+rack_options = Trollop::options do
+  banner <<-_
+Usage: #{exec_name} #{cmd} [options]
+
+  Options:
+_
+  opt :daemonize, "Daemonize the server", :default => false
+  opt :Host, "The host address to bind to", :type => :string, :default =>'0.0.0.0'
+  opt :pid, "Path to write a pid file to after daemonizing", :type => :int
+  opt :Port, "The port to bind to", :type => :int, :default => 6789
+  opt :server, "The rack handler: thin, mongrel, webrick, etc", :type => String, :default => rack_handler
+end
+
+#----------------------------------------------------------------------
+# validate the sole argument, the stickler root directory
+#----------------------------------------------------------------------
+stickler_root = ARGV.shift
+Trollop::die "Stickler root argument required" unless stickler_root
+
+stickler_root = File.expand_path( stickler_root )
+Trollop::die "Stickler root directory '#{stickler_root}' must already exist" unless File.directory?( stickler_root )
+Trollop::die "Stickler root directory '#{stickler_root}' must be writable" unless File.writable?( stickler_root )
+
+rack_handler( rack_options[:server] )
+rack_options[:pid] ||= File.join(stickler_root, "#{exec_name}.pid" )
+rack_options[:app] = ::Stickler::Web.new( stickler_root ).app
+# monkey patch Rack::Server since it ignores its the :app option
+# when the documentation states it will use it over :config
+class Rack::Server
+  def app
+    @app ||= options[:app]
+  end
+end
+
+case cmd
+when "start"
+  ::Rack::Server.new(rack_options).start if cmd == "start"
+when "stop"
+  pid = Float( File.read( rack_options[:pid] ) ).to_i
+  Process.kill( "INT", pid )
+  20.times do
+    begin
+      Process.kill( 0, pid )
+      sleep 0.1
+    rescue Errno::ESRCH
+      exit 0
+    end
+  end
+  Process.kill( "KILL", pid )
+end
+exit 0
