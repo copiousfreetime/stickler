@@ -60,11 +60,16 @@ Usage: #{exec_name} #{cmd} [options]
   Options:
 _
   opt :daemonize, "Daemonize the server", :default => false
-  opt :Host, "The host address to bind to", :type => :string, :default =>'0.0.0.0'
+  opt :host, "The host address to bind to", :type => :string, :default =>'0.0.0.0'
   opt :pid, "Path to write a pid file to after daemonizing", :type => :int
-  opt :Port, "The port to bind to", :type => :int, :default => 6789
+  opt :port, "The port to bind to", :type => :int, :default => 6789
   opt :server, "The rack handler: thin, mongrel, webrick, etc", :type => String, :default => rack_handler
 end
+
+# case changes for rack handlers, don't ask my why.  I'm keeping the
+# options on the commandline all the same for consistency.
+rack_options[:Host] = rack_options.delete(:host)
+rack_options[:Port] = rack_options.delete(:port)
 
 #----------------------------------------------------------------------
 # validate the sole argument, the stickler root directory
@@ -79,17 +84,15 @@ Trollop::die "Stickler root directory '#{stickler_root}' must be writable" unles
 rack_handler( rack_options[:server] )
 rack_options[:pid] ||= File.join(stickler_root, "#{exec_name}.pid" )
 rack_options[:app] = ::Stickler::Web.new( stickler_root ).app
-# monkey patch Rack::Server since it ignores its the :app option
-# when the documentation states it will use it over :config
-class Rack::Server
-  def app
-    @app ||= options[:app]
-  end
-end
 
 case cmd
 when "start"
-  ::Rack::Server.new(rack_options).start if cmd == "start"
+  # work around until
+  # http://github.com/rack/rack/commit/c73b474525bace3f059a130b15413abd4d917086
+  # makes it into a release.
+  r = ::Rack::Server.new(rack_options)
+  r.instance_variable_set('@app', rack_options[:app])
+  r.start
 when "stop"
   pid = Float( File.read( rack_options[:pid] ) ).to_i
   Process.kill( "INT", pid )
