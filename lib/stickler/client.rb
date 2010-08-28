@@ -14,7 +14,7 @@ module Stickler
     end
 
     def parser
-      me = self
+      me = self # scoping forces this
       @parser ||= Trollop::Parser.new do
         banner me.class.banner
         opt :server, "The gem or stickler server URL", :type => :string, :default => Gem.sources.first
@@ -29,6 +29,7 @@ module Stickler
         yield parser if block_given?
         return o
       end
+      return opts
     end
 
     def remote_repo_for( opts )
@@ -38,3 +39,4 @@ module Stickler
 end
 
 require 'stickler/client/push'
+require 'stickler/client/yank'
