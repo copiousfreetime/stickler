@@ -1,2 +1,45 @@
 #!/usr/bin/env ruby
 
+require 'stickler'
+require 'stickler/client'
+
+SUB_COMMANDS = %w[ push yank mirror ]
+exec_name = File.basename( $0 )
+
+#----------------------------------------------------------------------
+# parse through the top level global options, this is intercept
+# --version and --help
+#----------------------------------------------------------------------
+global_options = Trollop::options do
+  version "Stickler #{Stickler::VERSION}"
+  banner <<-_
+Stickler server interaction
+
+  Usage: #{exec_name} #{SUB_COMMANDS.join("|")} [options]
+
+  Examples:
+    #{exec_name} push ./my_gem-1.0.0.gem --server http://stickler.example.com/
+    #{exec_name} yank my_gem --version 1.0.0 --server http://stickler.example.com/
+    #{exec_name} mirror third_party --version 0.4.2 --upstream http://rubygems.org/ --server http://stickler.example.com/
+    #{exec_name} mirror --help
+_
+
+  stop_on SUB_COMMANDS
+end
+
+#----------------------------------------------------------------------
+# sub command processing
+#----------------------------------------------------------------------
+cmd = ARGV.shift
+Trollop::die "unknown sub command #{cmd.inspect}" unless SUB_COMMANDS.include?( cmd )
+
+
+case cmd
+when "push"
+  ::Stickler::Client::Push.new( ARGV ).run
+when "yank"
+  ::Stickler::Client::Yank.new( ARGV ).run
+when "mirror"
+  ::Stickler::Client::Mirror.new( ARGV ).run
+end
+

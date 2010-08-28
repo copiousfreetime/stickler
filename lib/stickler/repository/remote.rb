@@ -1,6 +1,7 @@
 require 'resourceful'
 require 'stickler/repository'
 require 'stickler/repository/api'
+require 'stickler/repository/rubygems_authenticator'
 require 'stringio'
 
 module ::Stickler::Repository
@@ -13,10 +14,15 @@ module ::Stickler::Repository
     # the http client
     attr_reader :http
 
-    def initialize( repo_uri )
+    def initialize( repo_uri, options = {}   )
+      options[:authenticator] ||= Stickler::Repository::RubygemsAuthenticator.new
+      options[:cache_manager] ||= Resourceful::InMemoryCacheManager.new
+      if options.delete(:debug) then
+        options[:logger]      ||= Resourceful::StdOutLogger.new
+      end
+
       @uri        = Addressable::URI.parse( ensure_http( ensure_trailing_slash( repo_uri ) ) )
-      @http       = Resourceful::HttpAccessor.new( :cache_manager => Resourceful::InMemoryCacheManager.new )
-#                                                   :logger => Resourceful::StdOutLogger.new )
+      @http       = Resourceful::HttpAccessor.new( options )
       @specs_list = nil
     end
 
