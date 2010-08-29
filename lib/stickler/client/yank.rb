@@ -6,7 +6,7 @@ module Stickler
 Remove a gem from the gemserver's index.  
 It will still be available for direct download.
 
-Usage: stickler yank [options] --gem-verion x.y.z gem
+Usage: stickler yank [options] --gem-version x.y.z gem
 
   Options:
 _
