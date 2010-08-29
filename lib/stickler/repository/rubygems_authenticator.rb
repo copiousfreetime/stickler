@@ -1,3 +1,5 @@
+require 'addressable/uri'
+
 module Stickler::Repository
   #
   # When talking to rubygems itself, the rubygems_api key is required.
@@ -5,12 +7,16 @@ module Stickler::Repository
   # talking to matches the rubygems host
   #
   class RubygemsAuthenticator
+    def self.rubygems_uri
+      @rubygems_uri ||= Addressable::URI.parse( "https://rubygems.org" )
+    end
+
     def credentials
       Gem.configuration.rubygems_api_key
     end
 
     def rubygems_uri
-      @rubygems_uri ||= Addressable::URI.parse( "https://rubygems.org" )
+      self.class.rubygems_uri
     end
 
     def can_handle?( request )
