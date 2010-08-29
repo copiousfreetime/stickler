@@ -17,7 +17,7 @@ module Stickler
       me = self # scoping forces this
       @parser ||= Trollop::Parser.new do
         banner me.class.banner
-        opt :server, "The gem or stickler server URL", :type => :string, :default => Gem.sources.first
+        opt :server, "The gem or stickler server URL", :type => :string, :required => true
         opt :debug, "Output debug information for the server interaction", :default => false
       end
     end
@@ -40,3 +40,4 @@ end
 
 require 'stickler/client/push'
 require 'stickler/client/yank'
+require 'stickler/client/mirror'
