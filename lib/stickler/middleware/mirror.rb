@@ -42,8 +42,10 @@ module Stickler::Middleware
         else
           not_found "Unable to find gem [#{spec.full_name}] at source #{host}"
         end
-      rescue ::Stickler::Repository::Mirror::Error => e
-        error( 409, e.message )
+      rescue ::Stickler::Repository::Mirror::ConflictError => ce
+        error( 409, ce.message )
+      rescue ::Stickler::Repository::Mirror::NotFoundError => nfe
+        not_found nfe.message
       end
     end
 

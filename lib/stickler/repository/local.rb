@@ -183,6 +183,15 @@ module Stickler::Repository
       File.join( specifications_dir, spec.spec_file_name )
     end
 
+    def gem_file_exist?( spec )
+      File.exist?( full_path_to_gem( spec ) )
+    end
+
+    def specification_file_exist?( spec )
+      File.exist?( full_path_to_specification( spec ) )
+    end
+
+
     private
 
     def setup_dirs
@@ -228,14 +237,6 @@ module Stickler::Repository
     def remove_file( path )
       return false unless File.exist?( path )
       return true  if File.unlink( path ) > 0
-    end
-
-    def gem_file_exist?( spec )
-      File.exist?( full_path_to_gem( spec ) )
-    end
-
-    def specification_file_exist?( spec )
-      File.exist?( full_path_to_specification( spec ) )
     end
 
     def specification_from_gem_file( path )

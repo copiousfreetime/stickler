@@ -11,7 +11,8 @@ module Stickler::Repository
   # and store in the Local instance
   #
   class Mirror
-    class Error < ::Stickler::Repository::Error ; end
+    class ConflictError < ::Stickler::Repository::Error ; end
+    class NotFoundError < ::Stickler::Repository::Error ; end
 
     extend Forwardable
 
@@ -34,17 +35,18 @@ module Stickler::Repository
     #
     def mirror( host, spec )
       specs = @local_repo.search_for( spec )
-      raise Error, "gem #{spec.full_name} already exists" unless specs.empty?
+      raise ConflictError, "gem #{spec.full_name} already exists" unless specs.empty?
 
       repo = remote_repo_for( host )
       repo.open( spec ) do |io|
         @local_repo.add( io )
       end
+      raise NotFoundError, "Unable to find gem #{spec.full_name} on #{host}" unless @local_repo.gem_file_exist?( spec )
       return spec 
     end
 
     def remote_repo_for( host )
-      @remote_repos[host] ||= ::Stickler::Repository::Remote.new( host )
+      @remote_repos[host] ||= ::Stickler::Repository::Remote.new( host, :debug => true )
     end
   end
 end

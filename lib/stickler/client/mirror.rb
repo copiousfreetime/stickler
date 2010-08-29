@@ -52,9 +52,10 @@ _
         resp = resource.post
         $stdout.puts "OK -> #{repo.uri.join(resp.headers['Location'])}"
       rescue Resourceful::UnsuccessfulHttpRequestError => he
-        $stdout.puts "ERROR -> #{he.http_response.code} #{Resourceful::Response::CODE_NAMES[he.http_response.code]}"
+        resp = he.http_response
+        $stdout.puts "ERROR -> #{resp.body}"
       rescue StandardError => e
-        $stdout.puts "ERROR: #{e.message}"
+        $stdout.puts "ERROR -> #{e.message}"
      end
     end
   end
