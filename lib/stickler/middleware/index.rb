@@ -3,6 +3,7 @@ require 'stickler/middleware'
 require 'stickler/middleware/helpers'
 require 'stickler/repository/null'
 require 'stickler/spec_lite'
+require 'stickler/logable'
 
 module Stickler::Middleware
   # Index is a Rack middleware that passes all requests through except for those
@@ -46,6 +47,7 @@ module Stickler::Middleware
   class Index < ::Sinatra::Base
     include Stickler::Middleware::Helpers::Compression
     include Stickler::Middleware::Helpers::Specs
+    include Stickler::Logable
 
     # The respository of the Index is a Repository::Null
     attr_reader :repo

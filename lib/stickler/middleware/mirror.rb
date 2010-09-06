@@ -36,15 +36,19 @@ module Stickler::Middleware
 
       begin
         if spec = @repo.mirror( host , spec ) then
+          logger.info("Mirrored #{spec.file_name}")
           status 201
           response["Location"] = "/gems/#{spec.file_name}"
           nil
         else
+          logger.info( "Unable to find #{spec.full_name} at #{host}" )
           not_found "Unable to find gem [#{spec.full_name}] at source #{host}"
         end
       rescue ::Stickler::Repository::Mirror::ConflictError => ce
+        logger.error( ce.message )
         error( 409, ce.message )
       rescue ::Stickler::Repository::Mirror::NotFoundError => nfe
+        logger.error( nfe.message )
         not_found nfe.message
       end
     end
@@ -58,5 +62,4 @@ module Stickler::Middleware
     end
   end
 end
-
 

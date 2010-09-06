@@ -33,8 +33,10 @@ module Stickler::Middleware
     post '/api/v1/gems' do
       begin
         spec = @repo.add( request.body )
+        logger.info( "Pushed #{spec.full_name}" )
         return spec.to_s
       rescue Stickler::Repository::Error => e
+        logger.error( "Error adding #{spec.full_name} to repo : #{e}" )
         error( 500, "Error adding gem to repo: #{e}" )
       end
     end
@@ -43,8 +45,10 @@ module Stickler::Middleware
     delete '/api/v1/gems/yank' do
       spec = Stickler::SpecLite.new( params[:gem_name], params[:version] )
       if s = @repo.yank( spec ) then
+        logger.info( "Yanked #{spec.full_name}" )
         return "Yanked #{s.to_s}"
       else
+        logger.warn( "Did not Yank #{spec.full_name}" )
         error( 503, "Did not Yank #{spec.to_s}" )
       end
     end
@@ -54,6 +58,7 @@ module Stickler::Middleware
       full_name, name, version, platform = *params[:captures]
       spec = Stickler::SpecLite.new( name, version, platform )
       @repo.delete( spec )
+      logger.info( "Deleted #{spec.full_name}" )
       return "deleted gem #{spec.full_name}"
     end
   end

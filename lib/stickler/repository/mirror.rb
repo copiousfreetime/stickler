@@ -16,6 +16,8 @@ module Stickler::Repository
 
     extend Forwardable
 
+    include Stickler::Logable
+
     def initialize( root_dir )
       @local_repo = ::Stickler::Repository::Local.new( root_dir )
       @remote_repos = {}
@@ -42,6 +44,7 @@ module Stickler::Repository
         @local_repo.add( io )
       end
       raise NotFoundError, "Unable to find gem #{spec.full_name} on #{host}" unless @local_repo.gem_file_exist?( spec )
+      logger.info( "Downloaded #{spec.full_name} from #{host} and adding to repo" )
       return spec 
     end
 
