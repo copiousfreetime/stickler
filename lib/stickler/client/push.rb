@@ -1,3 +1,4 @@
+require 'trollop'
 module Stickler
   class Client
     class Push < Stickler::Client

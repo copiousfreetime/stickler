@@ -7,11 +7,15 @@ end
 task :default => 'spec:run'
 task 'gem:release' => 'spec:run'
 
+$: << "lib"
+require 'stickler/version'
+
 Bones {
   name 'stickler'
   authors 'Jeremy Hinegardner'
   email   'jeremy@hinegardner.org'
   url     'http://rubygems.org/gems/stickler'
+  version Stickler::VERSION
 
   ruby_opts      %w[-W0 -rubygems]
   readme_file    'README.rdoc'
