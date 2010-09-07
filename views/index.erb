@@ -10,8 +10,8 @@
   <ol>
   <% specs_by_name.keys.sort.each do |name| %>
     <li><div class="gem">
-        <strong><%= specs_by_name[name].first.name %></strong>
-        (<%= specs_by_name[name].sort_by{ |spec| spec.full_name }.collect{ |spec| "<a href=\"/gems/#{spec.file_name}\">#{spec.version_platform}</a>" }.reverse.join(" ") %>)
+        <h3><%= specs_by_name[name].first.name %></h3>
+        <strong>Versions:<%= specs_by_name[name].sort_by{ |spec| spec.full_name }.collect{ |spec| "<a href=\"/gems/#{spec.file_name}\">#{spec.version_platform}</a>" }.reverse.join(" ") %></strong>
         </div>
     </li>
   <% end %>
