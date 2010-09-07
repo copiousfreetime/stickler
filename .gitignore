@@ -10,3 +10,4 @@ announcement.txt
 spec/tmp
 version.txt
 *.pid
+tmp
