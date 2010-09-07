@@ -46,6 +46,38 @@ module Stickler::Middleware
       end
 
       #
+      # return the specs as a hash of lists, keyedy by gemname
+      #
+      def specs_by_name
+        specs_grouped_by_name( specs )
+      end
+
+      #
+      # Return all the specs as a hash of specs_by_name.  The keys
+      # in this case are the first character of the gem name
+      #
+      def specs_by_first_upcase_char
+        by_char = Hash.new{ |h,k| h[k] = Array.new }
+        specs.each do |spec|
+          by_char[spec.name[0...1].upcase] << spec
+        end
+
+        by_char.keys.each { |k| by_char[k] = specs_grouped_by_name(by_char[k]) }
+        return by_char
+      end
+
+      #
+      # Given a list of specs, this will group them by name
+      #
+      def specs_grouped_by_name( list )
+        by_name = Hash.new{ |h,k| h[k] = Array.new }
+        list.each do |spec|
+          by_name[spec.name.downcase] << spec
+        end
+        return by_name
+      end
+
+      #
       # Append spec or array of specs to the current list of specs for this key.
       #
       def append_spec( key, spec_or_array_of_specs )

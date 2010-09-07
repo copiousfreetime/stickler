@@ -1,19 +1,19 @@
 <div id="header">
-  <h1>Available Gems</h1>
+  <h1>Gems on <%= Socket.gethostname %></h1>
 </div>
-<table class="gem" summary="This table is a list of the available gems.">
-  <thead>
-    <tr>
-      <th>Gem name</th>
-      <th>Version</th>
-    </tr>
-  </thead>
-  <tfoot></tfoot>
-  <tbody>
-<% specs.sort_by { |spec| spec.full_name }.each_with_index do |spec, idx| %>
-  <tr class="<%= %w[ red grey ][idx % 2]%>">
-    <td><a href="/gems/<%= spec.file_name %>"><%= spec.name %></a></td>
-    <td align="right"><%= spec.version %></td>
-  </tr>
-<% end %>
-</table>
+<div id="letterbox">
+<ol>
+  <%= specs_by_first_upcase_char.keys.sort.collect{ |k| "<li><a href=\"?char=#{k}\">#{k}</a></li>" }.join("") %>
+</ol>
+</div>
+<div class="gem_list">
+  <ol>
+  <% specs_by_name.keys.sort.each do |name| %>
+    <li><div class="gem">
+        <strong><%= specs_by_name[name].first.name %></strong>
+        (<%= specs_by_name[name].sort_by{ |spec| spec.full_name }.collect{ |spec| "<a href=\"/gems/#{spec.file_name}\">#{spec.version_platform}</a>" }.reverse.join(" ") %>)
+        </div>
+    </li>
+  <% end %>
+  </ol>
+</div>

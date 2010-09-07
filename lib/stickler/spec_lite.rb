@@ -22,11 +22,7 @@ module Stickler
     end
 
     def full_name
-      if platform == Gem::Platform::RUBY or platform.nil? then
-        name_version
-      else
-        "#{name_version}-#{platform}"
-      end
+      "#{name}-#{version_platform}"
     end
     alias :to_s :full_name
 
@@ -40,6 +36,14 @@ module Stickler
 
     def name_version
       "#{name}-#{version}"
+    end
+
+    def version_platform
+      if platform == Gem::Platform::RUBY or platform.nil? then
+        version.to_s
+      else
+        "#{version}-#{platform}"
+      end
     end
 
     def to_a
