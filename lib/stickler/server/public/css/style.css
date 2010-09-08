@@ -1,18 +1,15 @@
-body { background-color: #b9b9b9; }
-.container { background-color: #EAEAEA; }
-.header h1 { font-weight: bold; text-align: center; color: #3C110A; padding: 1em; }
+body { background-color: #fcfcfc}
+.container { background-color: #ffffff; border-left: 2px solid #e9e9e9; border-right: 2px solid #e9e9e9; }
+.header h1 { font-weight: bold; text-align: center; color: #A11A00; padding: 1em; }
 
-ol { list-style: none; }
-
-.navlist { background-color: #b9b9b9; border-top: 2px solid #540000; border-bottom: 2px solid #540000;}
-.navlist ol { text-align: center; margin-bottom: 0; }
+.navlist { background-color: #ededed; border-top: 2px solid #ddd; border-bottom: 2px solid #ddd;}
+.navlist ol { text-align: center; margin-bottom: 0; list-style: none;}
 .navlist ol li { display: inline-block; padding: 0px 3px 0px 3px; }
-.navlist ol li a { text-decoration: none; color: #540000;}
-.navlist ol li a:hover { font-weight: bold; background-color: #540000;  color: #b9b9b9; }
+.navlist ol li a { text-decoration: none; color: #393939;}
+.navlist ol li a:hover { font-weight: bold; background-color: #fff;  color: #333333; }
 
-/*
-.gem { margin: 20px; border: 2px solid red; }
-*/
-.gem { background-color: #FCE795; padding: 1em; margin-bottom: 20px; -moz-border-radius: 10px; border-radius: 10px; border: 2px solid #b8a86d;}
-.gem .name {  text-align: left; vertical-align: top; display: inline-block; width: 50%; }
-.gem .version { text-align: right; vertical-align: top; display: inline-block; width: 49%; }
+.gemlist ol { list-style: none; }
+.gemlist li { border-bottom: 2px solid #333; }
+.gem { margin-top: 20px; margin-bottom: 20px; }
+.gem .name {  text-align: left; vertical-align: top; display: inline-block; width: 50%; letter-spacing: 0.2em; font-weight: 900;}
+.gem .version { text-align: right; vertical-align: top; display: inline-block; width: 49%; color: #939393;}
