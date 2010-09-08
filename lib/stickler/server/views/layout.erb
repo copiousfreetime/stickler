@@ -5,29 +5,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
   <head>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-    <style type="text/css" media="screen">
-      * { margin: 0; padding: 0; border: 0; outline: 0; }
-      div.clear { clear: both; }
-      body { background: #eeeeee; margin: 0; padding: 0; }
-      #wrap { width: 1000px; margin: 0 auto; padding: 30px 50px 20px 50px;
-              background: #fff; border-left: 1px solid #DDD;
-              border-right: 1px solid #DDD; }
-      #header { margin: 0 auto 25px auto; }
-      #letterbox{ text-align: center; margin: 0 auto 25px auto; width: 100%; } 
-      ol, ul { list-style: none; }
-      li { display: inline-block; }
-      li a { font-weight: 900; padding: 20px 7px 20px; }
-      h1 { margin: 0; font-size: 36px; color: #981919; text-align: center; }
-      h2 { margin: 0; font-size: 22px; color: #333333; }
-      h3 { margin: 0; font-size: 18px; color: #983333; }
-      .gem_list ol li { display: block; padding: 8px; padding-left: 1.8em; border-top: 1px solid #B4AC99; }
-      .gem_list ol li strong { display: block; padding-left: 1.8em; }
-      .gem_list ol li:first-child { border: none; }
-    </style>
+    <link rel="stylesheet" href="css/blueprint/screen.css" type="text/css" media="screen, projection" />
+    <!--[if lt IE 8]>
+      <link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection" />
+    <![endif]-->
+    <link rel="stylesheet" href="css/style.css" type="text/css" media="screen, projection" />
     <title>Stickler</title>
   </head>
   <body>
-    <div id="wrap">
+    <div class="container">
       <%= yield %>
     </div>
   </body>
