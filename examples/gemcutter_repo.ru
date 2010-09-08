@@ -1,4 +1,6 @@
 #-----------------------------------------------------------------------
+# -*- vim: set ft=ruby: -*-
+#
 # An Example remote repository that implements all the methods that are
 # required to satisfy being talked to by a Respository::Remote client.
 # This means it needs to speak:

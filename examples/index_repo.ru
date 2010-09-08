@@ -1,4 +1,6 @@
 #-----------------------------------------------------------------------
+#-*- vim: set ft=ruby: -*-
+#
 # Example rackup file for serving up a null repository.  This really 
 # would never be used in the wild, but it shows the basics of what 
 # is required to setup a stickler webstack

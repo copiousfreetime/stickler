@@ -1,4 +1,6 @@
 #-----------------------------------------------------------------------
+#-*- vim: set ft=ruby: -*-
+#
 # Example repository for serving up a Mirror repository.  This repo
 # will respond to mirroring requests and mirror gems from a remote
 # repository locally.

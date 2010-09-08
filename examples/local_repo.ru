@@ -1,4 +1,6 @@
 #-----------------------------------------------------------------------
+#-*- vim: set ft=ruby: -*-
+#
 # Example rackup file for serving up a single repository.  This repository
 # will respond to index and gem requests.
 #-----------------------------------------------------------------------
