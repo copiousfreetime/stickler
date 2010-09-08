@@ -9,7 +9,10 @@ body { background-color: #fcfcfc}
 .navlist ol li a:hover { font-weight: bold; background-color: #fff;  color: #333333; }
 
 .gemlist ol { list-style: none; }
-.gemlist li { border-bottom: 2px solid #333; }
+.gemlist li { border-bottom: 2px solid #e9e9e9; }
 .gem { margin-top: 20px; margin-bottom: 20px; }
 .gem .name {  text-align: left; vertical-align: top; display: inline-block; width: 50%; letter-spacing: 0.2em; font-weight: 900;}
 .gem .version { text-align: right; vertical-align: top; display: inline-block; width: 49%; color: #939393;}
+
+.letter-start a { text-decoration: none; }
+.letter-start h2 { font-weight: 900; color: #A11A00; text-align: center; }

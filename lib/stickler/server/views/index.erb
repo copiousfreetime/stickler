@@ -1,9 +1,8 @@
-<div class="header prepend-4 span-17 last" ><h1>Gems on <%= Socket.gethostname.split(".").first %></h1></div>
+<div class="header prepend-4 span-17 last" name="top" ><h1>Gems on <%= Socket.gethostname.split(".").first %></h1></div>
 <div class="prepend-4 span-17 last">
   <div class="navlist large">
     <ol>
-      <!-- <%= specs_by_first_upcase_char.keys.sort.collect{ |k| "<li><strong><a href=\"?char=#{k}\">#{k}</a></strong></li>" }.join("") %> -->
-      <%= ("A".."Z").to_a.collect{ |k| "<li><strong><a href=\"?char=#{k}\">#{k}</a></strong></li>" }.join("") %>
+      <%= specs_by_first_upcase_char.keys.sort.collect{ |k| "<li><strong><a href=\"##{k}\">#{k}</a></strong></li>" }.join("") %>
     </ol>
   </div>
 </div>
@@ -12,15 +11,19 @@
 
 <div class="prepend-4 span-17 last">
   <div class="gemlist" >
+  <% specs_by_first_upcase_char.keys.sort.each do |char| %>
     <ol>
-      <% specs_by_name.keys.sort.each do |name| %>
-        <li>
-          <div class="gem">
-            <div class="name"><h3><%= specs_by_name[name].first.name %></h3></div>
-            <div class="version"><strong>Version(s):</strong><br /><%= specs_by_name[name].sort_by{ |spec| spec.full_name }.collect{ |spec| "<a href=\"/gems/#{spec.file_name}\">#{spec.version_platform}</a>" }.reverse.join(" ") %></strong></div>
-          </div>
-        </li>
+      <div class="letter-start"><a name="<%= char %>" href="#top" ><h2><%= char %></h2></a></div>
+      <% specs_by_first_upcase_char[char].keys.sort.each do |name|
+           spec_group = specs_by_first_upcase_char[char][name] %>
+      <li>
+        <div class="gem">
+          <div class="name"><h3><%= spec_group.first.name %></h3></div>
+          <div class="version"><strong>Version(s):</strong><br /><%= spec_group.sort_by{ |spec| spec.full_name }.collect{ |spec| "<a href=\"/gems/#{spec.file_name}\">#{spec.version_platform}</a>" }.reverse.join(" ") %></strong></div>
+        </div>
+      </li>
       <% end %>
     </ol>
+  <% end %>
   </div>
 </div>
