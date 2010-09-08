@@ -83,7 +83,7 @@ Trollop::die "Stickler root directory '#{stickler_root}' must be writable" unles
 
 rack_handler( rack_options[:server] )
 rack_options[:pid] ||= File.join(stickler_root, "#{exec_name}.pid" )
-rack_options[:app] = ::Stickler::Web.new( stickler_root ).app
+rack_options[:app] = ::Stickler::Server.new( stickler_root ).app
 
 case cmd
 when "start"

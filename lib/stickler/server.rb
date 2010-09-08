@@ -4,9 +4,10 @@ require 'stickler/middleware/gemcutter'
 require 'stickler/middleware/mirror'
 require 'stickler/middleware/index'
 require 'stickler/middleware/not_found'
+require 'rack/commonlogger'
 
 module Stickler
-  class Web
+  class Server
 
     # The directory holding all the repositories
     attr_reader :stickler_root
@@ -20,6 +21,7 @@ module Stickler
     def app
       root = self.stickler_root
       Rack::Builder.new do
+        use Rack::CommonLogger
         use Stickler::Middleware::Compression
         use Stickler::Middleware::Gemcutter, :serve_indexes => false, :repo_root => File.join( root, "gemcutter" )
         use Stickler::Middleware::Mirror,    :serve_indexes => false, :repo_root => File.join( root, "mirror" )
