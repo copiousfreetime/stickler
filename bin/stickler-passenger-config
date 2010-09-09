@@ -58,6 +58,7 @@ begin
 #-----------------------------------------------------------------------
 # config.ru for use with passenger deployed Stickler
 #-----------------------------------------------------------------------
+require 'rubygems' if RUBY_VERSION < "1.9"
 require 'stickler'
 run ::Stickler::Server.new( "#{stickler_root}" ).app
 
@@ -75,9 +76,9 @@ case cmd
 when "apache2"
   puts "Place the follwing configuration options into an appropriate"
   puts "Apache configuration file. Try `/etc/httpd/conf.d/stickler.conf'."
-  puts
 
   puts <<-__apache__
+
     <VirtualHost *:80>
          ServerName #{server_name}
          # if you need some other hostname to add
@@ -89,25 +90,22 @@ when "apache2"
              Options -MultiViews
          </Directory>
     </VirtualHost>
+
   __apache__
 when "nginx"
-  puts "Integrate the following into your Nginx configuration file."
-  puts
+  puts "Integrate the following configuration option into your Nginx configuration file."
   puts <<-__nginx__
-  http {
-      ...
+
       server {
           listen 80;
           server_name #{server_name};
           root #{doc_root};
           passenger_enabled on;
       }
-      ...
-  }
+
   __nginx__
 end
 
-puts 
 puts "Thank you for choosing Stickler."
 puts
 
