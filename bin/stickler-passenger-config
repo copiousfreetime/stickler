@@ -1,0 +1,114 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+require 'trollop'
+require 'stickler'
+
+SUB_COMMANDS = %w[ apache2 nginx ]
+exec_name = File.basename( $0 )
+
+#----------------------------------------------------------------------
+# parse through the top level global options, this is intercept
+# --version and --help
+#----------------------------------------------------------------------
+global_options = Trollop::options do
+  version "Stickler #{::Stickler::VERSION}"
+  banner <<-_
+Stickler passenger config 
+
+  Usage: #{exec_name} #{SUB_COMMANDS.join("|")} /path/to/stickler/root
+
+  Examples:
+    #{exec_name} apache2 /var/lib/stickler
+    #{exec_name} nginx /opt/stickler
+
+  Options:
+_
+  stop_on SUB_COMMANDS
+end
+
+#----------------------------------------------------------------------
+# sub command processing
+#----------------------------------------------------------------------
+cmd = ARGV.shift
+Trollop::die "unknown sub command #{cmd.inspect}" unless SUB_COMMANDS.include?( cmd )
+
+#----------------------------------------------------------------------
+# validate the sole argument, the stickler root directory
+#----------------------------------------------------------------------
+stickler_root = ARGV.shift
+Trollop::die "Stickler root argument required" unless stickler_root
+stickler_root = File.expand_path( stickler_root )
+
+puts "I assume you already have passenger installed and working."
+puts ""
+
+begin
+  # make the passenger require directory structure
+  %w[ public tmp ].each do |dir|
+    dir = File.join( stickler_root, dir )
+    FileUtils.mkdir_p dir
+    puts ">> Created directory #{dir}"
+  end
+
+  # and write the config.ru file
+  config_ru = File.join( stickler_root, "config.ru" )
+  File.open( config_ru, "w+" ) do |f|
+    f.puts <<-__config_ru__
+#-----------------------------------------------------------------------
+# config.ru for use with passenger deployed Stickler
+#-----------------------------------------------------------------------
+require 'stickler'
+run ::Stickler::Server.new( "#{stickler_root}" ).app
+
+    __config_ru__
+  end
+  puts ">> Wrote #{config_ru}"
+  puts
+rescue => e
+  Trollop::die "Unable to create stickler directory structure: #{e}"
+end
+
+doc_root = File.join( stickler_root, "public" )
+server_name = Socket.gethostname
+case cmd
+when "apache2"
+  puts "Place the follwing configuration options into an appropriate"
+  puts "Apache configuration file. Try `/etc/httpd/conf.d/stickler.conf'."
+  puts
+
+  puts <<-__apache__
+    <VirtualHost *:80>
+         ServerName #{server_name}
+         # if you need some other hostname to add
+         #ServerAlias somethingelse.example.com
+         
+         DocumentRoot #{doc_root}
+         <Directory #{doc_root}>
+             Allow from all
+             Options -MultiViews
+         </Directory>
+    </VirtualHost>
+  __apache__
+when "nginx"
+  puts "Integrate the following into your Nginx configuration file."
+  puts
+  puts <<-__nginx__
+  http {
+      ...
+      server {
+          listen 80;
+          server_name #{server_name};
+          root #{doc_root};
+          passenger_enabled on;
+      }
+      ...
+  }
+  __nginx__
+end
+
+puts 
+puts "Thank you for choosing Stickler."
+puts
+
+
