@@ -63,10 +63,16 @@ module Stickler
     def <=>(other)
       return 0 if other.object_id == self.object_id
       other = coerce( other )
+
       [ :name, :version, :platform ].each do |method|
-        result = ( self.send( method ).<=>( other.send( method ) ) )
+        us, them = self.send( method ), other.send( method )
+        if us.class != them.class then
+          us, them = us.to_s, them.to_s
+        end
+        result = us.<=>( them )
         return result unless 0 == result
       end
+
       return 0
     end
 
