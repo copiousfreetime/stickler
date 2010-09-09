@@ -53,6 +53,13 @@ describe Stickler::SpecLite do
     (@specs[:ruby] =~ @specs[:win]).should == false
   end
 
+  it "can be compared against something with the same name and version but different platform" do
+    list = []
+    list << r = Stickler::SpecLite.new( 'alib', '4.2' )
+    list << u = Stickler::SpecLite.new( 'alib', '4.2', 'x86-mswin32' ) 
+    list.sort.should == [ r, u ]
+  end
+
   it "can be sorted" do
     list = @specs.values
     alib = Stickler::SpecLite.new( 'alib', '4.2' )
