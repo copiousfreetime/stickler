@@ -66,8 +66,8 @@ module Stickler
 
       [ :name, :version, :platform ].each do |method|
         us, them = self.send( method ), other.send( method )
-        if us.class != them.class then
-          us, them = us.to_s, them.to_s
+        if us.instance_of?( Gem::Platform ) || them.instance_of?( Gem::Platform ) then
+          us, them  = us.to_s, them.to_s
         end
         result = us.<=>( them )
         return result unless 0 == result

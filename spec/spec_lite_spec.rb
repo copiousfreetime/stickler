@@ -60,6 +60,13 @@ describe Stickler::SpecLite do
     list.sort.should == [ r, u ]
   end
 
+  it 'converts platform comparisons to something that can be compared' do
+    list = []
+    list << h2 = Stickler::SpecLite.new( 'htimes', '1.1.1', 'x86-mingw32' )
+    list << h1 = Stickler::SpecLite.new( 'htimes', '1.1.1', 'java' )
+    list.sort.should == [ h1, h2 ]
+  end
+
   it "can be sorted" do
     list = @specs.values
     alib = Stickler::SpecLite.new( 'alib', '4.2' )
