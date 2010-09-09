@@ -170,7 +170,7 @@ module ::Stickler::Repository
     end
 
     def push_resource
-      @push_resource ||= @http.resource( push_uri, { 'Content-Type', 'application/octet-stream' } )
+      @push_resource ||= @http.resource( push_uri, { 'Content-Type' => 'application/octet-stream' } )
     end
 
     def yank_uri
