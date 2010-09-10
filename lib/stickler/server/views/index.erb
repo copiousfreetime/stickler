@@ -13,21 +13,23 @@
 
   <section class="span-17 last">
     <div class="gemlist" >
-    <% specs_by_first_upcase_char.keys.sort.each do |char| %>
-      <ol>
+      <% specs_by_first_upcase_char.keys.sort.each do |char| %>
+      <div class="letterlist">
         <div class="letter-start"><a name="<%= char %>" href="#top" ><h2><%= char %></h2></a></div>
-        <% specs_by_first_upcase_char[char].keys.sort.each do |name|
-             spec_group = specs_by_first_upcase_char[char][name] %>
-        <li>
-          <div class="gem">
-            <div class="name"><h3><%= spec_group.first.name %></h3></div>
-            <div class="version"><strong>Version(s):</strong><br /><%= spec_group.sort_by{ |spec| spec.full_name }.collect{ |spec| "<a href=\"/gems/#{spec.file_name}\">#{spec.version_platform}</a>" }.reverse.join(" ") %></strong></div>
-          </div>
-        </li>
-        <% end %>
-      </ol>
+        <ol>
+          <% specs_by_first_upcase_char[char].keys.sort.each_with_index do |name, idx|
+               spec_group = specs_by_first_upcase_char[char][name] %>
+          <li>
+            <div class="gem">
+              <div class="name"><h3><%= spec_group.first.name %></h3></div>
+              <div class="version"><strong>Version(s):</strong><br /><%= spec_group.sort_by{ |spec| spec.full_name }.collect{ |spec| "<a href=\"/gems/#{spec.file_name}\">#{spec.version_platform}</a>" }.reverse.join(" ") %></strong></div>
+            </div>
+          </li>
+          <% end %>
+        </ol>
+      </div>
     <% end %>
-    <script>$(function() { $('.gemlist ol li:even').addClass('stripe') })</script>
+    <script>$(function() { $('.letterlist ol li:even').addClass('stripe') })</script>
     </div>
   </section>
 
