@@ -3,7 +3,7 @@
 require 'stickler'
 require 'stickler/client'
 
-SUB_COMMANDS = %w[ push yank mirror ]
+SUB_COMMANDS = %w[ push yank mirror config ]
 exec_name = File.basename( $0 )
 
 #----------------------------------------------------------------------
@@ -22,6 +22,9 @@ Stickler server interaction
     #{exec_name} yank my_gem --version 1.0.0 --server http://stickler.example.com/
     #{exec_name} mirror third_party --version 0.4.2 --upstream http://rubygems.org/ --server http://stickler.example.com/
     #{exec_name} mirror --help
+    #{exec_name} config --server http://stickler.example.com --upstream http://rubygems.org/
+
+  Options:
 _
 
   stop_on SUB_COMMANDS
@@ -41,5 +44,7 @@ when "yank"
   ::Stickler::Client::Yank.new( ARGV ).run
 when "mirror"
   ::Stickler::Client::Mirror.new( ARGV ).run
+when "config"
+  ::Stickler::Client::Config.new( ARGV ).run
 end
 

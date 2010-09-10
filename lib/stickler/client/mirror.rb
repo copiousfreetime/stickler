@@ -15,7 +15,7 @@ _
       def parser
         unless @parser then
           @parser = super
-          @parser.opt( :upstream, "The upstream gem server from which to pull", :type => :string, :default => ::Stickler::Repository::RubygemsAuthenticator.rubygems_uri.to_s )
+          @parser.opt( :upstream, "The upstream gem server from which to pull", :type => :string, :default => Client.config.upstream )
           @parser.opt( :gem_version,  "The version of the gem to yank (required)",  :type => :string, :required => true )
           @parser.opt( :platform, "The platform of the gem to yank", :type => :string, :default => ::Gem::Platform::RUBY )
         end
@@ -33,8 +33,7 @@ _
       end
 
       def resource_uri( opts )
-        host = opts[:server]
-
+        opts[:server] || Client.config.server
       end
 
       def run
