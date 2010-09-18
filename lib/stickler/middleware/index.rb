@@ -118,8 +118,7 @@ module Stickler::Middleware
       spec = Stickler::SpecLite.new( name, version, platform )
       full_path = @repo.full_path_to_gem( spec )
       if full_path and File.exist?( full_path )then
-        content_type 'application/x-tar'
-        send_file( full_path )
+        send_file( full_path, :type => "application/x-tar" )
       else
         pass
       end
