@@ -1,88 +1,59 @@
-= Stickler
+Stickler
+========
+Jeremy Hinegardner <jeremy@hinegardner.org>
 
-* Homepage[http://copiousfreetime.rubyforge.org/stickler/]
-* {Rubyforge Project}[http://rubyforge.org/projects/copiousfreetime/]
-* email jeremy at hinegardner dot org 
-* {Managing a Gem Repository with Stickler}[http://copiousfreetime.org/articles/2008/10/09/managing-a-gem-repository-with-stickler.html]
 
-== DESCRIPTION
+Overview
+--------
 
 Stickler is a tool to organize and maintain an internal gem repository.
+Primarily, you would want to use Stickler if:
 
-At times it is useful to have complete control over the availability of the gems
-for you testing, staging and production environments.  In these cases you
-probably do not want to accidentally type 'gem update' and get a new untested
-version of a gem installed on your machines.  This is where Stickler helps.
+1. You have proprietary gems that you want to have available via a gem server so 
+   you may +gem install+ them.
+2. You would like to have a local mirror of third party gems from either 
+   http://rubygems.org or some other gem server.
+3. You want both (1) and (2) in the same server.
 
-Configure stickler with the the names and versions of the gems you require for
-your deployment and it will organize and setup everything that is necessary for
-a standard web server to function as your internal gem distribution server.
+Installation
+------------
+
+Installing stickler may be done via the standard gem installation
+
+--------------------
+gem install stickler
+--------------------
+
+Or downloaded from http://github.com/copiousfreetime/stickler/downloads
 
 
-== INSTALLATION
+Usage
+-----
 
-Install as a gem:
+Stickler is broken up into a few commandline programs.
 
-   gem install stickler
+stickler::                      Used to add gems to and remove gems from the +stickler-server+
+stickler-server::               The server process that holds the gems.
+sticckler-passenger-config::    A helper process to generate Passenger 
+                                configurations for +stickler-server+
 
-Or Get it from RubyForge[http://rubyforge.org/projects/copiousfreetime/] 
-or github[http://github.com/copiousfreetime/stickler/tree/master]
 
-== SYNOPSIS
+Credits
+-------
+* http://rubyforge.org/projects/rubygems/[The Rubygems Team]
 
-Using stickler is fairly simple.  First install it, then create a new stickler
-repository with the setup command:
+License
+-------
 
-  stickler setup /var/stickler
-
-This will create a stickler repository in /var/stickler, assuming you have the
-correct permissions to create that directory.  Now you need to populate it with
-some gems.  You can add and remove both gems and sources.  The best way to do
-this is to change into stickler repository and run other commands.  
-
-  cd /var/stickler
-  stickler add gem ramaze
-
-This will prompt you for the gem version requirement for 'ramaze' and then
-download ramaze and everything it depends upon into the stickler repository.
-
-You can also add your own upstream gem repository to stickler.  This enables you
-to merge multiple upstream repositories into a single repository.
-
-  stickler add source http://gems.example.com/
-
-Now you can add gems to your stickler repository that are found in the default
-upstream repository (rubygems) and your custom upstream repositories.  It will
-even resolve dependencies between them.
-
-When you are ready to distribute the gems found in your stickler repository,
-edit the 'stickler.yml' file found in the root of your repository and set the
-'downstream_source' configuration variable.  This is the location that your
-installed rubygems clients will contact to download gems.  Most likely something
-like 'http://gems.example.com' or whatever your company / organization name is.
-
-Then run the index command to generate the distributable gem repository.
-
-  stickler generate index
-
-This generates a directory structure under the 'dist' directory that you can
-rsync to a web server or otherwise push to some location for your managed
-machines to contact for gems.
-
-If you want to setup a system gem source configuration, use the 'generate
-sysconfig' command to generate the text file you can put on your systems so that
-they contact the 'downstream_source' as the default gem server.  The command
-informs you of where to install the file.
-
-  stickler generate sysconfig
-
-== CREDITS
-
-* {The Rubygems Team}[http://rubyforge.org/projects/rubygems/]
-
-== LICENSE
-
-Copyright (c) 2008 Jeremy Hinegardner
+Copyright (c) 2008-2010 Jeremy Hinegardner
 
 All rights reserved. Licensed under the same terms as Ruby.  No warranty is
 provided.  See LICENSE and COPYING for details.
+
+
+Appendix
+--------
+* http://copiousfreetime.rubyforge.org/stickler/
+* http://rubyforge.org/projects/copiousfreetime/[Rubyforge Project]
+* http://copiousfreetime.org/articles/2008/10/09/managing-a-gem-repository-with-stickler.html[Managing a Gem Repository with Stickler]
+
