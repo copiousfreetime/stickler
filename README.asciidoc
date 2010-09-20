@@ -83,11 +83,38 @@ Pushing gem(s) to http://localhost:6789/ ...
   /Users/jeremy/tmp/gems/stickler-2.0.0.gem -> OK http://localhost:6789/gems/stickler-2.0.0.gem
 ------------------------------------------------------------------
 
-.Mirror a gem
+.Mirror a gem from upstream
 ------------------------------------------------------------------
 % stickler mirror --gem-version 1.4.3 logging
 Asking http://localhost:6789/ to mirror logging-1.4.3 from rubygems.org : OK -> http://localhost:6789/gems/logging-1.4.3.gem
+% stickler mirror --gem-version 1.16.2 trollop
+Asking http://localhost:6789/ to mirror trollop-1.16.2 from rubygems.org : OK -> http://localhost:6789/gems/trollop-1.16.2.gem
 ------------------------------------------------------------------
+
+.Look at all the gems installed in your stickler server
+Open your browser to http://localhost:6789
+-------------------------------
+% launchy http://localhost:6789
+-------------------------------
+
+.Install a gem from your new stickler gem server
+------------------------------------------------------
+% gem install hitimes --source http://localhost:6789/
+------------------------------------------------------
+
+.Configure your servers to globally use your internal stickler gem server
+-----------------------------
+% cat /etc/gemrc
+---
+:benchmark: false
+:verbose: false
+:update_sources: true
+:bulk_threshold: 1000
+:backtrace: false
+:sources:
+- http://stickler.example.com
+gem: --no-rdoc --no-ri
+-----------------------------
 
 
 See Also
