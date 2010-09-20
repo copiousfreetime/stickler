@@ -1,5 +1,5 @@
-STICKLER-SERVER(1)
-==================
+STICKLER-PASSENGER-CONFIG(1)
+============================
 
 NAME
 ----
