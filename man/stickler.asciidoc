@@ -3,12 +3,12 @@ STICKLER(1)
 
 NAME
 ----
-stickler - interact with a *stickler-server*(1)
+stickler - command line program to interact with a stickler-server
 
 
 SYNOPSIS
 --------
-*sitckler* ['--help'] ['COMMAND'] ['COMMAND_OPTIONS'] ['gemfile(s)']
+*stickler* ['--help'] ['COMMAND'] ['COMMAND_OPTIONS'] ['gemfile(s)']
 
 
 DESCRIPTION
@@ -17,9 +17,9 @@ DESCRIPTION
 Stickler is a tool to organize and maintain an internal gem repository of
 proprietary gems and/or a mirror of third party gems.
 
-The *stickler*(1) command interacts with an instance of *stickler-server*(1).
-The *stickler*(1) sends commands to an instance of a *stickler-server*(1) to
-control the publishing, mirroring.
+The linkstick:stickler[1] command interacts with an instance of
+linkstick:stickler-server[1] to control the publishing and mirroring of ruby
+gems.
 
 COMMANDS
 --------
@@ -31,7 +31,7 @@ push` although there is no authorization mechanism.
 from direct download.  This works the same as `gem yank`.
 
 *mirror*:: Pull a specific version of a gem from an upstream gem server and
-store it in a stickler server
+store it in a linkstick:stickler-server[1]
 
 *config*:: Access or update the stickler client configuration.
 
@@ -62,13 +62,13 @@ These are the options for all commands.  Not all options apply to all commands.
     `--upstream` (e.g.  ruby, java, mswin32)
 
 *-s, --server*='SERVER'::
-    The gem server or stickler server URL.  This is used by all the commands.
+    The gem server or linkstick:stickler-server[1] URL.  This is used by all the commands.
 
 *-u, --upstream*='SERVER'::
     The upstream server from which to mirror a gem when using the `mirror` command.
 
 *-v, --version*::
-    Output the version of stickler.
+    Output the version.
 
 
 CONFIGURATION
@@ -79,7 +79,7 @@ config` command.
 
 [horizontal]
 *upstream*:: The default upstream server from which to mirror gems.
-*server*::   The default stickler-server(1) to interact with.
+*server*::   The default linkstick:stickler-server[1] to interact with.
 
 An example config file
 
@@ -92,14 +92,14 @@ An example config file
 
 EXAMPLES
 --------
-Push the local `my_gem-1.0.0.gem` file to the stickler server at
+Push the local `my_gem-1.0.0.gem` file to the linkstick:stickler-server[1] at
 *stickler.example.com*
 
 ----------------------------------------------------------------------
 stickler push ./my_gem-1.0.0.gem --server http://stickler.example.com/
 ----------------------------------------------------------------------
 
-Push all the gems in the `pkg` directory to the stickler server at
+Push all the gems in the `pkg` directory to the linkstick:stickler-server[1] at
 *stickler.example.com*
 
 ----------------------------------------------------------------------
@@ -128,7 +128,7 @@ stickler config --add --server http://stickler.example.com --upstream http://rub
 
 SEE ALSO
 --------
-stickler-server(1), stickler-passenger-config(1)
+linkstick:stickler-server[1], linkstick:stickler-passenger-config[1]
 
 AUTHOR
 ------
