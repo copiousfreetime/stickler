@@ -1,0 +1,87 @@
+STICKLER-SERVER(1)
+==================
+
+NAME
+----
+stickler-server - start and stop the stickler server process
+
+
+SYNOPSIS
+--------
+*stickler-server* ['--help'] ['COMMAND'] ['COMMAND_OPTIONS'] /path/to/stickler/root
+
+
+DESCRIPTION
+-----------
+stickler-server is the daemon process that houses the repositories of
+proprietary gems and/or mirrors of third party gems.
+
+
+COMMANDS
+--------
+[horizontal]
+*start*:: Start the stickler server process
+
+*stop*:: Stop the stickler server process
+
+
+OPTIONS
+-------
+*-d, --daemonize*::
+    Daemonize the server
+
+*--help*::
+    Show the help message
+
+*-h, --host*='HOST'::
+    The host address to bind to (default: 0.0.0.0)
+
+*-o, --port*='PORT'::
+    The port to bind to (default: 6789)
+
+*-p, --pid*='PID_FILE'::
+    Path to wriate a pid file to after daemonizing
+
+*-s, --server*='SERVER'::
+    The rack handler to use: thin, mongrel, webrick, etc.
+
+*-v, --version*::
+    Output the version.
+
+
+EXAMPLES
+--------
+Start the server, daemonized, using /var/lib/stickler as the root directory of
+all the repositories.
+
+---------------------------------------------------
+stickler-server start --daemonize /var/lib/stickler
+---------------------------------------------------
+
+Stop the server that is using /var/lib/stickler as its root directory.
+
+--------------------------------------
+stickler-server stop /var/lib/stickler
+--------------------------------------
+
+
+SEE ALSO
+--------
+linkstick:stickler[1], linkstick:stickler-passenger-config[1]
+
+
+AUTHOR
+------
+Written by Jeremy Hinegardner <jeremy@hinegardner.org>
+
+
+RESOURCES
+---------
+GitHub project: http://www.github.com/copiousfreetime/stickler
+
+
+BUGS
+----
+Please report bugs to the github issue tracker
+http://github.com/copiousfreetime/stickler/issues
+
