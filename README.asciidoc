@@ -40,9 +40,9 @@ link:man/stickler.html[stickler]::
 link:man/stickler-server.html[stickler-server]::
     The server process that holds the gems.
 
-link::man/stickler-passenger-config[stickler-passenger-config]::
+link:man/stickler-passenger-config.html[stickler-passenger-config]::
     A helper process to generate Passenger configurations for
-    link:man/stickler-server[stickler-server]
+    link:man/stickler-server.html[stickler-server]
 ******************************************************************
 
 The easiest way to get up and running with stickler is to run the
