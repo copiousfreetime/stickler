@@ -121,7 +121,6 @@ provided.  See LICENSE and COPYING for details.
 
 Appendix
 --------
-* http://copiousfreetime.rubyforge.org/stickler/
-* http://rubyforge.org/projects/copiousfreetime/[Rubyforge Project]
-* http://copiousfreetime.org/articles/2008/10/09/managing-a-gem-repository-with-stickler.html[Managing a Gem Repository with Stickler]
+* http://github.com/copiousfreetime/stickler[Github Project]
+* http://www.copiousfreetime.org/projects/stickler/
 

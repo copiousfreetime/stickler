@@ -14,7 +14,7 @@ Bones {
   name 'stickler'
   authors 'Jeremy Hinegardner'
   email   'jeremy@hinegardner.org'
-  url     'http://rubygems.org/gems/stickler'
+  url     'http://www.copiousfreetime.org/projects/stickler'
   version Stickler::VERSION
 
   ruby_opts      %w[-W0 -rubygems]
