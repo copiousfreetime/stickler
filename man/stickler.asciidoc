@@ -13,13 +13,13 @@ SYNOPSIS
 
 DESCRIPTION
 -----------
-
 Stickler is a tool to organize and maintain an internal gem repository of
 proprietary gems and/or a mirror of third party gems.
 
 The linkstick:stickler[1] command interacts with an instance of
 linkstick:stickler-server[1] to control the publishing and mirroring of ruby
 gems.
+
 
 COMMANDS
 --------
@@ -126,20 +126,23 @@ Set the `server` and `upstream` configration values in the `.gem/stickler` file.
 stickler config --add --server http://stickler.example.com --upstream http://rubygems.org/
 ------------------------------------------------------------------------------------------
 
+
 SEE ALSO
 --------
 linkstick:stickler-server[1], linkstick:stickler-passenger-config[1]
+
 
 AUTHOR
 ------
 Written by Jeremy Hinegardner <jeremy@hinegardner.org>
 
+
 RESOURCES
 ---------
 GitHub project: http://www.github.com/copiousfreetime/stickler
+
 
 BUGS
 ----
 Please report bugs to the github issue tracker
 http://github.com/copiousfreetime/stickler/issues
-
