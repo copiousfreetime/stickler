@@ -30,10 +30,64 @@ Usage
 -----
 Stickler is broken up into a few commandline programs.
 
-stickler::                      Used to add gems to and remove gems from the +stickler-server+
-stickler-server::               The server process that holds the gems.
-sticckler-passenger-config::    A helper process to generate Passenger 
-                                configurations for +stickler-server+
+.Command line programs
+******************************************************************
+[horizontal]
+link:man/stickler.html[stickler]::
+    Used to add gems to and remove gems from the
+    link:man/stickler-server.html[stickler-server]
+
+link:man/stickler-server.html[stickler-server]::
+    The server process that holds the gems.
+
+link::man/stickler-passenger-config[stickler-passenger-config]::
+    A helper process to generate Passenger configurations for
+    link:man/stickler-server[stickler-server]
+******************************************************************
+
+The easiest way to get up and running with stickler is to run the
+standalone server link:man/stickler-server.html[stickler-server] and
+then use link:man/stickler.html[stickler] to interact with it.
+
+.Start up a standalone stickler server
+------------------------------------------------------------------
+% mkdir -p /tmp/stickler-test
+% stickler-server start --daemonize /tmp/stickler-test
+------------------------------------------------------------------
+
+.Set some sane defaults
+------------------------------------------------------------------
+% stickler config --add --server http://localhost:6789 --upstream https://rubygems.org
+  server : http://localhost:6789
+upstream : https://rubygems.org
+
+% cat ~/.gem/stickler
+---
+:server: http://localhost:6789
+:upstream: https://rubygems.org
+------------------------------------------------------------------
+
+.Take a few gems and push them to the server
+------------------------------------------------------------------
+% ls -1
+heel-2.0.0.gem
+hitimes-1.1.1.gem
+launchy-0.3.5.gem
+stickler-2.0.0.gem
+
+% stickler push *.gem
+Pushing gem(s) to http://localhost:6789/ ...
+  /Users/jeremy/tmp/gems/heel-2.0.0.gem     -> OK http://localhost:6789/gems/heel-2.0.0.gem
+  /Users/jeremy/tmp/gems/hitimes-1.1.1.gem  -> OK http://localhost:6789/gems/hitimes-1.1.1.gem
+  /Users/jeremy/tmp/gems/launchy-0.3.5.gem  -> OK http://localhost:6789/gems/launchy-0.3.5.gem
+  /Users/jeremy/tmp/gems/stickler-2.0.0.gem -> OK http://localhost:6789/gems/stickler-2.0.0.gem
+------------------------------------------------------------------
+
+.Mirror a gem
+------------------------------------------------------------------
+% stickler mirror --gem-version 1.4.3 logging
+Asking http://localhost:6789/ to mirror logging-1.4.3 from rubygems.org : OK -> http://localhost:6789/gems/logging-1.4.3.gem
+------------------------------------------------------------------
 
 
 Credits
@@ -43,7 +97,7 @@ Credits
 
 License
 -------
-Copyright (c) 2008-2010 Jeremy Hinegardner
+Copyright (C) 2008-2010 Jeremy Hinegardner
 
 All rights reserved. Licensed under the same terms as Ruby.  No warranty is
 provided.  See LICENSE and COPYING for details.
