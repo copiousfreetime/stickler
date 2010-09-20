@@ -16,3 +16,4 @@ namespace :man do
 end
 
 task :clobber => %w[ man:clobber_man ]
+task 'gem:prereqs' => 'man:create'
