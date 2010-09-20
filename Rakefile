@@ -18,9 +18,9 @@ Bones {
   version Stickler::VERSION
 
   ruby_opts      %w[-W0 -rubygems]
-  readme_file    'README.rdoc'
+  readme_file    'README.asciidoc'
   ignore_file    '.gitignore'
-  history_file   'HISTORY.rdoc'
+  history_file   'HISTORY.asciidoc'
   rubyforge.name 'copiousfreetime'
 
   spec.opts << "--color" << "--format specdoc"
