@@ -90,6 +90,22 @@ Asking http://localhost:6789/ to mirror logging-1.4.3 from rubygems.org : OK -> 
 ------------------------------------------------------------------
 
 
+See Also
+--------
+The man pages that ship with the gem.  They may be viewed if you also install
+the link:http://defunkt.github.com/gem-man/[gem-man] gem.
+
+---------------------------------
+% gem install gem-man
+% gem man stickler
+View which manual?
+ 1. stickler-passenger-config(1)
+ 2. stickler-server(1)
+ 3. stickler(1)
+>
+---------------------------------
+
+
 Credits
 -------
 * http://rubyforge.org/projects/rubygems/[The Rubygems Team]
