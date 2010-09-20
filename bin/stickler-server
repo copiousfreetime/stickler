@@ -55,7 +55,7 @@ end
 #----------------------------------------------------------------------
 rack_options = Trollop::options do
   banner <<-_
-Usage: #{exec_name} #{cmd} [options]
+Usage: #{exec_name} #{cmd} [options] /path/to/stickler/root
 
   Options:
 _
