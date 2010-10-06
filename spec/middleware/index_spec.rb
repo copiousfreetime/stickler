@@ -15,7 +15,8 @@ describe Stickler::Middleware::Index do
 
   before do
     @webrick_gem_dir = File.expand_path( File.join( File.dirname( __FILE__ ), "tmp" ) )
-    FileUtils.mkdir_p( File.join( @webrick_gem_dir , "specifications" ))
+    w_spec_dir = File.join( @webrick_gem_dir, "specifications" )
+    FileUtils.mkdir_p( w_spec_dir  )
   end
 
   after do
