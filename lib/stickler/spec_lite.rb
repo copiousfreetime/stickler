@@ -14,10 +14,12 @@ module Stickler
     attr_reader :name
     attr_reader :version
     attr_reader :platform
+    attr_reader :platform_string
 
     def initialize( name, version, platform = Gem::Platform::RUBY )
       @name = name
       @version = Gem::Version.new( version )
+      @platform_string = platform.to_s
       @platform = Gem::Platform.new( platform )
     end
 
@@ -42,19 +44,19 @@ module Stickler
       if platform == Gem::Platform::RUBY or platform.nil? then
         version.to_s
       else
-        "#{version}-#{platform}"
+        "#{version}-#{platform_string}"
       end
     end
 
     def to_a
-      [ name, version.to_s, platform.to_s ]
+      [ name, version.to_s, platform_string ]
     end
 
     # 
     # Convert to the array format used by rubygems itself
     #
     def to_rubygems_a
-      [ name, version, platform.to_s ]
+      [ name, version, platform_string ]
     end
 
     #
@@ -64,11 +66,8 @@ module Stickler
       return 0 if other.object_id == self.object_id
       other = coerce( other )
 
-      [ :name, :version, :platform ].each do |method|
+      [ :name, :version, :platform_string ].each do |method|
         us, them = self.send( method ), other.send( method )
-        if us.instance_of?( Gem::Platform ) || them.instance_of?( Gem::Platform ) then
-          us, them  = us.to_s, them.to_s
-        end
         result = us.<=>( them )
         return result unless 0 == result
       end
@@ -84,7 +83,7 @@ module Stickler
       return (other and 
               self.name == other.name and
               self.version.to_s == other.version.to_s and
-              self.platform == other.platform )
+              self.platform_string == other.platform_string )
     end
 
     private
@@ -94,8 +93,8 @@ module Stickler
         other
       elsif other.respond_to?( :name ) and 
             other.respond_to?( :version ) and 
-            other.respond_to?( :platform ) then
-        SpecLite.new( other.name, other.version, other.platform )
+            other.respond_to?( :platform_string ) then
+        SpecLite.new( other.name, other.version, other.platform_string )
       else
         return false
       end

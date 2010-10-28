@@ -6,7 +6,8 @@ describe Stickler::SpecLite do
   before do
     @specs = {
       :ruby => Stickler::SpecLite.new( 'foo', '0.4.2' ),
-      :win  => Stickler::SpecLite.new( 'bar', '1.0.1', "x86-mswin32" )
+      :win  => Stickler::SpecLite.new( 'bar', '1.0.1', "x86-mswin32" ),
+      :java => Stickler::SpecLite.new( 'jfoo', '0.4.2', 'jruby' )
     }
   end
 
@@ -18,6 +19,8 @@ describe Stickler::SpecLite do
     [:ruby, 'spec_file_name'] => "foo-0.4.2.gemspec" ,
     [:win , 'file_name']      => "bar-1.0.1-x86-mswin32.gem",
     [:win , 'spec_file_name'] => "bar-1.0.1-x86-mswin32.gemspec",
+    [:java, 'file_name']      => 'jfoo-0.4.2-jruby.gem',
+    [:java, 'spec_file_name'] => 'jfoo-0.4.2-jruby.gemspec',
   }.each do |params, result|
     platform, method = *params
     it "on a #{platform} gem ##{method} is #{result}" do
@@ -29,22 +32,22 @@ describe Stickler::SpecLite do
     @specs[:win].to_a.should == [ 'bar', '1.0.1', 'x86-mswin32' ]
   end
 
-  it "returns false when compared to something that does not resond to :name, :version or :platform" do
+  it "returns false when compared to something that does not resond to :name, :version or :platform_string" do
     x = @specs[:ruby] =~ Object.new
     x.should == false
   end
 
-  it "can compare against anything that responds to :name, :version and :platform" do
+  it "can compare against anything that responds to :name, :version and :platform_string" do
     class OSpec
       attr_accessor :name
       attr_accessor :version
-      attr_accessor :platform
+      attr_accessor :platform_string
     end
 
     o = OSpec.new
     o.name = @specs[:ruby].name
     o.version = @specs[:ruby].version
-    o.platform = @specs[:ruby].platform
+    o.platform_string = @specs[:ruby].platform_string
     r = @specs[:ruby] =~ o
     r.should == true
   end
@@ -71,6 +74,6 @@ describe Stickler::SpecLite do
     list = @specs.values
     alib = Stickler::SpecLite.new( 'alib', '4.2' )
     list << alib
-    list.sort.should == [ alib, @specs[:win], @specs[:ruby] ]
+    list.sort.should == [ alib, @specs[:win], @specs[:ruby], @specs[:java] ]
   end
 end
