@@ -51,6 +51,14 @@ module Stickler::Repository
     end
 
     #
+    # Purge the list of local repos that are known.  This is mainly used in
+    # testing.
+    #
+    def self.purge
+      @mutex.synchronize { @repos.clear }
+    end
+
+    #
     # :call-seq:
     #     Local.new( '/tmp/repo' )
     #     Local.new( '/tmp/repo', "Temporary Repo" )
@@ -69,14 +77,14 @@ module Stickler::Repository
     #
     def self.new( root_dir, name = nil )
       repo = nil
-      @mutex.syncrhonize do
+      @mutex.synchronize do
         local_key = File.expand_path( root_dir ) + File::SEPARATOR
         repo = @repos[local_key]
         if repo.nil? then
           repo = super( local_key, name )
-          @repos[root_dir] = repo
+          @repos[local_key] = repo
         else
-          if repo.name != name then
+          if name and (repo.name != name) then
             raise Error, "A repository already exists for #{root_dir} with name has the name #{repo.name} which conflicts with the given name #{name}"
           end
         end
