@@ -20,7 +20,7 @@ module Stickler
 
     def app
       root = self.stickler_root
-      Rack::Builder.new do
+      Rack::Builder.app do
         use Rack::CommonLogger
         use Stickler::Middleware::Compression
         use Stickler::Middleware::Gemcutter, :serve_indexes => false, :repo_root => File.join( root, "gemcutter" )

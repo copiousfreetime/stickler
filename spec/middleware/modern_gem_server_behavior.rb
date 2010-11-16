@@ -19,4 +19,8 @@ shared_examples_for "modern gem server indexes" do
       should_match_webrick_behavior url
     end
   end
+
+  #it "can deal properly with prerelease gems '/quick/Marshal.#{Gem.marshal_version}/foo-2.0.0a.gemspec.rz'" do
+  #  pending 
+  #end
 end
