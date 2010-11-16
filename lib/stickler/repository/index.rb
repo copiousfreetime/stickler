@@ -19,8 +19,11 @@ module Stickler::Repository
     attr_reader :spec_dir
 
     def initialize( spec_dir )
-      @specs = []
-      @spec_dir = spec_dir
+      @specs              = []
+      @spec_dir           = spec_dir
+      @last_modified_time = nil
+      @last_entry_count   = nil
+      @spec_glob          = File.join( @spec_dir, "*.gemspec" )
       load_specs
     end
 
@@ -49,18 +52,29 @@ module Stickler::Repository
 
     def reload_necessary?
       return true unless @last_modified_time
-      current_modified_time = File.stat( self.spec_dir ).mtime
-      return (current_modified_time > @last_modified_time )
+      return true unless @last_entry_count
+      return true if (self.current_modified_time > @last_modified_time )
+      return true if (self.current_entry_count  != @last_entry_count   )
+      return false
     end
 
-    def last_modified_time
+    def current_modified_time
       File.stat( self.spec_dir ).mtime
+    end
+
+    def current_entry_count
+      Dir.glob( @spec_glob ).size
     end
 
     def spec_dir=( d )
       raise Error, "#{d} is not a directory" unless File.directory?( d )
       @spec_dir = d
-      @last_modified_time = File.stat( d ).mtime
+      update_reload_conditions
+    end
+
+    def update_reload_conditions
+      @last_modified_time = self.current_modified_time
+      @last_entry_count   = self.current_entry_count
     end
 
     def load_specs_in_dir( spec_dir )
@@ -72,6 +86,7 @@ module Stickler::Repository
         next unless entry =~ /\.gemspec\Z/
         add_spec_from_file( File.join( spec_dir, entry ) )
       end
+      update_reload_conditions
     end
 
     def add_spec_from_file( path )
