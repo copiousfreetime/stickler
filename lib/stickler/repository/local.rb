@@ -19,6 +19,9 @@ module Stickler::Repository
   class Local
     class Error < ::Stickler::Repository::Error; end
 
+    # The name to give to this repository
+    attr_reader :name
+
     # the root directory of the repository
     attr_reader :root_dir
 
@@ -34,8 +37,56 @@ module Stickler::Repository
     # the index of the repository
     attr_reader :index
 
-    def initialize( root_dir )
+    # mutex for synchronizing local instance allocations
+    @mutex = Mutex.new
+
+    # The list of repos keyd by root_dir
+    @repos = Hash.new
+
+    #
+    # Return the list of all the Local repositories
+    #
+    def self.repos
+      return @repos
+    end
+
+    #
+    # :call-seq:
+    #     Local.new( '/tmp/repo' )
+    #     Local.new( '/tmp/repo', "Temporary Repo" )
+    #
+    # Create a new Local repository.  Local repository instances
+    # are shared if the +root_dir+ is the same.  That is
+    #
+    #   repo1 = Local.new( '/foo/bar' )
+    #   repo2 = Local.new( '/foo/bar' )
+    #
+    # repo1 and repo2 will be references to the sname object
+    #
+    # If a new is called for an already existing repo, and the +name+
+    # of the repo is not nil, and different than the existing repo
+    # an exception is raised.
+    #
+    def self.new( root_dir, name = nil )
+      repo = nil
+      @mutex.syncrhonize do
+        local_key = File.expand_path( root_dir ) + File::SEPARATOR
+        repo = @repos[local_key]
+        if repo.nil? then
+          repo = super( local_key, name )
+          @repos[root_dir] = repo
+        else
+          if repo.name != name then
+            raise Error, "A repository already exists for #{root_dir} with name has the name #{repo.name} which conflicts with the given name #{name}"
+          end
+        end
+      end
+      repo
+    end
+
+    def initialize( root_dir, name = nil )
       @root_dir = File.expand_path( root_dir ) + File::SEPARATOR
+      @name     = name || @root_dir
       @gems_dir = File.join( @root_dir, 'gems/' )
       @specifications_dir = File.join( @root_dir, 'specifications/' )
       @temp_dir = File.join( @root_dir, "tmp/" )

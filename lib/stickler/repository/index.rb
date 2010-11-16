@@ -18,8 +18,6 @@ module Stickler::Repository
     # The directory the specs live
     attr_reader :spec_dir
 
-    # 
-
     def initialize( spec_dir )
       @specs = []
       @spec_dir = spec_dir
@@ -50,10 +48,9 @@ module Stickler::Repository
     end
 
     def reload_necessary?
-      return true
-      # return true unless @last_modified_time
-      # current_modified_time = File.stat( self.spec_dir ).mtime
-      # return (current_modified_time > @last_modified_time )
+      return true unless @last_modified_time
+      current_modified_time = File.stat( self.spec_dir ).mtime
+      return (current_modified_time > @last_modified_time )
     end
 
     def last_modified_time

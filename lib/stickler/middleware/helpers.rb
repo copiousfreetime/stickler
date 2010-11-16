@@ -106,7 +106,7 @@ module Stickler::Middleware
       #
       # The Class that includes this module and wants to use +append_specs+ MUST
       # have a +repo+ method. The +repo+ method must +respond_to+ both
-      # +root_dir+ and +specs+.
+      # +root_dir+ and +latest_specs+.
       #
       def append_latest_specs
         append_spec( self.repo.root_dir, self.repo.latest_specs )
