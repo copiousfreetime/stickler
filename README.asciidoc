@@ -141,10 +141,7 @@ Credits
 License
 -------
 Copyright (C) 2008-2010 Jeremy Hinegardner
-
-All rights reserved. Licensed under the same terms as Ruby.  No warranty is
-provided.  See LICENSE and COPYING for details.
-
+ISC License, See LICENSE for details
 
 Appendix
 --------
