@@ -34,7 +34,7 @@ module Stickler::Middleware
       # The specs by repository
       #
       def specs_by_repo
-        env['stickler.specs'] ||= Hash.new{ |h,k| h[k] = Array.new }
+        Stickle::Repository::Local.repos
       end
 
       #
@@ -69,48 +69,13 @@ module Stickler::Middleware
       #
       # Given a list of specs, this will group them by name
       #
-      def specs_grouped_by_name( list )
+      def specs_grouped_by_name( spec_list )
         by_name = Hash.new{ |h,k| h[k] = Array.new }
-        list.each do |spec|
+        spec_list.each do |spec|
           by_name[spec.name.downcase] << spec
         end
         return by_name
       end
-
-      #
-      # Append spec or array of specs to the current list of specs for this key.
-      #
-      def append_spec( key, spec_or_array_of_specs )
-        if Array === spec_or_array_of_specs then
-          specs_by_repo[key].concat(  spec_or_array_of_specs )
-        else
-          specs_by_repo[key] << spec_or_array_of_specs
-        end
-      end
-
-      #
-      # Automatically append the specs from the included class into the specs
-      # environment variable.
-      #
-      # The Class that includes this module and wants to use +append_specs+
-      # MUST have a +repo+ method. The +repo+ method must +respond_to+ both
-      # +root_dir+ and +specs+.
-      #
-      def append_specs
-        append_spec( self.repo.root_dir, self.repo.specs )
-      end
-
-      #
-      # Automatically append the latest_specs from the included class into the
-      # specs environment variable.
-      #
-      # The Class that includes this module and wants to use +append_specs+ MUST
-      # have a +repo+ method. The +repo+ method must +respond_to+ both
-      # +root_dir+ and +latest_specs+.
-      #
-      def append_latest_specs
-        append_spec( self.repo.root_dir, self.repo.latest_specs )
-      end
-    end
+   end
   end
 end
