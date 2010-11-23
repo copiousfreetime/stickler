@@ -31,7 +31,7 @@ _
 
         width = opts[:gemfiles].collect { |g| g.length }.sort.last
 
-        puts "Pushing gem(s) to #{repo.uri} ..."
+        $stdout.puts "Pushing gem(s) to #{repo.uri} ..."
         opts[:gemfiles].each do |gemfile|
           begin
             $stdout.write "  #{gemfile.ljust( width )} -> "
