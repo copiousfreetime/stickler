@@ -3,7 +3,7 @@
 require 'stickler'
 require 'stickler/client'
 
-SUB_COMMANDS = %w[ push yank mirror config ]
+SUB_COMMANDS = %w[ push yank mirror config list ].sort
 exec_name = File.basename( $0 )
 
 #----------------------------------------------------------------------
@@ -23,6 +23,7 @@ Stickler server interaction
     #{exec_name} mirror third_party --version 0.4.2 --upstream http://rubygems.org/ --server http://stickler.example.com/
     #{exec_name} mirror --help
     #{exec_name} config --server http://stickler.example.com --upstream http://rubygems.org/
+    #{exec_name} list --server http://stickler.example.com
 
   Options:
 _
@@ -46,5 +47,7 @@ when "mirror"
   ::Stickler::Client::Mirror.new( ARGV ).run
 when "config"
   ::Stickler::Client::Config.new( ARGV ).run
+when "link"
+  ::Stickler::Client::Link.new( ARGV ).run
 end
 

@@ -18,6 +18,12 @@ module Stickler::Repository
     # The directory the specs live
     attr_reader :spec_dir
 
+    # The last time the repository directory was modified
+    attr_reader :last_modified_time
+
+    # The number of entries in the spec directory
+    attr_reader :last_entry_count
+
     def initialize( spec_dir )
       @specs              = []
       @spec_dir           = spec_dir

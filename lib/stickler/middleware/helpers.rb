@@ -1,4 +1,5 @@
 require 'stickler/middleware'
+require 'stickler/repository/local'
 module Stickler::Middleware
   module Helpers
     #
@@ -34,15 +35,28 @@ module Stickler::Middleware
       # The specs by repository
       #
       def specs_by_repo
-        Stickle::Repository::Local.repos
+        Stickler::Repository::Local.repos
       end
 
       #
-      # return the flattened array of all the values in
-      # <tt>#specs_by_repo</tt>
+      # return the list of all the specs in all the repos
       #
       def specs
-        [ specs_by_repo.values ].flatten.sort
+        s = []
+        specs_by_repo.values.each do |idx|
+          idx.specs.each { |spec| s << spec unless spec.prerelease? } 
+        end
+      end
+
+      #
+      # return the list of all the latest_specs in all the repos
+      #
+      def latest_specs
+        s = []
+        specs_by_repo.values.each do |idx|
+          idx.latest_specs.each { |spec| s << spec unless spec.prerelease? }
+        end
+        return s.flatten.sort
       end
 
       #

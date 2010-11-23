@@ -16,6 +16,7 @@ describe ::Stickler::Middleware::Local do
   end
 
   before do
+    puts "gem_root => #{@gem_root}"
     @sinatra_gem_dir = @webrick_gem_dir = @gem_root
   end
 

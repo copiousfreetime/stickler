@@ -15,3 +15,4 @@ tmp
 man/*.xml
 man/*.1
 *.gemspec
+work/

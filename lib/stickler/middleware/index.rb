@@ -26,8 +26,7 @@ module Stickler::Middleware
   #
   # This class is also the base class for all the other GemServer type
   # middlewares, so there is an optional behavior to NOT respond to the index
-  # url requests and just append the spec, or latest_specs to
-  # env['stickler.specs'] instead of serving the values out of there.
+  # url requests.
   #
   # <b>:serve_indexes</b>::     +true+ or +false+ it defaults to +true+.  This
   #                             option is used when Index is used in a stack
@@ -72,7 +71,6 @@ module Stickler::Middleware
     end
 
     get '/' do
-      append_specs
       if @serve_indexes then 
         erb :index
       else
@@ -84,23 +82,21 @@ module Stickler::Middleware
     # Respond to the requests for the <b>all gems</b> index
     #
     get %r{\A/specs.#{Gem.marshal_version}(\.gz)?\Z} do |with_compression|
-      append_specs
-      serve_indexes( with_compression )
+      serve_indexes( specs, with_compression )
     end
 
     #
     # Respond to the requests for the <b>latest gems</b> index
     #
     get %r{\A/latest_specs.#{Gem.marshal_version}(\.gz)?\Z} do |with_compression|
-      append_latest_specs
-      serve_indexes( with_compression )
+      serve_indexes( latest_specs, with_compression )
     end
 
     #
     # Serve the indexes up as the response if @serve_indexes is true.  Otherwise
     # return false
     #
-    def serve_indexes( with_compression = :none )
+    def serve_indexes( specs, with_compression = :none )
       if @serve_indexes then
         self.compression = to_compression_flag( with_compression )
         return marshalled_specs( specs )

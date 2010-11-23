@@ -28,6 +28,7 @@ shared_examples_for "common gem server before after" do
   #
   def should_match_webrick_behavior(url)
 
+    puts "testing url #{url}"
     #webrick
     data = StringIO.new "GET #{url} HTTP/1.0\r\n\r\n"
     @webrick_request.parse data
