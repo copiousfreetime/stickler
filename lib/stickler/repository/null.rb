@@ -45,8 +45,6 @@ module Stickler::Repository
     alias :latest_specs :empty_array
     alias :search_for :empty_array
 
-    def
-
     def specs
       Array.new
     end
