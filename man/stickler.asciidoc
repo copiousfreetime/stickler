@@ -116,7 +116,7 @@ Take the +third_party+ gem, version +1.4.2+ that is on *rubygems.org* and mirror
 on *stickler.example.com*
 
 -----------------------------------------------------------------------------------------------------------------
-stickler mirror third_party --version 0.4.2 --upstream http://rubygems.org/ --server http://stickler.example.com/
+stickler mirror third_party_gem --gem-version 0.4.2 --upstream http://rubygems.org/ --server http://stickler.example.com/
 stickler mirror --help 
 -----------------------------------------------------------------------------------------------------------------
 
