@@ -20,7 +20,7 @@ Stickler server interaction
   Examples:
     #{exec_name} push ./my_gem-1.0.0.gem --server http://stickler.example.com/
     #{exec_name} yank my_gem --version 1.0.0 --server http://stickler.example.com/
-    #{exec_name} mirror third_party --version 0.4.2 --upstream http://rubygems.org/ --server http://stickler.example.com/
+    #{exec_name} mirror third_party_gem --gem-version 0.4.2 --upstream http://rubygems.org/ --server http://stickler.example.com/
     #{exec_name} mirror --help
     #{exec_name} config --server http://stickler.example.com --upstream http://rubygems.org/
     #{exec_name} list --server http://stickler.example.com
