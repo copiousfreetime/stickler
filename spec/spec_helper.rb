@@ -1,4 +1,4 @@
-require 'spec'
+require 'rspec'
 require 'rack/test'
 
 Spec::Runner.configure do |config|

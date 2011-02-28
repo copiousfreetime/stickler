@@ -21,9 +21,8 @@ Bones {
   readme_file    'README.asciidoc'
   ignore_file    '.bnsignore'
   history_file   'HISTORY.asciidoc'
-  rubyforge.name 'copiousfreetime'
 
-  spec.opts << "--color" << "--format specdoc"
+  spec.opts << "--color" << "--format documentation"
 
   summary 'Stickler is a tool to organize and maintain an internal gem repository.'
   description <<_
@@ -47,4 +46,5 @@ _
   depend_on 'bones'       , '~> 3.4.6', :development => true
   depend_on 'rack-test'   , '~> 0.5.4', :development => true
   depend_on 'bones-extras', '~> 1.2.4', :development => true
+  depend_on 'rspec'       , '~> 2.5.0', :development => true
 }
