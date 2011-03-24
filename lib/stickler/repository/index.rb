@@ -38,9 +38,14 @@ module Stickler::Repository
       return @specs
     end
 
+    #
+    # return all the latest specs in the repository, do not include pre-release
+    # gems
+    #
     def latest_specs
       latest = {}
       specs.each do |s|
+        next if s.prerelease?
         if old_spec = latest[s.name] then
           if old_spec.version < s.version then
             latest[s.name] = s
@@ -50,6 +55,13 @@ module Stickler::Repository
         end
       end
       latest.values
+    end
+
+    #
+    # return just the list of pre-release specs
+    #
+    def prerelease_specs
+      specs.select { |s| s.prerelease? }
     end
 
     def load_specs
