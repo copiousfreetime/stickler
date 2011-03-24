@@ -1,5 +1,4 @@
 require 'spec'
-require 'awesome_print'
 require 'index_spec_helpers'
 
 require 'stickler/repository/local'
