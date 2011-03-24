@@ -98,8 +98,12 @@ module Stickler::Repository
       @gems_dir = File.join( @root_dir, 'gems/' )
       @specifications_dir = File.join( @root_dir, 'specifications/' )
       @temp_dir = File.join( @root_dir, "tmp/" )
-      @index = ::Stickler::Repository::Index.new( @specifications_dir )
+
+      # setup the dirs before doing the index because the @specifications_dir
+      # may not exist yet.
       setup_dirs
+
+      @index = ::Stickler::Repository::Index.new( @specifications_dir )
     end
 
     #
