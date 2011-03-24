@@ -47,4 +47,5 @@ _
   depend_on 'bones'       , '~> 3.4.6', :development => true
   depend_on 'rack-test'   , '~> 0.5.4', :development => true
   depend_on 'bones-extras', '~> 1.2.4', :development => true
+  depend_on 'builder'     , '~> 3.0.0', :development => true
 }

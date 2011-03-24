@@ -4,6 +4,7 @@ require 'stickler/repository/api'
 require 'stickler/repository/index'
 require 'addressable/uri'
 require 'tempfile'
+require 'forwardable'
 
 module Stickler::Repository
   #
@@ -129,25 +130,14 @@ module Stickler::Repository
     end
 
     #
-    # A list of all the specs in the repo
+    # Forward some calls directly to the index
     #
-    def specs
-      @index.specs
-    end
-
-    #
-    # A list of just the latests specs in the repo
-    #
-    def latest_specs
-      @index.latest_specs
-    end
-
-    #
-    # The last time this index was modified
-    #
-    def last_modified_time
-      @index.last_modified_time
-    end
+    extend Forwardable
+    def_delegators :@index, :specs,
+                            :released_specs,
+                            :latest_specs,
+                            :prerelease_specs,
+                            :last_modified_time
 
     #
     # See Api#search_for
