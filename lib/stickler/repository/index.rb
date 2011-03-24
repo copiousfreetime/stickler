@@ -64,6 +64,13 @@ module Stickler::Repository
       specs.select { |s| s.prerelease? }
     end
 
+    #
+    # return just the list of release specs
+    #
+    def released_specs
+      specs.select { |s| not s.prerelease? }
+    end
+
     def load_specs
       load_specs_in_dir( self.spec_dir )
     end

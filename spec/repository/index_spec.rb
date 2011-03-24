@@ -38,5 +38,10 @@ describe ::Stickler::Repository::Index do
     @index.prerelease_specs.size.should == 1
     @index.prerelease_specs.first.full_name.should == "foo-2.0.0a"
   end
+
+  it "knows the released specs" do
+    @index.released_specs.size.should == 2
+    @index.released_specs.collect { |s| s.full_name }.sort.should == %w[ bar-1.0.0 foo-1.0.0 ]
+  end
 end
 

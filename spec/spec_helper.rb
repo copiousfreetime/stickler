@@ -2,6 +2,8 @@ require 'spec'
 require 'awesome_print'
 require 'index_spec_helpers'
 
+require 'stickler/repository/local'
+
 Spec::Runner.configure do |config|
 
   config.before( :each ) do
