@@ -2,6 +2,7 @@ require File.expand_path( File.join( File.dirname(__FILE__), "..", "spec_helper.
 require 'stickler/middleware/not_found'
 
 describe ::Stickler::Middleware::NotFound do
+  include Rack::Test::Methods
   def app
     ::Stickler::Middleware::NotFound.new
   end
