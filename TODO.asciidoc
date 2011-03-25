@@ -1,3 +1,5 @@
+* Add in a full transparent proxy for automatically pullilng gems from an
+  upstream gem server if the local gem server does not have the gem in question
 * There appears to be something different about evaling the specification off
   disk, and the loading the specification from the yaml in the .gem file.  They
   are different.  It appears that @original_platform is not set when the Ruby
