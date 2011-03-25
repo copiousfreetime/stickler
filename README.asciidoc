@@ -143,8 +143,9 @@ License
 Copyright (C) 2008-2010 Jeremy Hinegardner
 ISC License, See LICENSE for details
 
+
 Appendix
 --------
 * http://github.com/copiousfreetime/stickler[Github Project]
+* link:HISTORY.html[History]
 * http://www.copiousfreetime.org/projects/stickler/
-
