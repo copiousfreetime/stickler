@@ -2,8 +2,13 @@ Stickler Changelog
 ==================
 Jeremy Hinegardner <jeremy@hinegardner.org>
 
-Version 2.1.0 - 2010-11-XX
+Version 2.1.0 - 2011-03-25
 --------------------------
+* Added 'list' client command
+* Added support for prerelease gems
+* Internal refactoring of how internal repositories are managed
+* Refactored testing and updated to rspec2
+* Switched underlying HTTP client to Excon
 * Change to ISC License
 
 Version 2.0.1 - 2010-09-19
