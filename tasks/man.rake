@@ -1,7 +1,7 @@
 namespace :man do
 
   rule '.1' => '.asciidoc' do |t|
-    sh "a2x --format manpage #{t.source}"
+    sh "a2x --no-xmllint --format manpage #{t.source}"
   end
 
   src = FileList["man/*.asciidoc"]
