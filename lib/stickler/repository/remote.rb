@@ -190,7 +190,7 @@ module ::Stickler::Repository
     end
 
     def download_resource( resource )
-      resource.request( :method => :get ).body
+      resource.request( :method => :get, :expects => [ 200 ] ).body
     rescue Excon::Errors::Error => e
       return false
     end
@@ -201,7 +201,7 @@ module ::Stickler::Repository
     end
 
     def remote_uri_exist?( uri )
-      rc = Excon.head( uri.to_s, :expects => [ 200, 301, 302] )
+      rc = Excon.head( uri.to_s, :expects => [ 200 ] )
       return true
     rescue Excon::Errors::Error => e
       return false
