@@ -1,4 +1,5 @@
 require 'stickler/spec_lite'
+require 'stickler/logable'
 require 'stickler/repository'
 require 'stickler/repository/api'
 require 'stickler/repository/index'
@@ -19,6 +20,7 @@ module Stickler::Repository
   #
   class Local
     class Error < ::Stickler::Repository::Error; end
+    include Stickler::Logable
 
     # The name to give to this repository
     attr_reader :name

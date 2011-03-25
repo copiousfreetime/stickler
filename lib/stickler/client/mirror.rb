@@ -45,15 +45,15 @@ _
         $stdout.write "Asking #{repo.uri} to mirror #{spec.full_name} from #{upstream_host} : "
         $stdout.flush
 
-        uri = [ repo.uri.join( upstream_host ), opts[:gem_name], opts[:gem_version], opts[:platform] ].join("/")
-        resource = repo.http.resource( uri )
+        uri  = [ repo.uri.join( upstream_host ), opts[:gem_name], opts[:gem_version], opts[:platform] ].join("/")
+        resp = Excon.post( uri, :expects => [200] )
 
-        resp = resource.post
         $stdout.puts "OK -> #{repo.uri.join(resp.headers['Location'])}"
-      rescue Resourceful::UnsuccessfulHttpRequestError => he
-        resp = he.http_response
+      rescue Excon::Errors::Error => he
+        resp = he.response
         $stdout.puts "ERROR -> #{resp.body}"
       rescue StandardError => e
+        puts e.backtrace.join("\n")
         $stdout.puts "ERROR -> #{e.message}"
      end
     end

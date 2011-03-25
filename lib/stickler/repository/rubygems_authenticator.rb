@@ -19,14 +19,13 @@ module Stickler::Repository
       self.class.rubygems_uri
     end
 
-    def can_handle?( request )
-      request_uri  = Addressable::URI.parse(request.uri)
-      return (request_uri.host   == rubygems_uri.host  ) && 
-             (request_uri.scheme == rubygems_uri.scheme)
+    def handles?( scheme, host )
+      return ( scheme == rubygems_uri.scheme ) &&
+             ( host   == rubygems_uri.host )
     end
 
-    def add_credentials_to(request)
-      request.header['Authorization'] = credentials
+    def authorization_headers
+      { 'Authorization' => credentials }
     end
   end
 end

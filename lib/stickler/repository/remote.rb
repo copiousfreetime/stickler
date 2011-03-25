@@ -11,15 +11,13 @@ module ::Stickler::Repository
   # cutter api (push/yank/unyank).  The legacy gem server api is not utilized.
   #
   class Remote
-    # the http client
-    attr_reader :http
+
+    attr_reader :authenticator
 
     def initialize( repo_uri, options = {}   )
-      options[:authenticator] ||= Stickler::Repository::RubygemsAuthenticator.new
-
-      @uri        = Addressable::URI.parse( ensure_http( ensure_trailing_slash( repo_uri ) ) )
-      @http       = Excon.new( @uri.to_s )
-      @specs_list = nil
+      @authenticator = options[:authenticator] || Stickler::Repository::RubygemsAuthenticator.new
+      @uri           = Addressable::URI.parse( ensure_http( ensure_trailing_slash( repo_uri ) ) )
+      @specs_list    = nil
     end
 
     #
@@ -76,7 +74,7 @@ module ::Stickler::Repository
     def push( path )
       spec = speclite_from_gem_file( path )
       raise Stickler::Repository::Error, "gem #{spec.full_name} already exists in remote repository" if remote_gem_file_exist?( spec )
-      resp = push_resource.request( :method => :post,  :body => IO.read( path ), :expects => [ 200 ] )
+      resp = resource_request( push_resource, :body => IO.read( path ) )
       return spec
     rescue Excon::Errors::Error => e
       msg = "Failure pushing #{path} to remote repository : response code => #{e.response.status}, response message => '#{e.response.body}'"
@@ -89,9 +87,7 @@ module ::Stickler::Repository
     def yank( spec )
       return nil unless remote_gem_file_exist?( spec )
       query = { :gem_name => spec.name, :version => spec.version.to_s }
-      response = yank_resource.request( :method => :delete, :query => query, 
-                                        :headers => {'Content-Type' => 'application/x-www-form-urlencoded'},
-                                        :expects => [200])
+      resp  = resource_request( yank_resource, :query => query  )
       return full_uri_to_gem( spec )
     rescue Excon::Errors::Error => e
       raise Stickler::Repository::Error, "Failure yanking: #{e.inspect}"
@@ -102,7 +98,7 @@ module ::Stickler::Repository
     #
     def delete( spec )
       return false unless remote_gem_file_exist?( spec )
-      gem_resource( spec ).request( :method => :delete )
+      resource_request( gem_resource( spec ), :method => :delete )
       return true
     rescue Excon::Errors::Error => e
       return false
@@ -126,6 +122,7 @@ module ::Stickler::Repository
       end
       nil
     rescue Excon::Errors::Error => e
+      $stderr.puts e.inspect
       return nil
     end
 
@@ -150,7 +147,7 @@ module ::Stickler::Repository
     end
 
     def specs_list_resource
-      @specs_list_resource ||= Excon.new( specs_list_uri.to_s )
+      @specs_list_resource ||= Excon.new( specs_list_uri.to_s, :method => :get, :expects => [200] )
     end
 
     def push_uri
@@ -158,7 +155,11 @@ module ::Stickler::Repository
     end
 
     def push_resource
-      @push_resource ||= Excon.new( push_uri.to_s, :headers => { 'Content-Type' => 'application/octet-stream' } )
+      unless @push_resource then
+        params = { :method => :post, :headers => { 'Content-Type' => 'application/octet-stream' }, :expects => [ 201, 200 ] }
+        @push_resource = Excon.new( push_uri.to_s, params )
+      end
+      return @push_resource
     end
 
     def yank_uri
@@ -166,11 +167,17 @@ module ::Stickler::Repository
     end
 
     def yank_resource
-      @yank_resource ||= Excon.new( yank_uri.to_s )
+      unless @yank_resource then
+        params = { :method => :delete,
+                   :headers => { 'Content-Type' => 'application/x-www-form-urlencoded' },
+                   :expects => [200] }
+        @yank_resource = Excon.new( yank_uri.to_s, params )
+      end
+      return @yank_resource
     end
 
     def gem_resource( spec )
-      Excon.new( full_uri_to_gem( spec ) )
+      Excon.new( full_uri_to_gem( spec ), :method => :get, :expects => [200] )
     end
 
     def download_specs_list
@@ -190,8 +197,9 @@ module ::Stickler::Repository
     end
 
     def download_resource( resource )
-      resource.request( :method => :get, :expects => [ 200 ] ).body
+      resource_request( resource, :method => :get, :expects => [200] ).body
     rescue Excon::Errors::Error => e
+      puts e.inspect
       return false
     end
 
@@ -201,7 +209,7 @@ module ::Stickler::Repository
     end
 
     def remote_uri_exist?( uri )
-      rc = Excon.head( uri.to_s, :expects => [ 200 ] )
+      rc = resource_request( Excon.new( uri.to_s ),  :method => :head, :expects => [200] )
       return true
     rescue Excon::Errors::Error => e
       return false
@@ -218,6 +226,30 @@ module ::Stickler::Repository
 
     def speclite_from_specification( spec )
       Stickler::SpecLite.new( spec.name, spec.version.to_s, spec.platform )
+    end
+
+    def resource_request( resource, params = {} )
+      trys = 0
+      begin
+        if authenticator.handles?( resource.connection[:host], resource.connection[:scheme] ) then
+          resource.connection[:headers].merge!( authenticator.authorization_headers )
+        end
+        trys += 1
+        #puts "Making request #{resource.connection.inspect} with extra params #{params.inspect}"
+        resource.request( params )
+      rescue Excon::Errors::MovedPermanently, Excon::Errors::Found,
+             Excon::Errors::SeeOther, Excon::Errors::TemporaryRedirect => redirect
+        # follow a redirect, it is only allowable to follow redirects from a GET or
+        # HEAD request.  Only follow a few times though.
+        raise redirect unless [ :get, :head ].include?( redirect.request[:method] )
+        raise redirect if trys > 5
+        #puts "Redirecting to #{redirect.response.headers['Location']}"
+        resource = Excon::Connection.new( redirect.response.headers['Location'],
+                                          { :headers => resource.connection[:headers],
+                                            :query   => resource.connection[:headers],
+                                            :method  => resource.connection[:method] } )
+        retry
+      end
     end
   end
 end
