@@ -22,7 +22,7 @@ Bones {
   ignore_file    '.bnsignore'
   history_file   'HISTORY.asciidoc'
 
-  spec.opts << "--color" << "--format documentation"
+  spec.opts << "--color" << "--format specdoc"
 
   summary 'Stickler is a tool to organize and maintain an internal gem repository.'
   description <<_
