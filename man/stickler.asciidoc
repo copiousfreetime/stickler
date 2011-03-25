@@ -35,6 +35,8 @@ store it in a linkstick:stickler-server[1]
 
 *config*:: Access or update the stickler client configuration.
 
+*list*:: List all the gems in the remote repository
+
 
 OPTIONS
 -------
