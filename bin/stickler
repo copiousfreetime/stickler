@@ -47,7 +47,7 @@ when "mirror"
   ::Stickler::Client::Mirror.new( ARGV ).run
 when "config"
   ::Stickler::Client::Config.new( ARGV ).run
-when "link"
-  ::Stickler::Client::Link.new( ARGV ).run
+when "list"
+  ::Stickler::Client::List.new( ARGV ).run
 end
 

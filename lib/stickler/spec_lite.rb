@@ -48,6 +48,10 @@ module Stickler
       end
     end
 
+    def prerelease?
+      version.prerelease?
+    end
+
     def to_a
       [ name, version.to_s, platform_string ]
     end

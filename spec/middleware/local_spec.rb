@@ -1,13 +1,15 @@
-require File.expand_path( File.join( File.dirname(__FILE__), "..", "spec_helper.rb" ) )
-require File.expand_path( File.join( File.dirname(__FILE__), "modern_gem_server_behavior.rb" ) )
-require File.expand_path( File.join( File.dirname(__FILE__), "legacy_gem_server_behavior.rb" ) )
+require File.expand_path( "../spec_helper",File.dirname(__FILE__) )
 
 require 'stickler/middleware/local'
 require 'stickler/middleware/compression'
 
-describe ::Stickler::Middleware::Local do
+describe Stickler::Middleware::Local do
+
+  include IndexSpecHelpers
+  include Rack::Test::Methods
+
   def app
-    repo_root = @sinatra_gem_dir 
+    repo_root = @idx_spec_datadir
     ::Rack::Builder.new do
       use ::Stickler::Middleware::Compression
       use ::Stickler::Middleware::Local, :repo_root => repo_root
@@ -15,12 +17,57 @@ describe ::Stickler::Middleware::Local do
     end
   end
 
-  before do
-    puts "gem_root => #{@gem_root}"
-    @sinatra_gem_dir = @webrick_gem_dir = @gem_root
+  describe "When serving a modern index" do
+    before( :all ) do 
+      mirror_spec_gemdir
+      make_modern_index
+    end
+
+    after( :all ) do
+      destroy_scratch_dir
+    end
+
+    [
+      "/specs.#{Gem.marshal_version}",
+      "/specs.#{Gem.marshal_version}.gz",
+      "/latest_specs.#{Gem.marshal_version}",
+      "/latest_specs.#{Gem.marshal_version}.gz",
+      "/prerelease_specs.#{Gem.marshal_version}",
+      "/prerelease_specs.#{Gem.marshal_version}.gz",
+      "/quick/Marshal.#{Gem.marshal_version}/foo-1.0.0.gemspec.rz",
+      "/quick/Marshal.#{Gem.marshal_version}/bar-1.0.0.gemspec.rz",
+      "/quick/Marshal.#{Gem.marshal_version}/foo-2.0.0a.gemspec.rz",
+    ].each do |path|
+      it "should return the same bytes as Gem::Indexer for '#{path}'" do
+        response = get( path )
+        validate_contents( response.body,
+                           IO.read( File.join(@scratch_datadir, path) ),
+                           response.content_type )
+      end
+    end
   end
 
-  it_should_behave_like "modern gem server indexes"
-#  it_should_behave_like "legacy gem server indexes"
+  describe "When serving a legacy index" do
+     before( :all ) do 
+      mirror_spec_gemdir
+      make_legacy_index
+    end
 
-end    
+    after( :all ) do
+      destroy_scratch_dir
+    end
+
+    [
+      "/Marshal.#{Gem.marshal_version}",
+      "/Marshal.#{Gem.marshal_version}.Z",
+    ].each do |path|
+      it "should return the same bytes as Gem::Indexer for '#{path}'" do
+        pending
+        response = get( path )
+        validate_contents( response.body,
+                           IO.read( File.join(@scratch_datadir, path) ),
+                           response.content_type )
+      end
+    end
+  end
+end

@@ -42,21 +42,37 @@ module Stickler::Middleware
       # return the list of all the specs in all the repos
       #
       def specs
-        s = []
-        specs_by_repo.values.each do |idx|
-          idx.specs.each { |spec| s << spec unless spec.prerelease? } 
-        end
+        collect_specs_via( :specs )
       end
 
       #
       # return the list of all the latest_specs in all the repos
       #
       def latest_specs
-        s = []
-        specs_by_repo.values.each do |idx|
-          idx.latest_specs.each { |spec| s << spec unless spec.prerelease? }
-        end
-        return s.flatten.sort
+        collect_specs_via( :latest_specs )
+      end
+
+      #
+      # return the list of all the pre-release specs
+      #
+      def prerelease_specs
+        collect_specs_via( :prerelease_specs )
+      end
+
+      #
+      # return just the list of the releeased specs in all the repos
+      #
+      def released_specs
+        collect_specs_via( :released_specs )
+      end
+
+      #
+      # Collect all the specs via a call on each Repository
+      #
+      def collect_specs_via( method )
+        specs_by_repo.values.collect do |idx|
+          idx.send( method )
+        end.flatten.sort
       end
 
       #

@@ -28,5 +28,20 @@ describe ::Stickler::Repository::Index do
     FileUtils.rm( File.join( @index_me, "foo-1.0.0.gemspec" ) )
     @index.specs.size.should == ( @specifications.size - 1 )
   end
+
+  it "knows just the latest specs" do
+    @index.latest_specs.size.should == (@specifications.size - 1)
+    @index.latest_specs.collect { |s| s.full_name }.sort.should == %w[ bar-1.0.0 foo-1.0.0 ]
+  end
+
+  it "knows the pre-release specs" do
+    @index.prerelease_specs.size.should == 1
+    @index.prerelease_specs.first.full_name.should == "foo-2.0.0a"
+  end
+
+  it "knows the released specs" do
+    @index.released_specs.size.should == 2
+    @index.released_specs.collect { |s| s.full_name }.sort.should == %w[ bar-1.0.0 foo-1.0.0 ]
+  end
 end
 

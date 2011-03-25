@@ -7,20 +7,27 @@ require 'stickler/logable'
 require 'stickler/paths'
 
 module Stickler::Middleware
-  # Index is a Rack middleware that passes all requests through except for those
-  # matching these two urls:
+  # Index is a Rack middleware that passes all requests through except for the
+  # following urls:
   #
   # <b>/specs.#{Gem.marhsal_version}.gz</b>::         The [ name, version, platform ] index
   #                                                   of <b>all<b> the gems in the
   #                                                   entire repository
   #
-  # <b>/latest_specs.#{Gem.marshal_version}.gz</b>::  The [ name, version, # platform ] index
+  # <b>/latest_specs.#{Gem.marshal_version}.gz</b>::  The [ name, version, platform ] index
   #                                                   of the <b>most recent</b> version of each
   #                                                   gem in the repository.
   #
-  # For these 2 urls, it respond reponds with the summation of all the specs
-  # that are in <tt>env['stickler.specs']</tt>.  If there are no specs in that
-  # environment variable, then it returns with an empty index.
+  # <b>/prerelease_specs.#{Gem.marshal-version}.gz</b>:: The [ name, version, platform ] index
+  #                                                      of the <b>prerelease</b> versions of the
+  #                                                      prerelease gems in the repository
+  #
+  # <b>/quick/Marshal.#{Gem.marshal_version}/*.gemspec.rz</b>:: The gemspec of each gem
+  #
+  # <b>/gems/*.gem</b>::                              The actual .gem file to serve
+  #
+  # For the <b>specs</b> urls, it responds with the summation of all the specs
+  # that are in all the repositories served by stickler
   #
   # == Options
   #
@@ -81,15 +88,22 @@ module Stickler::Middleware
     #
     # Respond to the requests for the <b>all gems</b> index
     #
-    get %r{\A/specs.#{Gem.marshal_version}(\.gz)?\Z} do |with_compression|
-      serve_indexes( specs, with_compression )
+    get %r{\A/specs.#{Gem.marshal_version}(\.gz)?\Z} do |compression|
+      serve_indexes( released_specs, compression )
     end
 
     #
     # Respond to the requests for the <b>latest gems</b> index
     #
-    get %r{\A/latest_specs.#{Gem.marshal_version}(\.gz)?\Z} do |with_compression|
-      serve_indexes( latest_specs, with_compression )
+    get %r{\A/latest_specs.#{Gem.marshal_version}(\.gz)?\Z} do |compression|
+      serve_indexes( latest_specs, compression)
+    end
+
+    #
+    # Respond to the request for the <b>pre release gems</b> index
+    #
+    get %r{\A/prerelease_specs.#{Gem.marshal_version}(\.gz)?\Z} do |compression|
+      serve_indexes( prerelease_specs, compression )
     end
 
     #
@@ -127,7 +141,7 @@ module Stickler::Middleware
     # To support pre-releases the a-z has been added to the version
     #
     get %r{\A/quick/Marshal.#{Gem.marshal_version}/(.*?)-([0-9.]+[0-9a-z.]*)(-.*?)?\.gemspec\.rz\Z} do
-      name, version, platform, with_compression = *params[:captures]
+      name, version, platform = *params[:captures]
       spec = Stickler::SpecLite.new( name, version, platform )
       full_path = @repo.full_path_to_specification( spec )
       if full_path and File.exist?( full_path ) then
@@ -143,7 +157,27 @@ module Stickler::Middleware
     # everywhere
     #
     def marshalled_specs( spec_a )
-      marshal( spec_a.collect { |s| s.to_rubygems_a } )
+      a = spec_a.collect { |s| s.to_rubygems_a }
+      marshal( optimize_specs( a ) )
+    end
+
+    #
+    # Optimize the specs marshalling by using identical objects as much as possible.  this
+    # is take directly from RubyGems source code.  See rubygems/indexer.rb
+    # #compact_specs
+    #
+    def optimize_specs( specs )
+      names     = {}
+      versions  = {}
+      platforms = {}
+
+      specs.collect do |(name, version, platform)|
+        names[name]         = name     unless names.include?( name )
+        versions[version]   = version  unless versions.include?( version )
+        platforms[platform] = platform unless platforms.include?( platform )
+
+        [ names[name], versions[version], platforms[platform] ]
+      end
     end
 
     def marshal( data )

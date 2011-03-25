@@ -76,4 +76,14 @@ describe Stickler::SpecLite do
     list << alib
     list.sort.should == [ alib, @specs[:win], @specs[:ruby], @specs[:java] ]
   end
+
+  it "knows when it is a prerelease specification" do
+    spec = Stickler::SpecLite.new( 'prerelease', '1.2.3a' )
+    spec.should be_prerelease
+  end
+
+  it "knows when it is not a prerelease specification" do
+    spec = Stickler::SpecLite.new( 'prerelease', '1.2.3' )
+    spec.should_not be_prerelease
+  end
 end
