@@ -23,9 +23,5 @@ module Stickler::Repository
       return ( scheme == rubygems_uri.scheme ) &&
              ( host   == rubygems_uri.host )
     end
-
-    def authorization_headers
-      { 'Authorization' => credentials }
-    end
   end
 end

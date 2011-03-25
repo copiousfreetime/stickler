@@ -231,8 +231,10 @@ module ::Stickler::Repository
     def resource_request( resource, params = {} )
       trys = 0
       begin
-        if authenticator.handles?( resource.connection[:host], resource.connection[:scheme] ) then
-          resource.connection[:headers].merge!( authenticator.authorization_headers )
+        resource.connection[:headers]['User-Agent'] = "Stickler Client v#{Stickler::VERSION}"
+        resource.connection[:headers].delete('Authorization')
+        if authenticator.handles?( resource.connection[:scheme], resource.connection[:host] ) then
+          resource.connection[:headers]['Authorization'] = authenticator.credentials
         end
         trys += 1
         #puts "Making request #{resource.connection.inspect} with extra params #{params.inspect}"
