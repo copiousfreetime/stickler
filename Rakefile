@@ -38,14 +38,15 @@ Primarily, you would want to use Stickler if:
 _
 
 
-  depend_on 'sinatra', '~> 1.0.0'
+  depend_on 'sinatra'    , '~> 1.0.0'
   depend_on 'addressable', '~> 2.1.2'
-  depend_on 'resourceful', '~> 1.0.1'
-  depend_on 'trollop', '~> 1.16.2'
-  depend_on 'logging', '~> 1.4.3'
+  depend_on 'excon'      , '~> 0.5.8'
+  depend_on 'trollop'    , '~> 1.16.2'
+  depend_on 'logging'    , '~> 1.4.3'
 
   depend_on 'bones'       , '~> 3.4.6', :development => true
   depend_on 'rack-test'   , '~> 0.5.4', :development => true
   depend_on 'bones-extras', '~> 1.2.4', :development => true
   depend_on 'builder'     , '~> 3.0.0', :development => true
+  depend_on 'rspec'       , '~> 1.3.1', :development => true
 }
