@@ -6,7 +6,7 @@ require 'stickler/repository/remote'
 describe Stickler::Repository::Remote do
   before do
     @repo_uri = "http://localhost:6789/"
-    @repo     = ::Stickler::Repository::Remote.new( @repo_uri )
+    @repo     = ::Stickler::Repository::Remote.new( @repo_uri, :debug => true )
   end
 
   it_should_behave_like 'includes Repository::Api'
@@ -23,10 +23,9 @@ describe Stickler::Repository::Remote do
       system cmd
 
       tries = 0
-      @acc      = ::Resourceful::HttpAccessor.new
       loop do
         begin
-          @acc.resource( @repo_uri + "specs.#{Gem.marshal_version}.gz" ).get
+          Excon.get( @repo_uri + "specs.#{Gem.marshal_version}.gz" )
           #puts "rackup started with pid #{IO.read( @pid_file )}"
           break
         rescue => e

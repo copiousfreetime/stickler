@@ -4,7 +4,7 @@ require 'stickler/middleware/local'
 require 'stickler/repository/local'
 
 module Stickler::Middleware
-  # 
+  #
   # A rack middleware for implementing the gemcutter api
   #
   # == Options
@@ -46,7 +46,7 @@ module Stickler::Middleware
       spec = Stickler::SpecLite.new( params[:gem_name], params[:version] )
       if s = @repo.yank( spec ) then
         logger.info( "Yanked #{spec.full_name}" )
-        return "Yanked #{s.to_s}"
+        return "Yanked #{spec.full_name}"
       else
         logger.warn( "Did not Yank #{spec.full_name}" )
         error( 503, "Did not Yank #{spec.to_s}" )

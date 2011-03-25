@@ -1,4 +1,4 @@
-require 'resourceful'
+require 'excon'
 require 'stickler/repository'
 require 'stickler/repository/api'
 require 'stickler/repository/rubygems_authenticator'
@@ -16,13 +16,9 @@ module ::Stickler::Repository
 
     def initialize( repo_uri, options = {}   )
       options[:authenticator] ||= Stickler::Repository::RubygemsAuthenticator.new
-      options[:cache_manager] ||= Resourceful::InMemoryCacheManager.new
-      if options.delete(:debug) then
-        options[:logger]      ||= Resourceful::StdOutLogger.new
-      end
 
       @uri        = Addressable::URI.parse( ensure_http( ensure_trailing_slash( repo_uri ) ) )
-      @http       = Resourceful::HttpAccessor.new( options )
+      @http       = Excon.new( @uri.to_s )
       @specs_list = nil
     end
 
@@ -80,13 +76,11 @@ module ::Stickler::Repository
     def push( path )
       spec = speclite_from_gem_file( path )
       raise Stickler::Repository::Error, "gem #{spec.full_name} already exists in remote repository" if remote_gem_file_exist?( spec )
-      begin
-        resp = push_resource.post( IO.read( path ) )
-      rescue Resourceful::UnsuccessfulHttpRequestError => e
-        msg = "Failure pushing #{path} to remote repository : response code => #{e.http_response.code}, response message => '#{e.http_response.body}'"
-        raise Stickler::Repository::Error, msg
-      end
+      resp = push_resource.request( :method => :post,  :body => IO.read( path ), :expects => [ 200 ] )
       return spec
+    rescue Excon::Errors::Error => e
+      msg = "Failure pushing #{path} to remote repository : response code => #{e.response.status}, response message => '#{e.response.body}'"
+      raise Stickler::Repository::Error, msg
     end
 
     #
@@ -94,15 +88,13 @@ module ::Stickler::Repository
     #
     def yank( spec )
       return nil unless remote_gem_file_exist?( spec )
-      begin
-        form_data = Resourceful::UrlencodedFormData.new
-        form_data.add( "gem_name", spec.name )
-        form_data.add( "version", spec.version.to_s )
-        yank_resource.request( :delete, form_data.read, {'Content-Type' => form_data.content_type } )
-        return full_uri_to_gem( spec )
-      rescue Resourceful::UnsuccessfulHttpRequestError => e
-        raise Stickler::Repository::Error, "Failure yanking: #{e.inspect}"
-      end
+      query = { :gem_name => spec.name, :version => spec.version.to_s }
+      response = yank_resource.request( :method => :delete, :query => query, 
+                                        :headers => {'Content-Type' => 'application/x-www-form-urlencoded'},
+                                        :expects => [200])
+      return full_uri_to_gem( spec )
+    rescue Excon::Errors::Error => e
+      raise Stickler::Repository::Error, "Failure yanking: #{e.inspect}"
     end
 
     #
@@ -110,12 +102,10 @@ module ::Stickler::Repository
     #
     def delete( spec )
       return false unless remote_gem_file_exist?( spec )
-      begin
-        gem_resource( spec ).delete
-        return true
-      rescue Resourceful::UnsuccessfulHttpRequestError => e
-        return false
-      end
+      gem_resource( spec ).request( :method => :delete )
+      return true
+    rescue Excon::Errors::Error => e
+      return false
     end
 
     #
@@ -123,22 +113,20 @@ module ::Stickler::Repository
     #
     def open( spec, &block )
       return nil unless remote_gem_file_exist?( spec )
-      begin
-        data = download_resource( gem_resource( spec ) )
-        io = StringIO.new( data , "rb" )
-        if block_given? then
-          begin
-            yield io
-          ensure
-            io.close
-          end
-        else
-          return io
+      data = download_resource( gem_resource( spec ) )
+      io = StringIO.new( data , "rb" )
+      if block_given? then
+        begin
+          yield io
+        ensure
+          io.close
         end
-      rescue Resourceful::UnsuccessfulHttpRequestError => e
-        return nil
+      else
+        return io
       end
       nil
+    rescue Excon::Errors::Error => e
+      return nil
     end
 
     private
@@ -162,7 +150,7 @@ module ::Stickler::Repository
     end
 
     def specs_list_resource
-      @specs_list_resource ||= @http.resource( specs_list_uri )
+      @specs_list_resource ||= Excon.new( specs_list_uri.to_s )
     end
 
     def push_uri
@@ -170,7 +158,7 @@ module ::Stickler::Repository
     end
 
     def push_resource
-      @push_resource ||= @http.resource( push_uri, { 'Content-Type' => 'application/octet-stream' } )
+      @push_resource ||= Excon.new( push_uri.to_s, :headers => { 'Content-Type' => 'application/octet-stream' } )
     end
 
     def yank_uri
@@ -178,11 +166,11 @@ module ::Stickler::Repository
     end
 
     def yank_resource
-      @yank_resource ||= @http.resource( yank_uri )
+      @yank_resource ||= Excon.new( yank_uri.to_s )
     end
 
     def gem_resource( spec )
-      @http.resource( full_uri_to_gem( spec ) )
+      Excon.new( full_uri_to_gem( spec ) )
     end
 
     def download_specs_list
@@ -198,15 +186,13 @@ module ::Stickler::Repository
     end
 
     def download_uri( uri )
-      download_resource( http.resource( uri ) )
+      download_resource( Excon.new( uri ) )
     end
 
     def download_resource( resource )
-      begin
-        resource.get.body
-      rescue Resourceful::UnsuccessfulHttpRequestError => e
-        return false
-      end
+      resource.request( :method => :get ).body
+    rescue Excon::Errors::Error => e
+      return false
     end
 
     def remote_gem_file_exist?( spec )
@@ -215,14 +201,10 @@ module ::Stickler::Repository
     end
 
     def remote_uri_exist?( uri )
-      begin
-        # FIXME: bug in Resourceful that uses cached HEAD responses
-        #        to satisfy later GET requests.
-        rc = http.resource( uri ).head( 'Cache-Control' => 'no-store' ).successful?
-        return rc
-      rescue Resourceful::UnsuccessfulHttpRequestError => e
-        return false
-      end
+      rc = Excon.head( uri.to_s, :expects => [ 200, 301, 302] )
+      return true
+    rescue Excon::Errors::Error => e
+      return false
     end
 
     def speclite_from_gem_file( path )
