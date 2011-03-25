@@ -37,7 +37,7 @@ Primarily, you would want to use Stickler if:
 _
 
 
-  depend_on 'sinatra'    , '~> 1.0.0'
+  depend_on 'sinatra'    , '~> 1.2.1'
   depend_on 'addressable', '~> 2.1.2'
   depend_on 'excon'      , '~> 0.5.8'
   depend_on 'trollop'    , '~> 1.16.2'
