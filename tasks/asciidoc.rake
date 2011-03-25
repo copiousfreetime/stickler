@@ -11,7 +11,19 @@ namespace :asciidoc do
   task :create => html
 
   task :clobber_asciidoc do
-    rm_f FileList["man/*.{html,xml}", "*.{html,xml}"]
+    rm_f FileList["man/*.{html,xml,css}", "*.{html,xml,css}"]
+    rm_rf FileList["asciidoc-output"]
+  end
+
+  desc "Deploy the asciidoc"
+  task :deploy => html do
+    FileUtils.cp "README.html", "index.html"
+    %w[ . man ].each do |d|
+      dest_d = File.expand_path( "asciidoc-output/#{d}" )
+      FileUtils.mkdir dest_d unless File.directory?( dest_d )
+      FileUtils.cp FileList["#{d}/*.{css,html}"], dest_d
+    end
+    sh "rsync -ravz asciidoc-output/* #{ENV['DEST_DIR']}" if ENV['DEST_DIR']
   end
 end
 
