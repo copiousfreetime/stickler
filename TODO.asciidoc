@@ -1,0 +1,4 @@
+* There appears to be something different about evaling the specification off
+  disk, and the loading the specification from the yaml in the .gem file.  They
+  are different.  It appears that @original_platform is not set when the Ruby
+  specification is eval'd but it is when the yaml is loaded.
