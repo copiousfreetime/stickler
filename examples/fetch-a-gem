@@ -1,0 +1,6 @@
+require 'stickler'
+
+repo = Stickler::Repository::Remote.new( "https://rubygems.org" )
+spec = Stickler::SpecLite.new( "hitimes", "1.1.1" )
+g = repo.get( spec )
+puts "Retrieved #{g.size} bytes"
