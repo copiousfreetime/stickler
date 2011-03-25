@@ -1,9 +1,9 @@
-require 'spec'
+require 'rspec'
 require 'index_spec_helpers'
 
 require 'stickler/repository/local'
 
-Spec::Runner.configure do |config|
+RSpec.configure do |config|
 
   config.before( :each ) do
     @spec_dir           = File.expand_path( File.dirname( __FILE__ ) )
