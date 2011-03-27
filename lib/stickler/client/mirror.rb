@@ -46,7 +46,7 @@ _
         $stdout.flush
 
         uri  = [ repo.uri.join( upstream_host ), opts[:gem_name], opts[:gem_version], opts[:platform] ].join("/")
-        resp = Excon.post( uri, :expects => [200] )
+        resp = Excon.post( uri, :expects => [200, 201] )
 
         $stdout.puts "OK -> #{repo.uri.join(resp.headers['Location'])}"
       rescue Excon::Errors::Error => he
