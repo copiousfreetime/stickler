@@ -2,6 +2,10 @@ Stickler Changelog
 ==================
 Jeremy Hinegardner <jeremy@hinegardner.org>
 
+Version 2.1.2 - 2011-03-31
+--------------------------
+* Fix bug introduced in 2.1.1 where .gemspec urls would match but .gem urls would not
+
 Version 2.1.1 - 2011-03-31
 --------------------------
 * Fix bug where stickler would only serve ruby platform gems
