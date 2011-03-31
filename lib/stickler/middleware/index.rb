@@ -56,6 +56,8 @@ module Stickler::Middleware
     include Stickler::Middleware::Helpers::Specs
     include Stickler::Logable
 
+    NAME_VERSION_PLATFORM_REGEX = "(.+)-([0-9.]+[0-9a-z.]*)(?:-(.+))?"
+
     # The respository of the Index is a Repository::Null
     attr_reader :repo
 
@@ -123,7 +125,7 @@ module Stickler::Middleware
     # Actually serve up the gem.  This is really only used by the child classes.
     # an Index instance will never have any gems to return.
     #
-    get %r{\A/gems/(.*?)-([0-9.]+)(-.*?)?\.gem\Z} do
+    get %r{\A/gems/#{NAME_VERSION_PLATFORM_REGEX}\.gem\Z} do
       name, version, platform = *params[:captures]
       spec = Stickler::SpecLite.new( name, version, platform )
       full_path = @repo.full_path_to_gem( spec )
@@ -140,7 +142,7 @@ module Stickler::Middleware
     #
     # To support pre-releases the a-z has been added to the version
     #
-    get %r{\A/quick/Marshal.#{Gem.marshal_version}/(.+)-([0-9.]+[0-9a-z.]*)(?:-(.+))?\.gemspec\.rz\Z} do
+    get %r{\A/quick/Marshal.#{Gem.marshal_version}/#{NAME_VERSION_PLATFORM_REGEX}\.gemspec\.rz\Z} do
       name, version, platform = *params[:captures]
       spec = Stickler::SpecLite.new( name, version, platform )
       full_path = @repo.full_path_to_specification( spec )
