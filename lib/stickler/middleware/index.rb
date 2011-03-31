@@ -140,7 +140,7 @@ module Stickler::Middleware
     #
     # To support pre-releases the a-z has been added to the version
     #
-    get %r{\A/quick/Marshal.#{Gem.marshal_version}/(.*?)-([0-9.]+[0-9a-z.]*)(-.*?)?\.gemspec\.rz\Z} do
+    get %r{\A/quick/Marshal.#{Gem.marshal_version}/(.+)-([0-9.]+[0-9a-z.]*)(?:-(.+))?\.gemspec\.rz\Z} do
       name, version, platform = *params[:captures]
       spec = Stickler::SpecLite.new( name, version, platform )
       full_path = @repo.full_path_to_specification( spec )
