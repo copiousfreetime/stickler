@@ -1,7 +1,9 @@
 begin
+  USING_BONES_VERSION = '3.7.0'
   require 'bones'
 rescue LoadError
-  abort '### Please install the "bones" gem ###'
+  load 'tasks/contribute.rake'
+  Rake.application.invoke_task( :help )
 end
 
 task :default => 'spec:run'
@@ -36,6 +38,8 @@ Primarily, you would want to use Stickler if:
 3. You want both (1) and (2) in the same server.
 _
 
+  # I'm explicitly controlling the version of bones.
+
 
   depend_on 'sinatra'    , '~> 1.2.1'
   depend_on 'addressable', '~> 2.2.4'
@@ -43,9 +47,15 @@ _
   depend_on 'trollop'    , '~> 1.16.2'
   depend_on 'logging'    , '~> 1.5.0'
 
-  depend_on 'bones'       , '~> 3.6.5', :development => true
+  depend_on 'rake'        , '~> 0.9.2'
+  depend_on 'bones'       , "~> #{USING_BONES_VERSION}", :development => true
   depend_on 'rack-test'   , '~> 0.5.7', :development => true
   depend_on 'bones-extras', '~> 1.3.0', :development => true
   depend_on 'builder'     , '~> 3.0.0', :development => true
-  depend_on 'rspec'       , '~> 2.5.0', :development => true
+  depend_on 'rspec'       , '~> 2.6.0', :development => true
 }
+
+# Sorry Tim, I need to manage my own bones version
+::Bones.config.gem._spec.dependencies.delete_if do |d|
+  d.name == 'bones' and d.requirement.to_s =~ /^>=/
+end

@@ -1,0 +1,36 @@
+desc "Instructions on how to contribute to stickler"
+task :help do
+  abort <<-_banner
+-----------------------------------------------------------------------
+  I see you are wanting to do some development on stickler. You will 
+  need to install the 'bones' gem first.
+
+     % gem install bones -v #{USING_BONES_VERSION}
+
+  The easiest way to start after that is with the 
+  'install:dependencies' task:
+
+     % rake install:dependencies
+
+  If you use bundler, then you will need to first create the Gemfile 
+  and then run 'bundle install':
+
+     % rake bundle:gemfile
+     % bundle install
+
+  Now you are ready to work on stickler.  Please submit bugs and pull 
+  requests to:
+
+    https://github.com/copiousfreetime/stickler
+
+  Thanks!
+
+     -jeremy
+-----------------------------------------------------------------------
+_banner
+end
+
+desc "(Alias for 'help') Instructions on how to contribute to stickler"
+task 'how_to_contribute' => :help
+desc "(Alias for 'help') Instructions on how to contribute to stickler"
+task '==> I WANT TO CONTRIBUTE <==' => :help

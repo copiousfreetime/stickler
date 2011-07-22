@@ -132,6 +132,13 @@ View which manual?
 >
 ---------------------------------
 
+Development
+-----------
+If you want to do development on stickler, I suggest using
+https://rvm.beginrescueend.com/[RVM] and creating a gemset for stickler.
+
+Then run 'rake how_to_contribute'
+
 
 Credits
 -------

@@ -17,3 +17,4 @@ man/*.1
 *.gemspec
 work/
 *.css
+Gemfile*
