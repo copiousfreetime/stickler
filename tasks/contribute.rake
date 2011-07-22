@@ -10,7 +10,7 @@ task :help do
   The easiest way to start after that is with the 
   'install:dependencies' task:
 
-     % rake install:dependencies
+     % rake gem:install_dependencies
 
   If you use bundler, then you will need to first create the Gemfile 
   and then run 'bundle install':
