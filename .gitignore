@@ -19,3 +19,5 @@ work/
 *.css
 Gemfile*
 .rvmrc
+spec/data/mirror
+spec/data/gemcutter
