@@ -22,7 +22,7 @@
            <li <%= 'class="stripe"' if 1 == (idx % 2 )%> >
             <div class="gem">
               <div class="name"><h3><%= spec_group.first.name %></h3></div>
-              <div class="version"><strong>Version(s):</strong><br /><%= spec_group.sort_by{ |spec| spec.full_name }.collect{ |spec| "<a href=\"/gems/#{spec.file_name}\">#{spec.version_platform}</a>" }.reverse.join(" ") %></strong></div>
+              <div class="version"><strong>Version(s):</strong><br /><%= spec_group.sort.collect{ |spec| "<a href=\"/gems/#{spec.file_name}\">#{spec.version_platform}</a>" }.reverse.join(" ") %></strong></div>
             </div>
           </li>
           <% end %>
