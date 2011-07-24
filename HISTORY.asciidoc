@@ -2,6 +2,12 @@ Stickler Changelog
 ==================
 Jeremy Hinegardner <jeremy@hinegardner.org>
 
+Version 2.1.3 - 2011-07-24
+--------------------------
+* Do not feed ARGV strings directly into Gem::Version (copiousfreetime/stickler#4)
+* In web page, display gems in sort order, not lexical order (copiousfreetime/stickler#16)
+* Make sure Rack body's respond to #each (copiousfreetime/stickler#17)
+
 Version 2.1.2 - 2011-03-31
 --------------------------
 * Fix bug introduced in 2.1.1 where .gemspec urls would match but .gem urls would not

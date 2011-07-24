@@ -12,7 +12,7 @@ module Stickler
 
     MAJOR = 2
     MINOR = 1
-    BUILD = 2
+    BUILD = 3
 
     def self.to_ary
       [ MAJOR, MINOR, BUILD ]
