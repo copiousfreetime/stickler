@@ -18,3 +18,4 @@ man/*.1
 work/
 *.css
 Gemfile*
+.rvmrc

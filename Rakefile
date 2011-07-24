@@ -43,13 +43,13 @@ _
 
   depend_on 'sinatra'    , '~> 1.2.1'
   depend_on 'addressable', '~> 2.2.4'
-  depend_on 'excon'      , '~> 0.5.8'
+  depend_on 'excon'      , '~> 0.6.5'
   depend_on 'trollop'    , '~> 1.16.2'
   depend_on 'logging'    , '~> 1.5.0'
 
   depend_on 'rake'        , '~> 0.9.2'
   depend_on 'bones'       , "~> #{USING_BONES_VERSION}", :development => true
-  depend_on 'rack-test'   , '~> 0.5.7', :development => true
+  depend_on 'rack-test'   , '~> 0.6.0', :development => true
   depend_on 'bones-extras', '~> 1.3.0', :development => true
   depend_on 'builder'     , '~> 3.0.0', :development => true
   depend_on 'rspec'       , '~> 2.6.0', :development => true
