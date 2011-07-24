@@ -24,7 +24,8 @@ module Stickler::Middleware
           stream = Gem.deflate( body.first )
         end
       end
-      return [ status, headers, [ stream ] ]
+      stream = [ stream.to_s ] unless stream.respond_to?( :each )
+      return [ status, headers, stream ]
     end
   end
 end
