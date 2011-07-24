@@ -86,4 +86,13 @@ describe Stickler::SpecLite do
     spec = Stickler::SpecLite.new( 'prerelease', '1.2.3' )
     spec.should_not be_prerelease
   end
+
+  it "needs to be version sortable" do
+    a = Stickler::SpecLite.new( "foo", "1.0.3" )
+    b = Stickler::SpecLite.new( "foo", "1.0.22" )
+    c = Stickler::SpecLite.new( "foo", "1.0.17" )
+
+    [ b, a, c ].sort.should == [ a, c, b ]
+
+  end
 end
