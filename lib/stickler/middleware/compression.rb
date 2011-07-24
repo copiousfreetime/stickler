@@ -24,7 +24,7 @@ module Stickler::Middleware
           stream = Gem.deflate( body.first )
         end
       end
-      return [ status, headers, stream ]
+      return [ status, headers, [ stream ] ]
     end
   end
 end
