@@ -12,8 +12,11 @@ module Stickler
       ::Stickler::Client::ConfigFile.new
     end
 
+    # Create a new client
+    #
+    # Takes an argv like array as a parameter.
     def initialize( argv = ARGV )
-      @argv          = argv
+      @argv = argv.collect { |e| e.dup }
     end
 
     def parser
