@@ -2,6 +2,10 @@ Stickler Changelog
 ==================
 Jeremy Hinegardner <jeremy@hinegardner.org>
 
+Version 2.1.4 - 2011-09-09
+--------------------------
+* Update dependencies to newest version
+
 Version 2.1.3 - 2011-07-24
 --------------------------
 * Do not feed ARGV strings directly into Gem::Version (copiousfreetime/stickler#4)
