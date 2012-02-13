@@ -30,7 +30,7 @@ module Stickler::Repository
 
     # the directory containing the .gem files
     attr_reader :gems_dir
-   
+
     # the directory containing the .gemspec files
     attr_reader :specifications_dir
 

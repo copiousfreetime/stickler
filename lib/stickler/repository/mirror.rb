@@ -22,8 +22,8 @@ module Stickler::Repository
       @local_repo = ::Stickler::Repository::Local.new( root_dir )
       @remote_repos = {}
     end
-    def_delegators :@local_repo, :uri, :gems_uri, :uri_for_gem, :search_for, 
-                                 :push, :delete, :get, :open, 
+    def_delegators :@local_repo, :uri, :gems_uri, :uri_for_gem, :search_for,
+                                 :push, :delete, :get, :open,
                                  :specs, :latest_specs, :root_dir,
                                  :last_modified_time, :full_path_to_gem,
                                  :full_path_to_specification
