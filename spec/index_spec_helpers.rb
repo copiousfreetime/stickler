@@ -1,4 +1,3 @@
-require 'spec_helper'
 require 'rack/test'
 require 'rubygems/user_interaction'
 require 'rubygems/indexer'
