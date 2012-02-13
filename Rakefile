@@ -1,5 +1,5 @@
 begin
-  USING_BONES_VERSION = '3.7.1'
+  USING_BONES_VERSION = '3.7.3'
   require 'bones'
 rescue LoadError
   load 'tasks/contribute.rake'
@@ -19,7 +19,7 @@ Bones {
   url     'http://www.copiousfreetime.org/projects/stickler'
   version Stickler::VERSION
 
-  ruby_opts      %w[-W0 -rubygems]
+  ruby_opts      %w[-w -rubygems]
   readme_file    'README.asciidoc'
   ignore_file    '.bnsignore'
   history_file   'HISTORY.asciidoc'
@@ -41,18 +41,18 @@ _
   # I'm explicitly controlling the version of bones.
 
 
-  depend_on 'sinatra'    , '~> 1.2.6'
-  depend_on 'addressable', '~> 2.2.4'
-  depend_on 'excon'      , '~> 0.6.6'
+  depend_on 'sinatra'    , '~> 1.3.6'
+  depend_on 'addressable', '~> 2.2.6'
+  depend_on 'excon'      , '~> 0.9.5'
   depend_on 'trollop'    , '~> 1.16.2'
-  depend_on 'logging'    , '~> 1.6.1'
+  depend_on 'logging'    , '~> 1.6.2'
 
-  depend_on 'rake'        , '~> 0.9.2'
+  depend_on 'rake'        , '~> 0.9.2.2'
   depend_on 'bones'       , "~> #{USING_BONES_VERSION}", :development => true
   depend_on 'rack-test'   , '~> 0.6.1', :development => true
   depend_on 'bones-extras', '~> 1.3.0', :development => true
   depend_on 'builder'     , '~> 3.0.0', :development => true
-  depend_on 'rspec'       , '~> 2.6.0', :development => true
+  depend_on 'rspec'       , '~> 2.8.0', :development => true
 }
 
 # Sorry Tim, I need to manage my own bones version

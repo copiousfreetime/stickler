@@ -63,9 +63,9 @@ module Stickler::Middleware
 
     server_path = Stickler::Paths.lib_path( "stickler", "server" )
 
-    set :views,  File.join( server_path, "views" )
-    set :public, File.join( server_path, "public" )
-    set :static, true
+    set :views,         File.join( server_path, "views" )
+    set :public_folder, File.join( server_path, "public" )
+    set :static,        true
 
     def initialize( app, opts = {} )
       @app           = app
