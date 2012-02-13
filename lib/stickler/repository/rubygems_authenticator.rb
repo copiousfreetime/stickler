@@ -11,6 +11,15 @@ module Stickler::Repository
       @rubygems_uri ||= Addressable::URI.parse( "https://rubygems.org" )
     end
 
+    def self.handles?( uri )
+      return ( uri.scheme == rubygems_uri.scheme ) &&
+             ( uri.host   == rubygems_uri.host )
+    end
+
+    def initialize( uri )
+      # do nothing
+    end
+
     def credentials
       Gem.configuration.rubygems_api_key
     end
@@ -19,9 +28,5 @@ module Stickler::Repository
       self.class.rubygems_uri
     end
 
-    def handles?( scheme, host )
-      return ( scheme == rubygems_uri.scheme ) &&
-             ( host   == rubygems_uri.host )
-    end
   end
 end

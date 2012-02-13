@@ -3,6 +3,7 @@ require 'stickler/repository'
 require 'stickler/version'
 require 'stickler/repository/api'
 require 'stickler/repository/rubygems_authenticator'
+require 'stickler/repository/basic_authenticator'
 require 'stringio'
 
 module ::Stickler::Repository
@@ -16,8 +17,8 @@ module ::Stickler::Repository
     attr_reader :authenticator
 
     def initialize( repo_uri, options = {}   )
-      @authenticator = options[:authenticator] || Stickler::Repository::RubygemsAuthenticator.new
       @uri           = Addressable::URI.parse( ensure_http( ensure_trailing_slash( repo_uri ) ) )
+      @authenticator = load_authenticator( @uri )
       @specs_list    = nil
     end
 
@@ -139,6 +140,17 @@ module ::Stickler::Repository
       return uri
     end
 
+    def authenticator_class( uri )
+      [ RubygemsAuthenticator, BasicAuthenticator ].find { |a| a.handles?( uri ) }
+    end
+
+    def load_authenticator( uri )
+      if klass = authenticator_class( uri ) then
+        return klass.new( uri )
+      end
+      return nil
+    end
+
     def full_uri_to_gem( spec )
       gems_uri.join( spec.file_name )
     end
@@ -200,7 +212,7 @@ module ::Stickler::Repository
     def download_resource( resource )
       resource_request( resource, :method => :get, :expects => [200] ).body
     rescue Excon::Errors::Error => e
-      puts e.inspect
+      $stderr.puts e.inspect
       return false
     end
 
@@ -234,19 +246,20 @@ module ::Stickler::Repository
       begin
         resource.connection[:headers]['User-Agent'] = "Stickler Client v#{Stickler::VERSION}"
         resource.connection[:headers].delete('Authorization')
-        if authenticator.handles?( resource.connection[:scheme], resource.connection[:host] ) then
+        if authenticator then
           resource.connection[:headers]['Authorization'] = authenticator.credentials
         end
         trys += 1
-        #puts "Making request #{resource.connection.inspect} with extra params #{params.inspect}"
         resource.request( params )
+      rescue Excon::Errors::Unauthorized => unauth
+        uri = "#{unauth.request[:scheme]}://#{unauth.request[:host]}:#{unauth.request[:port]}#{unauth.request[:path]}"
+        raise Stickler::Repository::Error, "Not authorized to access #{uri}. Authorization needed for: #{unauth.response.headers['WWW-Authenticate']}"
       rescue Excon::Errors::MovedPermanently, Excon::Errors::Found,
              Excon::Errors::SeeOther, Excon::Errors::TemporaryRedirect => redirect
         # follow a redirect, it is only allowable to follow redirects from a GET or
         # HEAD request.  Only follow a few times though.
         raise redirect unless [ :get, :head ].include?( redirect.request[:method] )
         raise redirect if trys > 5
-        #puts "Redirecting to #{redirect.response.headers['Location']}"
         resource = Excon::Connection.new( redirect.response.headers['Location'],
                                           { :headers => resource.connection[:headers],
                                             :query   => resource.connection[:headers],
