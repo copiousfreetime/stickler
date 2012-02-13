@@ -47,7 +47,7 @@ _
   depend_on 'trollop'    , '~> 1.16.2'
   depend_on 'logging'    , '~> 1.6.2'
 
-  depend_on 'rake'        , '~> 0.9.2.2' :development => true
+  depend_on 'rake'        , '~> 0.9.2.2', :development => true
   depend_on 'bones'       , "~> #{USING_BONES_VERSION}", :development => true
   depend_on 'rack-test'   , '~> 0.6.1', :development => true
   depend_on 'bones-extras', '~> 1.3.0', :development => true
