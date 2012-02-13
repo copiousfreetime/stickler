@@ -11,8 +11,8 @@ module Stickler
   module Version
 
     MAJOR = 2
-    MINOR = 1
-    BUILD = 4
+    MINOR = 2
+    BUILD = 0
 
     def self.to_ary
       [ MAJOR, MINOR, BUILD ]

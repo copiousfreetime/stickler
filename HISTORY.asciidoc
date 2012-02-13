@@ -2,6 +2,12 @@ Stickler Changelog
 ==================
 Jeremy Hinegardner <jeremy@hinegardner.org>
 
+
+Version 2.2.0 - 2012-02-13
+--------------------------
+* Updated dependencies to latest versions
+* Added supoort for HTTP Basic Auth in the client
+
 Version 2.1.4 - 2011-09-09
 --------------------------
 * Update dependencies to newest version
