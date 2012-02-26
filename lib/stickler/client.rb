@@ -30,7 +30,6 @@ module Stickler
 
     def parse( argv )
       opts = Trollop::with_standard_exception_handling( parser ) do
-        raise Trollop::HelpNeeded if argv.empty? # show help screen
         o = parser.parse( argv )
         yield parser if block_given?
         return o
