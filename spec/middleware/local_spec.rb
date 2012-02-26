@@ -37,7 +37,8 @@ describe Stickler::Middleware::Local do
       "/quick/Marshal.#{Gem.marshal_version}/foo-1.0.0.gemspec.rz",
       "/quick/Marshal.#{Gem.marshal_version}/bar-1.0.0.gemspec.rz",
       "/quick/Marshal.#{Gem.marshal_version}/foo-2.0.0a.gemspec.rz",
-      "/quick/Marshal.#{Gem.marshal_version}/baz-3.1.4-java.gemspec.rz"
+      "/quick/Marshal.#{Gem.marshal_version}/baz-3.1.4-java.gemspec.rz",
+      "/quick/Marshal.#{Gem.marshal_version}/baz-3.1.4.gemspec.rz",
     ].each do |path|
       it "should return the same bytes as Gem::Indexer for '#{path}'" do
         response = get( path )

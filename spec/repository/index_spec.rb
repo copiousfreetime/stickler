@@ -31,7 +31,7 @@ describe ::Stickler::Repository::Index do
 
   it "knows just the latest specs" do
     @index.latest_specs.size.should == (@specifications.size - 1)
-    @index.latest_specs.collect { |s| s.full_name }.sort.should == %w[ bar-1.0.0 baz-3.1.4-java foo-1.0.0 ]
+    @index.latest_specs.collect { |s| s.full_name }.sort.should == %w[ bar-1.0.0 baz-3.1.4 baz-3.1.4-java foo-1.0.0 ]
   end
 
   it "knows the pre-release specs" do
@@ -40,8 +40,8 @@ describe ::Stickler::Repository::Index do
   end
 
   it "knows the released specs" do
-    @index.released_specs.size.should == 3
-    @index.released_specs.collect { |s| s.full_name }.sort.should == %w[ bar-1.0.0 baz-3.1.4-java foo-1.0.0 ]
+    @index.released_specs.size.should == 4
+    @index.released_specs.collect { |s| s.full_name }.sort.should == %w[ bar-1.0.0 baz-3.1.4 baz-3.1.4-java foo-1.0.0 ]
   end
 end
 

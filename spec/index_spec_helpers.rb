@@ -64,7 +64,10 @@ module IndexSpecHelpers
     end
 
     got  = Marshal.load( response_un )
+    got.sort! if got.kind_of?( Array )
+
     need = Marshal.load( expected_un )
+    need.sort! if need.kind_of?( Array )
     got.should == need
   end
 end

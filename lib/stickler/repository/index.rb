@@ -46,12 +46,13 @@ module Stickler::Repository
       latest = {}
       specs.each do |s|
         next if s.prerelease?
-        if old_spec = latest[s.name] then
+        key = "#{s.name}.#{s.platform}"
+        if old_spec = latest[key] then
           if old_spec.version < s.version then
-            latest[s.name] = s
+            latest[key] = s
           end
         else
-          latest[s.name] = s
+          latest[key] = s
         end
       end
       latest.values

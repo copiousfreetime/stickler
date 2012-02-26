@@ -29,7 +29,7 @@ describe ::Stickler::Repository::Local do
     Dir.glob( File.join( @gems_dir, "*.gem" ) ).each do |gem|
       @repo.push( gem )
     end
-    @repo.specs.size.should == 4
+    @repo.specs.size.should == 5
   end
 
   it "two instances with the same repo dir are the same object" do
