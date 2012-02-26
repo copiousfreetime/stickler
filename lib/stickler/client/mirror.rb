@@ -1,3 +1,4 @@
+require 'stickler/repository/remote_mirror'
 module Stickler
   class Client
     class Mirror < Stickler::Client

@@ -1,4 +1,3 @@
-require 'stickler/repository'
 require 'stickler/repository/remote'
 require 'stickler/repository/local'
 require 'forwardable'
