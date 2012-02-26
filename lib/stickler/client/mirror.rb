@@ -36,6 +36,10 @@ _
         opts[:server] || Client.config.server
       end
 
+      def remote_repo_for( opts )
+        Stickler::Repository::RemoteMirror.new( opts[:server], :debug => opts[:debug] )
+      end
+
       def run
         opts = parse( self.argv )
         repo = remote_repo_for( opts )
@@ -45,13 +49,11 @@ _
         $stdout.write "Asking #{repo.uri} to mirror #{spec.full_name} from #{upstream_host} : "
         $stdout.flush
 
-        uri  = [ repo.uri.join( upstream_host ), opts[:gem_name], opts[:gem_version], opts[:platform] ].join("/")
-        resp = Excon.post( uri, :expects => [200, 201] )
+        resp = repo.mirror( spec, upstream_host )
 
         $stdout.puts "OK -> #{repo.uri.join(resp.headers['Location'])}"
-      rescue Excon::Errors::Error => he
-        resp = he.response
-        $stdout.puts "ERROR -> #{resp.body}"
+      rescue Stickler::Repository::Error => e
+        $stdout.puts "ERROR: #{e.message}"
       rescue StandardError => e
         puts e.backtrace.join("\n")
         $stdout.puts "ERROR -> #{e.message}"
