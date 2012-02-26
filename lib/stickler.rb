@@ -8,5 +8,3 @@ require 'stickler/middleware'
 require 'stickler/spec_lite'
 require 'stickler/version'
 require 'stickler/server'
-
-
