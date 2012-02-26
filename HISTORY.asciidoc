@@ -3,10 +3,11 @@ Stickler Changelog
 Jeremy Hinegardner <jeremy@hinegardner.org>
 
 
-Version 2.2.3 - 2012-02-26
+Version 2.2.4 - 2012-02-26
 --------------------------
 * Fixed authentication failing on mirror command (copiousfreetime/stickler/#12)
 * Fixed 'list' command not working when no flags where given
+* Fixed latest_specs not having all platforms in it (copiousfreetime/stickler/#21)
 
 Version 2.2.2 - 2012-02-13
 --------------------------
