@@ -2,6 +2,9 @@ Stickler Changelog
 ==================
 Jeremy Hinegardner <jeremy@hinegardner.org>
 
+Version 2.3.0 - 2012-
+--------------------------
+* Expose deleting a gem via the stickler commandline (copiousfreetime/stickler/#10)
 
 Version 2.2.4 - 2012-02-26
 --------------------------
