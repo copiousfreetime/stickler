@@ -45,6 +45,7 @@ end
 
 require 'stickler/client/push'
 require 'stickler/client/yank'
+require 'stickler/client/delete'
 require 'stickler/client/mirror'
 require 'stickler/client/config'
 require 'stickler/client/list'

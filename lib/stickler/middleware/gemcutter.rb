@@ -54,8 +54,8 @@ module Stickler::Middleware
     end
 
     # direct delete
-    delete %r{\A/gems/((.*?)-([0-9.]+)(-.*?)?)\.gem\Z} do
-      full_name, name, version, platform = *params[:captures]
+    delete %r{\A/gems/#{NAME_VERSION_PLATFORM_REGEX}\.gem\Z} do
+      name, version, platform = *params[:captures]
       spec = Stickler::SpecLite.new( name, version, platform )
       @repo.delete( spec )
       logger.info( "Deleted #{spec.full_name}" )

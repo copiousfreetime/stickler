@@ -3,7 +3,7 @@
 require 'stickler'
 require 'stickler/client'
 
-SUB_COMMANDS = %w[ push yank mirror config list ].sort
+SUB_COMMANDS = %w[ push yank mirror config list delete ].sort
 exec_name = File.basename( $0 )
 
 #----------------------------------------------------------------------
@@ -24,6 +24,7 @@ Stickler server interaction
     #{exec_name} mirror --help
     #{exec_name} config --server http://stickler.example.com --upstream http://rubygems.org/
     #{exec_name} list --server http://stickler.example.com
+    #{exec_name} delete my_gem --gem-version 1.2.3 --server #http://stickler.example.com/
 
   Options:
 _
@@ -35,7 +36,8 @@ end
 # sub command processing
 #----------------------------------------------------------------------
 cmd = ARGV.shift
-Trollop::die "unknown sub command #{cmd.inspect}" unless SUB_COMMANDS.include?( cmd )
+Trollop::die "No sub command given" unless cmd
+Trollop::die "Unknown sub command #{cmd.inspect}" unless SUB_COMMANDS.include?( cmd )
 
 
 case cmd
@@ -43,6 +45,8 @@ when "push"
   ::Stickler::Client::Push.new( ARGV ).run
 when "yank"
   ::Stickler::Client::Yank.new( ARGV ).run
+when "delete"
+  ::Stickler::Client::Delete.new( ARGV ).run
 when "mirror"
   ::Stickler::Client::Mirror.new( ARGV ).run
 when "config"
