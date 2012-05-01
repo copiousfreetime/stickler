@@ -1,6 +1,6 @@
 module Stickler
   # The Current Version of the library
-  VERSION = "2.2.4"
+  VERSION = "2.3.0"
 end
 
 require 'stickler/error'
