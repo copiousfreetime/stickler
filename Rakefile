@@ -86,18 +86,18 @@ end
 # Coverage - optional code coverage, rcov for 1.8 and simplecov for 1.9, so
 #            for the moment only rcov is listed.
 #------------------------------------------------------------------------------
-begin
-  require 'rcov/rcovtask'
-  Rcov::RcovTask.new do |t|
-    t.libs      << 'spec'
-    t.pattern   = 'spec/**/*_spec.rb'
-    t.verbose   = true
-    t.rcov_opts << "-x ^/"           # remove all the global files
-    t.rcov_opts << "--sort coverage" # so we see the worst files at the top
-  end
-rescue LoadError
-  Util.task_warning( 'rcov' )
-end
+#begin
+#  require 'rcov/rcovtask'
+#  Rcov::RcovTask.new do |t|
+#    t.libs      << 'spec'
+#    t.pattern   = 'spec/**/*_spec.rb'
+#    t.verbose   = true
+#    t.rcov_opts << "-x ^/"           # remove all the global files
+#    t.rcov_opts << "--sort coverage" # so we see the worst files at the top
+#  end
+#rescue LoadError
+#  Util.task_warning( 'rcov' )
+#end
 
 #------------------------------------------------------------------------------
 # Manifest - We want an explicit list of thos files that are to be packaged in
