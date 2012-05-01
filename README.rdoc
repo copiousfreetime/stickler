@@ -1,10 +1,10 @@
-Stickler
-========
-Jeremy Hinegardner <jeremy@hinegardner.org>
+= Stickler
 
+* Jeremy Hinegardner <jeremy@hinegardner.org>
+* http://github.com/copiousfreetime/qup
 
-Overview
---------
+== DESCRIPTION
+
 Stickler is a tool to organize and maintain an internal gem repository.
 Primarily, you would want to use Stickler if:
 
@@ -15,19 +15,17 @@ Primarily, you would want to use Stickler if:
 3. You want both (1) and (2) in the same server.
 
 
-Installation
-------------
+== INSTALLATION
+
 Installing stickler may be done via the standard gem installation
 
---------------------
-gem install stickler
---------------------
+    gem install stickler
 
 Or downloaded from http://github.com/copiousfreetime/stickler/downloads
 
 
-Usage
------
+== USAGE
+
 Stickler is broken up into a few commandline programs.
 
 .Command line programs
@@ -132,27 +130,27 @@ View which manual?
 >
 ---------------------------------
 
-Development
------------
+== DEVELOPMENT
+
 If you want to do development on stickler, I suggest using
 https://rvm.beginrescueend.com/[RVM] and creating a gemset for stickler.
 
 Then run 'rake how_to_contribute'
 
 
-Credits
--------
+== CREDITS
+
 * http://rubyforge.org/projects/rubygems/[The Rubygems Team]
 
 
-License
--------
+== LICENSE
+
 Copyright (C) 2008-2010 Jeremy Hinegardner
 ISC License, See LICENSE for details
 
 
-Appendix
---------
+== APPENDIX
+
 * http://github.com/copiousfreetime/stickler[Github Project]
 * link:HISTORY.html[History]
 * http://www.copiousfreetime.org/projects/stickler/

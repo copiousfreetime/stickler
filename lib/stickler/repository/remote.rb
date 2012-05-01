@@ -1,5 +1,5 @@
 require 'excon'
-require 'stickler/version'
+require 'stickler'
 require 'stickler/repository'
 require 'stickler/repository/api'
 require 'stickler/repository/rubygems_authenticator'
