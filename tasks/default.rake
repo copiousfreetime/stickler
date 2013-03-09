@@ -50,13 +50,12 @@ task :develop => "develop:default"
 # Minitest - standard TestTask
 #------------------------------------------------------------------------------
 begin
-  require 'rake/testtask'
-  Rake::TestTask.new( :test ) do |t|
-    t.ruby_opts    = %w[ -w -rubygems ]
-    t.libs         = %w[ lib spec ]
-    t.pattern      = "spec/**/*_spec.rb"
+  require 'rspec/core/rake_task'
+   RSpec::Core::RakeTask.new( :test ) do |t|
+    t.ruby_opts    = %w[ -w ]
+    t.rspec_opts   = %w[ --color --format documentation ]
   end
-
+  task :default => :test
   task :test_requirements
   task :test => :test_requirements
   task :default => :test
