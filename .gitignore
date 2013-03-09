@@ -12,8 +12,6 @@ version.txt
 *.pid
 tmp
 *.html
-man/*.xml
-man/*.1
 *.gemspec
 work/
 *.css

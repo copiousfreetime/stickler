@@ -1,0 +1,321 @@
+.\" generated with Ronn/v0.7.3
+.\" http://github.com/rtomayko/ronn/tree/0.7.3
+.
+.TH "STICKLER" "1" "March 2013" "" ""
+.
+.SH "NAME"
+stickler \- command line program to interact with a stickler\-server
+.
+.SH "SYNOPSIS"
+\fIstickler\fR [\-\-help] [COMMAND] [COMMAND_OPTIONS] [gemfile(s)]
+.
+.SH "DESCRIPTION"
+Stickler is a tool to organize and maintain an internal gem repository of proprietary gems and/or a mirror of third party gems\.
+.
+.P
+The stickler(1) command interacts with an instance of stickler\-server(1) to control the publishing and mirroring of ruby gems\.
+.
+.SH "COMMANDS"
+\fIpush\fR:
+.
+.IP "" 4
+.
+.nf
+
+Push one or more gems to a gemserver\.  This works the same as `gem push`
+although there is no authorization mechanism\.
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fIyank\fR:
+.
+.IP "" 4
+.
+.nf
+
+Remove a gem from the gemserver\'s index\.  It will still be available from
+direct download\.  This works the same as `gem yank`\.
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fImirror\fR:
+.
+.IP "" 4
+.
+.nf
+
+Pull a specific version of a gem from an upstream gem server and
+store it in a stickler\-server(1)\.
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fIconfig\fR:
+.
+.IP "" 4
+.
+.nf
+
+Access or update the stickler client configuration\.
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fIlist\fR:
+.
+.IP "" 4
+.
+.nf
+
+List all the gems in the remote repository\.
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fIunyank\fR:
+.
+.IP "" 4
+.
+.nf
+
+Put a gem that was _yanked_ back into the gemserver index\. This reverses a
+`yank`\.
+.
+.fi
+.
+.IP "" 0
+.
+.SH "OPTIONS"
+These are the options for all commands\. Not all options apply to all commands\.
+.
+.P
+\fI\-a, \-\-add\fR:
+.
+.IP "" 4
+.
+.nf
+
+Add the `\-\-server` or `\-\-upstream` items to the config file when using the
+`config` command\.
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fI\-d, \-\-debug\fR:
+.
+.IP "" 4
+.
+.nf
+
+Output debug information
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fI\-g, \-\-gem\-version\fR=\'VERSION\':
+.
+.IP "" 4
+.
+.nf
+
+The version of the gem to yank from `\-\-server` or to mirror from
+`\-\-upstream`\.
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fI\-h, \-\-help\fR:
+.
+.IP "" 4
+.
+.nf
+
+Show the help message
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fI\-l, \-\-list\fR:
+.
+.IP "" 4
+.
+.nf
+
+Display the current configuration when using the `config` command\.
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fI\-p, \-\-platform\fR=\'PLATFORM\':
+.
+.IP "" 4
+.
+.nf
+
+The platform of the gem to yank from `\-\-server` or to mirror from
+`\-\-upstream` (e\.g\.  ruby, java, mswin32)
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fI\-s, \-\-server\fR=\'SERVER\':
+.
+.IP "" 4
+.
+.nf
+
+The gem server or stickler\-server(1) URL\.  This is used by all the commands\.
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fI\-u, \-\-upstream\fR=\'SERVER\':
+.
+.IP "" 4
+.
+.nf
+
+The upstream server from which to mirror a gem when using the `mirror`
+command\.
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fI\-v, \-\-version\fR:
+.
+.IP "" 4
+.
+.nf
+
+Output the version\.
+.
+.fi
+.
+.IP "" 0
+.
+.SH "CONFIGURATION"
+Stickler uses the \fB\.gem/stickler\fR file to hold its configuration\. It is a yaml file and Currently there are two options\. These are altered using the \fBstickler config\fR command\.
+.
+.P
+\fIupstream\fR: The default upstream server from which to mirror gems\. \fIserver\fR: The default linkstick:stickler\-server[1] to interact with\.
+.
+.P
+An example config file
+.
+.IP "" 4
+.
+.nf
+
+\-\-\-
+:server: http://stickler\.example\.com
+:upstream: https://rubygems\.org
+.
+.fi
+.
+.IP "" 0
+.
+.SH "EXAMPLES"
+Push the local \fBmy_gem\-1\.0\.0\.gem\fR file to the stickler\-server(1) at \fIstickler\.example\.com\fR
+.
+.IP "" 4
+.
+.nf
+
+stickler push \./my_gem\-1\.0\.0\.gem \-\-server http://stickler\.example\.com/
+.
+.fi
+.
+.IP "" 0
+.
+.P
+Push all the gems in the \fBpkg\fR directory to the stickler\-server(1) at \fIstickler\.example\.com\fR
+.
+.IP "" 4
+.
+.nf
+
+stickler push \-\-server http://stickler\.example\.com/ \./pkg/*\.gem
+.
+.fi
+.
+.IP "" 0
+.
+.P
+Yank vesion 1\.0\.0 of my_gem from the gem index on sticker\.example\.com
+.
+.IP "" 4
+.
+.nf
+
+stickler yank my_gem \-\-version 1\.0\.0 \-\-server http://stickler\.example\.com/
+.
+.fi
+.
+.IP "" 0
+.
+.P
+Take the +third_party+ gem, version +1\.4\.2+ that is on \fIrubygems\.org\fR and mirror it on \fIstickler\.example\.com\fR
+.
+.IP "" 4
+.
+.nf
+
+stickler mirror third_party_gem \-\-gem\-version 0\.4\.2 \-\-upstream http://rubygems\.org/ \-\-server http://stickler\.example\.com/
+stickler mirror \-\-help
+.
+.fi
+.
+.IP "" 0
+.
+.P
+Set the \fBserver\fR and \fBupstream\fR configration values in the \fB\.gem/stickler\fR file\.
+.
+.IP "" 4
+.
+.nf
+
+stickler config \-\-add \-\-server http://stickler\.example\.com \-\-upstream http://rubygems\.org/
+.
+.fi
+.
+.IP "" 0
+.
+.SH "SEE ALSO"
+stickler\-server(1), stickler\-passenger\-config(1)
+.
+.SH "AUTHOR"
+Written by Jeremy Hinegardner \fIjeremy@copiousfreetime\.org\fR
+.
+.SH "RESOURCES"
+GitHub project \fIhttps://www\.github\.com/copiousfreetime/stickler\fR
+.
+.SH "BUGS"
+Please report bugs to the github issue tracker \fIhttps://github\.com/copiousfreetime/stickler/issues\fR

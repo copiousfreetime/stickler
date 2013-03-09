@@ -1,0 +1,83 @@
+.\" generated with Ronn/v0.7.3
+.\" http://github.com/rtomayko/ronn/tree/0.7.3
+.
+.TH "STICKLER\-PASSENGER\-CONFIG" "1" "March 2013" "" ""
+.
+.SH "NAME"
+stickler\-passenger\-config \- output a Phusion Passenger config for stickler
+.
+.SH "SYNOPSIS"
+\fIstickler\-passenger\-config\fR [\-\-help] [COMMAND] [COMMAND_OPTIONS] /path/to/stickler/root
+.
+.SH "DESCRIPTION"
+\fIstickler\-passenger\-config\fR will create a stickler web application directory, including the config\.ru file for use with Phusion Passenger \fIhttp://modrails\.com/\fR\. It will then output the stanza to be incorporated into an Apache \fIhttp://httpd\.apache\.org/\fR or Nginx \fIhttp://nginx\.net\fR configuration\.
+.
+.SH "COMMANDS"
+\fIapache2\fR: Output an Apache config\.
+.
+.P
+\fInginx\fR: Output an Nginx config\.
+.
+.SH "OPTIONS"
+\fI\-h, \-\-help\fR:
+.
+.IP "" 4
+.
+.nf
+
+Show the help message
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fI\-v, \-\-version\fR:
+.
+.IP "" 4
+.
+.nf
+
+Output the version\.
+.
+.fi
+.
+.IP "" 0
+.
+.SH "EXAMPLES"
+Output a passenger config for use with apache\.
+.
+.IP "" 4
+.
+.nf
+
+stickler\-passenger\-config apache2 /var/lib/stickler
+.
+.fi
+.
+.IP "" 0
+.
+.P
+Output a pasenger a config to be integrated with an nginx config\.
+.
+.IP "" 4
+.
+.nf
+
+stickler\-passenger\-config nginx /var/lib/stickler
+.
+.fi
+.
+.IP "" 0
+.
+.SH "SEE ALSO"
+stickler(1), stickler\-server(1)
+.
+.SH "AUTHOR"
+Written by Jeremy Hinegardner \fIjeremy@copiousfreetime\.org\fR
+.
+.SH "RESOURCES"
+GitHub project \fIhttps://www\.github\.com/copiousfreetime/stickler\fR
+.
+.SH "BUGS"
+Please report bugs to the github issue tracker \fIhttps://github\.com/copiousfreetime/stickler/issues\fR

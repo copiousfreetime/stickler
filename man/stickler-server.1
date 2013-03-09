@@ -1,0 +1,168 @@
+.\" generated with Ronn/v0.7.3
+.\" http://github.com/rtomayko/ronn/tree/0.7.3
+.
+.TH "STICKLER\-SERVER" "1" "March 2013" "" ""
+.
+.SH "NAME"
+stickler\-server \- start and stop the stickler server process
+.
+.SH "SYNOPSIS"
+\fIstickler\-server\fR [\-\-help] [COMMAND] [COMMAND_OPTIONS] /path/to/stickler/root
+.
+.SH "DESCRIPTION"
+stickler\-server is the daemon process that houses the repositories of proprietary gems and/or mirrors of third party gems\.
+.
+.SH "COMMANDS"
+\fIstart\fR:
+.
+.IP "" 4
+.
+.nf
+
+Start the stickler server process
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fIstop\fR:
+.
+.IP "" 4
+.
+.nf
+
+Stop the stickler server process
+.
+.fi
+.
+.IP "" 0
+.
+.SH "OPTIONS"
+\fI\-d, \-\-daemonize\fR:
+.
+.IP "" 4
+.
+.nf
+
+Daemonize the server
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fI\-\-help\fR:
+.
+.IP "" 4
+.
+.nf
+
+Show the help message
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fI\-h, \-\-host\fR=\'HOST\':
+.
+.IP "" 4
+.
+.nf
+
+The host address to bind to (default: 0\.0\.0\.0)
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fI\-o, \-\-port\fR=\'PORT\':
+.
+.IP "" 4
+.
+.nf
+
+The port to bind to (default: 6789)
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fI\-p, \-\-pid\fR=\'PID_FILE\':
+.
+.IP "" 4
+.
+.nf
+
+Path to wriate a pid file to after daemonizing
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fI\-s, \-\-server\fR=\'SERVER\':
+.
+.IP "" 4
+.
+.nf
+
+The rack handler to use: thin, mongrel, webrick, etc\.
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fI\-v, \-\-version\fR:
+.
+.IP "" 4
+.
+.nf
+
+Output the version\.
+.
+.fi
+.
+.IP "" 0
+.
+.SH "EXAMPLES"
+Start the server, daemonized, using /var/lib/stickler as the root directory of all the repositories\.
+.
+.IP "" 4
+.
+.nf
+
+stickler\-server start \-\-daemonize /var/lib/stickler
+.
+.fi
+.
+.IP "" 0
+.
+.P
+Stop the server that is using /var/lib/stickler as its root directory\.
+.
+.IP "" 4
+.
+.nf
+
+stickler\-server stop /var/lib/stickler
+.
+.fi
+.
+.IP "" 0
+.
+.SH "SEE ALSO"
+stickler(1), stickler\-passenger\-config(1)
+.
+.SH "AUTHOR"
+Written by Jeremy Hinegardner \fIjeremy@copiousfreetime\.org\fR
+.
+.SH "RESOURCES"
+GitHub project \fIhttps://www\.github\.com/copiousfreetime/stickler\fR
+.
+.SH "BUGS"
+Please report bugs to the github issue tracker \fIhttps://github\.com/copiousfreetime/stickler/issues\fR
