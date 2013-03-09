@@ -162,6 +162,15 @@ module Stickler::Repository
       return uri_for_gem( spec )
     end
 
+    #
+    # See Api#unyank
+    #
+    def unyank( spec )
+      return nil if specification_file_exist?( spec )
+      return nil unless gem_file_exist?( spec )
+      install_specification( spec )
+    end
+
 
     #
     # :call-seq:
@@ -194,7 +203,8 @@ module Stickler::Repository
     # See Api#push
     #
     def push( path )
-      spec = specification_from_gem_file( path )
+      # is this line needed? Never used.
+      # spec = specification_from_gem_file( path )
       result = nil
       File.open( path ) do |io|
         result = add( io )

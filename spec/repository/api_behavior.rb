@@ -104,6 +104,38 @@ shared_examples_for "implements Repository::Api" do
 
   end
 
+  describe "#unyank" do
+    before( :each ) do
+      @repo.search_for( @foo_spec ).should be_empty
+      @repo.push( @foo_gem_local_path )
+    end
+
+    it "returns nil if the gem to unyank does not exist" do
+      non_existing_gem = @missing_spec
+      @repo.unyank( non_existing_gem ).should be_nil
+    end
+
+    #Do we even care about this?
+    xit "returns nil if the gem to unyank has not been yanked" do
+      @repo.unyank( @foo_spec ).should be_nil
+    end
+
+    context " when file has been yanked" do
+      before :each do
+        @repo.yank( @foo_spec )
+      end
+
+      it "return true if the gem is successfully unyanked" do
+        @repo.unyank( @foo_spec ).should be_true
+      end
+
+      it "finds the gem in a search" do
+        @repo.unyank( @foo_spec )
+        @repo.search_for( @foo_spec ).should_not be_empty
+      end
+    end
+  end
+
   describe "#search_for" do
     it "returns specs for items that are found" do
       @repo.push( @foo_gem_local_path )
