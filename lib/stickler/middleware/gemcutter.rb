@@ -41,6 +41,19 @@ module Stickler::Middleware
       end
     end
 
+    # gemcutter unyank
+    post '/api/v1/gems/unyank' do
+      begin
+        spec = Stickler::SpecLite.new( params[:spec_name], params[:version] )
+        @repo.unyank( spec )
+        logger.info( "Unyanked #{spec.full_name}" )
+        return spec.to_s
+      rescue Stickler::Repository::Error => e
+        logger.error( "Error unyanking #{spec.full_name} to repo : #{e}" )
+        error( 500, "Error unyanking gem to repo: #{e}" )
+      end
+    end
+
     # gemcutter yank
     delete '/api/v1/gems/yank' do
       spec = Stickler::SpecLite.new( params[:gem_name], params[:version] )

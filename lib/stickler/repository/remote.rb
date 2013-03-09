@@ -96,6 +96,19 @@ module ::Stickler::Repository
     end
 
     #
+    # See Api#unyank
+      #
+    def unyank( spec )
+      return nil unless remote_gem_file_exist?( spec )
+      query = { :spec_name => spec.name, :version => spec.version.to_s }
+      resp  = resource_request( unyank_resource, :query => query  )
+      true
+    rescue Excon::Errors::Error => e
+      # raise Stickler::Repository::Error, "Failure unyanking: #{e.inspect}"
+      []
+    end
+
+    #
     # See Api#delete
     #
     def delete( spec )
@@ -179,6 +192,10 @@ module ::Stickler::Repository
       Addressable::URI.join( uri, "api/v1/gems/yank" )
     end
 
+    def unyank_uri
+      Addressable::URI.join( uri, "api/v1/gems/unyank" )
+    end
+
     def yank_resource
       unless @yank_resource then
         params = { :method => :delete,
@@ -187,6 +204,16 @@ module ::Stickler::Repository
         @yank_resource = Excon.new( yank_uri.to_s, params )
       end
       return @yank_resource
+    end
+    
+    def unyank_resource
+      unless @unyank_resource then
+        params = { :method => :post,
+                   :headers => { 'Content-Type' => 'application/x-www-form-urlencoded' },
+                   :expects => [200] }
+        @unyank_resource = Excon.new( unyank_uri.to_s, params )
+      end
+      return @unyank_resource
     end
 
     def gem_resource( spec )
