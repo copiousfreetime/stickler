@@ -3,7 +3,7 @@ module Stickler
     class Unyank < Stickler::Client
       def self.banner
 <<-_
-Restore a yanked gem to the gemserver's index.  
+Restore a yanked gem to the gemserver's index.
 
 Usage: stickler unyank [options] --gem-version x.y.z gem
 
@@ -42,9 +42,9 @@ _
         else
           $stdout.puts "FAILURE"
         end
-     rescue Stickler::Repository::Error => e
+      rescue Stickler::Repository::Error => e
         $stdout.puts "ERROR: #{e.message}"
-     end
+      end
     end
   end
 end
