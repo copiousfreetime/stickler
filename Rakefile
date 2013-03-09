@@ -15,11 +15,12 @@ This.ruby_gemspec do |spec|
   spec.add_runtime_dependency( 'logging'    , '~> 1.6.2'  )
 
   # The Development Dependencies
-  spec.add_development_dependency( 'rake'        , '~> 10.0.3' )
+  spec.add_development_dependency( 'rake'        , '~> 10.0.3'  )
   spec.add_development_dependency( 'rack-test'   , '~> 0.6.1'   )
   spec.add_development_dependency( 'builder'     , '~> 3.0.0'   )
   spec.add_development_dependency( 'rspec'       , '~> 2.9.0'   )
   spec.add_development_dependency( 'rdoc'        , '~> 3.12'    )
+  spec.add_development_dependency( 'ronn'        , '~> 0.7.3'   )
 
 end
 

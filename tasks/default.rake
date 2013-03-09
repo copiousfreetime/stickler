@@ -58,7 +58,6 @@ begin
   task :default => :test
   task :test_requirements
   task :test => :test_requirements
-  task :default => :test
 rescue LoadError
   This.task_warning( 'test' )
 end
@@ -231,6 +230,15 @@ CLOBBER << This.gemspec_file.to_s
 require 'rubygems/package_task'
 Gem::PackageTask.new( This.platform_gemspec ) do
   # nothing
+end
+
+
+#------------------------------------------------------------------------------
+# man pages
+#------------------------------------------------------------------------------
+desc "Create the man pages"
+task :man do
+  sh "ronn --roff #{FileList["man/*.ronn"]}"
 end
 
 #------------------------------------------------------------------------------
