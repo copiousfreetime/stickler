@@ -60,5 +60,5 @@ Version 0.1.1 - 2008-10-12
 
 Version 0.1.0 - 2008-10-10
 --------------------------
-* http://copiousfreetime.org/articles/2008/10/09/managing-a-gem-repository-with-stickler.html[Managing a Gem Repository with Stickler]
+* [Managing a Gem Repository with Stickler](http://copiousfreetime.org/articles/2008/10/09/managing-a-gem-repository-with-stickler.html)
 * Initial public release

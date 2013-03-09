@@ -58,13 +58,12 @@ lib/stickler/server/public/js/modernizr-1.5.min.js
 lib/stickler/server/views/index.erb
 lib/stickler/server/views/layout.erb
 lib/stickler/spec_lite.rb
-man/asciidoc.conf
+man/stickler-passenger-config.1.ronn
 man/stickler-passenger-config.1
-man/stickler-passenger-config.asciidoc
+man/stickler-server.1.ronn
 man/stickler-server.1
-man/stickler-server.asciidoc
+man/stickler.1.ronn
 man/stickler.1
-man/stickler.asciidoc
 spec/data/gemcutter/gems/foo-1.0.0.gem
 spec/data/gems/bar-1.0.0.gem
 spec/data/gems/baz-3.1.4-java.gem
@@ -84,7 +83,6 @@ spec/repository/remote_spec.rb
 spec/spec.opts
 spec/spec_helper.rb
 spec/spec_lite_spec.rb
-tasks/contribute.rake
 tasks/default.rake
 tasks/man.rake
 tasks/this.rb

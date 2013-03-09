@@ -1,0 +1,144 @@
+STICKLER(1)
+===========
+
+NAME
+----
+stickler - command line program to interact with a stickler-server
+
+
+SYNOPSIS
+--------
+*stickler* [--help] [COMMAND] [COMMAND_OPTIONS] [gemfile(s)]
+
+
+DESCRIPTION
+-----------
+Stickler is a tool to organize and maintain an internal gem repository of
+proprietary gems and/or a mirror of third party gems.
+
+The stickler(1) command interacts with an instance of
+stickler-server(1) to control the publishing and mirroring of ruby
+gems.
+
+
+COMMANDS
+--------
+*push*: 
+    Push one or more gems to a gemserver.  This works the same as `gem push`
+    although there is no authorization mechanism.
+
+*yank*: 
+    Remove a gem from the gemserver's index.  It will still be available from
+    direct download.  This works the same as `gem yank`.
+
+*mirror*:
+    Pull a specific version of a gem from an upstream gem server and
+    store it in a stickler-server(1).
+
+*config*:
+    Access or update the stickler client configuration.
+
+*list*:
+    List all the gems in the remote repository.
+
+*unyank*:
+    Put a gem that was _yanked_ back into the gemserver index. This reverses a
+    `yank`.
+
+OPTIONS
+-------
+These are the options for all commands.  Not all options apply to all commands.
+
+*-a, --add*:
+    Add the `--server` or `--upstream` items to the config file when using the
+    `config` command.
+
+*-d, --debug*:
+    Output debug information
+
+*-g, --gem-version*='VERSION':
+    The version of the gem to yank from `--server` or to mirror from
+    `--upstream`.
+
+*-h, --help*:
+    Show the help message
+
+*-l, --list*:
+    Display the current configuration when using the `config` command.
+
+*-p, --platform*='PLATFORM':
+    The platform of the gem to yank from `--server` or to mirror from
+    `--upstream` (e.g.  ruby, java, mswin32)
+
+*-s, --server*='SERVER':
+    The gem server or stickler-server(1) URL.  This is used by all the commands.
+
+*-u, --upstream*='SERVER':
+    The upstream server from which to mirror a gem when using the `mirror`
+    command.
+
+*-v, --version*:
+    Output the version.
+
+
+CONFIGURATION
+-------------
+Stickler uses the `.gem/stickler` file to hold its configuration.  It is a yaml
+file and Currently there are two options.  These are altered using the `stickler
+config` command.
+
+*upstream*: The default upstream server from which to mirror gems.
+*server*:   The default linkstick:stickler-server[1] to interact with.
+
+An example config file
+
+    --- 
+    :server: http://stickler.example.com
+    :upstream: https://rubygems.org
+
+
+EXAMPLES
+--------
+Push the local `my_gem-1.0.0.gem` file to the stickler-server(1) at
+*stickler.example.com*
+
+    stickler push ./my_gem-1.0.0.gem --server http://stickler.example.com/
+
+Push all the gems in the `pkg` directory to the stickler-server(1) at
+*stickler.example.com*
+
+    stickler push --server http://stickler.example.com/ ./pkg/*.gem 
+
+Yank vesion 1.0.0 of my_gem from the gem index on sticker.example.com
+
+    stickler yank my_gem --version 1.0.0 --server http://stickler.example.com/
+
+Take the +third_party+ gem, version +1.4.2+ that is on *rubygems.org* and mirror
+it on *stickler.example.com*
+
+    stickler mirror third_party_gem --gem-version 0.4.2 --upstream http://rubygems.org/ --server http://stickler.example.com/
+    stickler mirror --help 
+
+Set the `server` and `upstream` configration values in the `.gem/stickler` file.
+
+    stickler config --add --server http://stickler.example.com --upstream http://rubygems.org/
+
+
+SEE ALSO
+--------
+stickler-server(1), stickler-passenger-config(1)
+
+
+AUTHOR
+------
+Written by Jeremy Hinegardner <jeremy@copiousfreetime.org>
+
+
+RESOURCES
+---------
+[GitHub project](https://www.github.com/copiousfreetime/stickler)
+
+
+BUGS
+----
+Please report bugs to the [github issue tracker](https://github.com/copiousfreetime/stickler/issues)

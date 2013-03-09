@@ -1,0 +1,70 @@
+STICKLER-PASSENGER-CONFIG(1)
+============================
+
+NAME
+----
+stickler-passenger-config - output a Phusion Passenger config for stickler
+
+
+SYNOPSIS
+--------
+*stickler-passenger-config* [--help] [COMMAND] [COMMAND_OPTIONS] /path/to/stickler/root
+
+
+DESCRIPTION
+-----------
+*stickler-passenger-config* will create a stickler web application directory,
+including the config.ru file for use with [Phusion Passenger](http://modrails.com/).
+It will then output the stanza to be incorporated into an
+[Apache](http://httpd.apache.org/) or [Nginx](http://nginx.net)
+configuration.
+
+
+COMMANDS
+--------
+
+*apache2*: Output an Apache config.
+
+*nginx*: Output an Nginx config.
+
+
+OPTIONS
+-------
+*-h, --help*:
+    Show the help message
+
+*-v, --version*:
+    Output the version.
+
+
+EXAMPLES
+--------
+Output a passenger config for use with apache.
+
+    stickler-passenger-config apache2 /var/lib/stickler
+
+
+Output a pasenger a config to be integrated with an nginx config.
+
+    stickler-passenger-config nginx /var/lib/stickler
+
+
+SEE ALSO
+--------
+stickler(1), stickler-server(1)
+
+
+AUTHOR
+------
+Written by Jeremy Hinegardner <jeremy@copiousfreetime.org>
+
+
+RESOURCES
+---------
+[GitHub project](https://www.github.com/copiousfreetime/stickler)
+
+
+BUGS
+----
+Please report bugs to the [github issue tracker](https://github.com/copiousfreetime/stickler/issues)
+
