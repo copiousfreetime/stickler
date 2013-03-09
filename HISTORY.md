@@ -7,6 +7,7 @@ Version 2.3.0 - 2013-03-09
 * Expose deleting a gem via the stickler commandline (copiousfreetime/stickler/#10)
 * Update dependencies for Excon so http proxy works (copiousfreetime/stickler/#24)
 * Implement unyank for local and remote repositories (copiousfreetime/stickler/#26)
+* Updated dependencies to latest versions
 
 Version 2.2.4 - 2012-02-26
 --------------------------
