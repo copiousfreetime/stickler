@@ -281,10 +281,9 @@ module ::Stickler::Repository
         # HEAD request.  Only follow a few times though.
         raise redirect unless [ :get, :head ].include?( redirect.request[:method] )
         raise redirect if trys > 5
-        resource = Excon::Connection.new( redirect.response.headers['Location'],
-                                          { :headers => resource.data[:headers],
-                                            :query   => resource.data[:headers],
-                                            :method  => resource.data[:method] } )
+        resource = Excon.new( redirect.response.headers['Location'],
+                              { :headers => resource.data[:headers],
+                                :method  => resource.data[:method] } )
         retry
       end
     end
