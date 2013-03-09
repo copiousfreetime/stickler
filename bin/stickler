@@ -3,7 +3,7 @@
 require 'stickler'
 require 'stickler/client'
 
-SUB_COMMANDS = %w[ push yank mirror config list delete ].sort
+SUB_COMMANDS = %w[ push yank mirror config list delete unyank ].sort
 exec_name = File.basename( $0 )
 
 #----------------------------------------------------------------------
@@ -20,6 +20,7 @@ Stickler server interaction
   Examples:
     #{exec_name} push ./my_gem-1.0.0.gem --server http://stickler.example.com/
     #{exec_name} yank my_gem --gem-version 1.0.0 --server http://stickler.example.com/
+    #{exec_name} unyank my_gem --gem-version 1.0.0 --server http://stickler.example.com/
     #{exec_name} mirror third_party_gem --gem-version 0.4.2 --upstream http://rubygems.org/ --server http://stickler.example.com/
     #{exec_name} mirror --help
     #{exec_name} config --server http://stickler.example.com --upstream http://rubygems.org/
@@ -45,6 +46,8 @@ when "push"
   ::Stickler::Client::Push.new( ARGV ).run
 when "yank"
   ::Stickler::Client::Yank.new( ARGV ).run
+when "unyank"
+  ::Stickler::Client::Unyank.new( ARGV ).run
 when "delete"
   ::Stickler::Client::Delete.new( ARGV ).run
 when "mirror"
