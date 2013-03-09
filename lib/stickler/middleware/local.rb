@@ -23,7 +23,7 @@ module Stickler::Middleware
   #   use Stickler::Middleware::Local, :repo_root => '/path/to/repository',
   #                                    :serve_indexes => true
   #
-  class Local < Index
+  class Local < ::Stickler::Middleware::Index
     def initialize( app = nil, opts = {} )
       super( app, opts )
       # overwrite the repo that is set in the parent

@@ -22,5 +22,5 @@ module Stickler
         run Sinatra::Base
       end
     end
- end
+  end
 end

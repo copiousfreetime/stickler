@@ -104,6 +104,6 @@ module Stickler::Middleware
         end
         return by_name
       end
-   end
+    end
   end
 end

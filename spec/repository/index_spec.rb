@@ -19,28 +19,28 @@ describe ::Stickler::Repository::Index do
   end
 
   it "indexes all the .gemspec files in the directory" do
-    @index.specs.size.should == @specifications.size
+    @index.specs.size.should eq @specifications.size
   end
 
   it "is able to notice changes in the index" do
-    @index.specs.size.should == @specifications.size
+    @index.specs.size.should eq @specifications.size
     FileUtils.rm( File.join( @index_me, "foo-1.0.0.gemspec" ) )
-    @index.specs.size.should == ( @specifications.size - 1 )
+    @index.specs.size.should eq( @specifications.size - 1 )
   end
 
   it "knows just the latest specs" do
-    @index.latest_specs.size.should == (@specifications.size - 1)
-    @index.latest_specs.collect { |s| s.full_name }.sort.should == %w[ bar-1.0.0 baz-3.1.4 baz-3.1.4-java foo-1.0.0 ]
+    @index.latest_specs.size.should eq(@specifications.size - 1)
+    @index.latest_specs.collect { |s| s.full_name }.sort.should eq(%w[ bar-1.0.0 baz-3.1.4 baz-3.1.4-java foo-1.0.0 ])
   end
 
   it "knows the pre-release specs" do
-    @index.prerelease_specs.size.should == 1
-    @index.prerelease_specs.first.full_name.should == "foo-2.0.0a"
+    @index.prerelease_specs.size.should eq 1
+    @index.prerelease_specs.first.full_name.should eq "foo-2.0.0a"
   end
 
   it "knows the released specs" do
-    @index.released_specs.size.should == 4
-    @index.released_specs.collect { |s| s.full_name }.sort.should == %w[ bar-1.0.0 baz-3.1.4 baz-3.1.4-java foo-1.0.0 ]
+    @index.released_specs.size.should eq 4
+    @index.released_specs.collect { |s| s.full_name }.sort.should eq(%w[ bar-1.0.0 baz-3.1.4 baz-3.1.4-java foo-1.0.0 ])
   end
 end
 

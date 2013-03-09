@@ -60,8 +60,8 @@ shared_examples_for "implements Repository::Api" do
     it "deletes a gem from the repo" do
       @repo.search_for( @foo_spec ).should be_empty
       @repo.push( @foo_gem_local_path )
-      @repo.search_for( @foo_spec ).size.should == 1
-      @repo.delete( @foo_spec ).should == true
+      @repo.search_for( @foo_spec ).size.should eq 1
+      @repo.delete( @foo_spec ).should eq true
       @repo.search_for( @foo_spec ).should be_empty
     end
 

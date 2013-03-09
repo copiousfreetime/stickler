@@ -13,7 +13,7 @@ module ::Stickler::Repository
     # repository
     def mirror( spec, upstream_host )
       raise Stickler::Repository::Error, "gem #{spec.full_name} already exists in remote repository" if remote_gem_file_exist?( spec )
-      resp = resource_request( mirror_resource( spec, upstream_host ) )
+      resource_request( mirror_resource( spec, upstream_host ) )
     end
 
     private

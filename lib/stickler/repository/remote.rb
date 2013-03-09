@@ -74,7 +74,7 @@ module ::Stickler::Repository
     def push( path )
       spec = speclite_from_gem_file( path )
       raise Stickler::Repository::Error, "gem #{spec.full_name} already exists in remote repository" if remote_gem_file_exist?( spec )
-      resp = resource_request( push_resource, :body => IO.read( path ) )
+      resource_request( push_resource, :body => IO.read( path ) )
       return spec
     rescue Excon::Errors::Error => e
       msg = "Failure pushing #{path} to remote repository : response code => #{e.response.status}, response message => '#{e.response.body}'"
@@ -87,7 +87,7 @@ module ::Stickler::Repository
     def yank( spec )
       return nil unless remote_gem_file_exist?( spec )
       query = { :gem_name => spec.name, :version => spec.version.to_s }
-      resp  = resource_request( yank_resource, :query => query  )
+      resource_request( yank_resource, :query => query  )
       return full_uri_to_gem( spec )
     rescue Excon::Errors::Error => e
       raise Stickler::Repository::Error, "Failure yanking: #{e.inspect}"
@@ -99,11 +99,10 @@ module ::Stickler::Repository
     def unyank( spec )
       return nil unless remote_gem_file_exist?( spec )
       query = { :spec_name => spec.name, :version => spec.version.to_s }
-      resp  = resource_request( unyank_resource, :query => query  )
+      resource_request( unyank_resource, :query => query  )
       true
     rescue Excon::Errors::Error => e
-      # raise Stickler::Repository::Error, "Failure unyanking: #{e.inspect}"
-      []
+      raise Stickler::Repository::Error, "Failure unyanking: #{e.inspect}"
     end
 
     #
@@ -113,7 +112,7 @@ module ::Stickler::Repository
       return false unless remote_gem_file_exist?( spec )
       resource_request( gem_resource( spec ), :method => :delete )
       return true
-    rescue Excon::Errors::Error => e
+    rescue Excon::Errors::Error
       return false
     end
 
@@ -179,11 +178,10 @@ module ::Stickler::Repository
     end
 
     def push_resource
-      unless @push_resource then
+      @push_resource ||= begin
         params = { :method => :post, :headers => { 'Content-Type' => 'application/octet-stream' }, :expects => [ 201, 200 ] }
-        @push_resource = Excon.new( push_uri.to_s, params )
+        Excon.new( push_uri.to_s, params )
       end
-      return @push_resource
     end
 
     def yank_uri
@@ -195,23 +193,21 @@ module ::Stickler::Repository
     end
 
     def yank_resource
-      unless @yank_resource then
+      @yank_resource ||= begin
         params = { :method => :delete,
                    :headers => { 'Content-Type' => 'application/x-www-form-urlencoded' },
                    :expects => [200] }
-        @yank_resource = Excon.new( yank_uri.to_s, params )
+        Excon.new( yank_uri.to_s, params )
       end
-      return @yank_resource
     end
     
     def unyank_resource
-      unless @unyank_resource then
+      @unyank_resource ||= begin
         params = { :method => :post,
                    :headers => { 'Content-Type' => 'application/x-www-form-urlencoded' },
                    :expects => [200] }
-        @unyank_resource = Excon.new( unyank_uri.to_s, params )
+        Excon.new( unyank_uri.to_s, params )
       end
-      return @unyank_resource
     end
 
     def gem_resource( spec )
@@ -247,9 +243,9 @@ module ::Stickler::Repository
     end
 
     def remote_uri_exist?( uri )
-      rc = resource_request( Excon.new( uri.to_s ),  :method => :head, :expects => [200] )
+      resource_request( Excon.new( uri.to_s ),  :method => :head, :expects => [200] )
       return true
-    rescue Excon::Errors::Error => e
+    rescue Excon::Errors::Error
       return false
     end
 
@@ -269,10 +265,10 @@ module ::Stickler::Repository
     def resource_request( resource, params = {} )
       trys = 0
       begin
-        resource.connection[:headers]['User-Agent'] = "Stickler Client v#{Stickler::VERSION}"
-        resource.connection[:headers].delete('Authorization')
+        resource.data[:headers]['User-Agent'] = "Stickler Client v#{Stickler::VERSION}"
+        resource.data[:headers].delete('Authorization')
         if authenticator then
-          resource.connection[:headers]['Authorization'] = authenticator.credentials
+          resource.data[:headers]['Authorization'] = authenticator.credentials
         end
         trys += 1
         resource.request( params )
@@ -286,9 +282,9 @@ module ::Stickler::Repository
         raise redirect unless [ :get, :head ].include?( redirect.request[:method] )
         raise redirect if trys > 5
         resource = Excon::Connection.new( redirect.response.headers['Location'],
-                                          { :headers => resource.connection[:headers],
-                                            :query   => resource.connection[:headers],
-                                            :method  => resource.connection[:method] } )
+                                          { :headers => resource.data[:headers],
+                                            :query   => resource.data[:headers],
+                                            :method  => resource.data[:method] } )
         retry
       end
     end

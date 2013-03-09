@@ -17,8 +17,8 @@ describe ::Stickler::Repository::Local do
   %w[ gems specifications ].each do |sub_dir|
     it "creates #{sub_dir} directory" do
       new_dir = File.join( @repo_dir , sub_dir ) + File::SEPARATOR
-      File.directory?( new_dir ).should == true
-      @repo.send( "#{sub_dir}_dir" ).should == new_dir
+      File.directory?( new_dir ).should eq true
+      @repo.send( "#{sub_dir}_dir" ).should eq new_dir
     end
 
   end
@@ -27,20 +27,20 @@ describe ::Stickler::Repository::Local do
     Dir.glob( File.join( @gems_dir, "*.gem" ) ).each do |gem|
       @repo.push( gem )
     end
-    @repo.specs.size.should == 5
+    @repo.specs.size.should eq 5
   end
 
   it "two instances with the same repo dir are the same object" do
     repo2 = ::Stickler::Repository::Local.new( File.join(@repos_dir, '1') )
-    repo2.object_id.should == @repo.object_id
-    ::Stickler::Repository::Local.repos.size.should == 1
+    repo2.object_id.should eq @repo.object_id
+    ::Stickler::Repository::Local.repos.size.should eq 1
   end
 
 
   it "keeps track of all the repository instances" do
-    repo2 = ::Stickler::Repository::Local.new( File.join(@repos_dir, "2" ) )
-    repo3 = ::Stickler::Repository::Local.new( File.join(@repos_dir, "3" ) )
-    ::Stickler::Repository::Local.repos.size.should == 3
+    ::Stickler::Repository::Local.new( File.join(@repos_dir, "2" ) )
+    ::Stickler::Repository::Local.new( File.join(@repos_dir, "3" ) )
+    ::Stickler::Repository::Local.repos.size.should eq 3
   end
 
   it_should_behave_like 'includes Repository::Api'

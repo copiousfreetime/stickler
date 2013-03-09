@@ -21,7 +21,7 @@ class SticklerTestServer
         Excon.get( @repo_uri + "specs.#{Gem.marshal_version}.gz" )
         #puts "rackup started with pid #{IO.read( @pid_file )}"
         break
-      rescue => e
+      rescue
         tries += 1
         sleep tries * 0.1
       end

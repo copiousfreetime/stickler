@@ -53,7 +53,7 @@ module Stickler::Middleware
     # gemcutter yank
     delete '/api/v1/gems/yank' do
       spec = Stickler::SpecLite.new( params[:gem_name], params[:version] )
-      if s = @repo.yank( spec ) then
+      if @repo.yank( spec ) then
         logger.info( "Yanked #{spec.full_name}" )
         return "Yanked #{spec.full_name}"
       else
