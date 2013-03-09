@@ -1,11 +1,3 @@
-require 'sinatra'
-require 'stickler/middleware'
-require 'stickler/middleware/helpers'
-require 'stickler/repository/null'
-require 'stickler/spec_lite'
-require 'stickler/logable'
-require 'stickler/paths'
-
 module Stickler::Middleware
   # Index is a Rack middleware that passes all requests through except for the
   # following urls:

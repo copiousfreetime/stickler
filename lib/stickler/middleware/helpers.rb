@@ -1,5 +1,3 @@
-require 'stickler/middleware'
-require 'stickler/repository/local'
 module Stickler::Middleware
   module Helpers
     #

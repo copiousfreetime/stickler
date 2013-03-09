@@ -1,7 +1,5 @@
-require File.expand_path( File.join( File.dirname(__FILE__), "..", "spec_helper.rb" ) )
-require File.expand_path( File.join( File.dirname(__FILE__), "api_behavior.rb" ) )
-
-require 'stickler/repository/remote'
+require 'spec_helper'
+require 'repository/api_behavior'
 
 class SticklerTestServer
   def initialize( spec_dir, ru_file )

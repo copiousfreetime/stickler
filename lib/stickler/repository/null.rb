@@ -1,4 +1,3 @@
-require 'stickler/repository'
 module Stickler::Repository
   #
   # A null repository.  It is in most respecs like a Repository::Local that has

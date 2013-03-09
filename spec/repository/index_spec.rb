@@ -1,5 +1,4 @@
-require File.expand_path( File.join( File.dirname(__FILE__), "..", "spec_helper.rb" ) )
-require 'stickler/repository/index'
+require 'spec_helper'
 
 describe ::Stickler::Repository::Index do
 

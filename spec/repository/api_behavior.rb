@@ -1,5 +1,3 @@
-require 'stickler/repository/api'
-
 shared_examples_for "includes Repository::Api" do
   describe "responds to all the api methods" do
     Stickler::Repository::Api.api_methods.each do |method|

@@ -1,5 +1,3 @@
-require 'rack/utils'
-require 'stickler/middleware'
 module Stickler::Middleware
   class Compression
     def initialize( app )

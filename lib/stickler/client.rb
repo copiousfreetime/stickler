@@ -1,5 +1,4 @@
 require 'trollop'
-require 'rubygems'
 require 'stickler/client/config_file'
 
 module Stickler
@@ -43,9 +42,10 @@ module Stickler
   end
 end
 
-require 'stickler/client/push'
-require 'stickler/client/yank'
-require 'stickler/client/delete'
-require 'stickler/client/mirror'
 require 'stickler/client/config'
+require 'stickler/client/delete'
 require 'stickler/client/list'
+require 'stickler/client/mirror'
+require 'stickler/client/push'
+require 'stickler/client/unyank'
+require 'stickler/client/yank'

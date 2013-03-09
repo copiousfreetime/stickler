@@ -1,4 +1,3 @@
-require 'stickler/middleware'
 module Stickler::Middleware
   #
   # Idea completely taken from rack-contrib, it can function as a middleware

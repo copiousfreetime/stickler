@@ -1,7 +1,3 @@
-require 'sinatra/base'
-require 'stickler/middleware/index'
-require 'stickler/repository/mirror'
-
 module Stickler::Middleware
   #
   # A Mirror server keeps gems from one or more upstream gem servers in local

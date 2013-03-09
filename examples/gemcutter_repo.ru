@@ -10,8 +10,7 @@
 #-----------------------------------------------------------------------
 $:.unshift File.expand_path( File.join( File.dirname(__FILE__), "..", "lib" ) )
 
-require 'stickler/middleware/gemcutter'
-require 'stickler/middleware/compression'
+require 'stickler'
 
 gem_dir = File.expand_path( "../spec/tmp", File.dirname( __FILE__ ) )
 

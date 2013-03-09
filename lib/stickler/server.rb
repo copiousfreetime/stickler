@@ -1,11 +1,3 @@
-require 'stickler/error'
-require 'stickler/middleware/compression'
-require 'stickler/middleware/gemcutter'
-require 'stickler/middleware/mirror'
-require 'stickler/middleware/index'
-require 'stickler/middleware/not_found'
-require 'rack/commonlogger'
-
 module Stickler
   class Server
 

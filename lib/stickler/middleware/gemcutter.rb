@@ -1,8 +1,4 @@
-require 'sinatra/base'
-require 'stickler/middleware'
 require 'stickler/middleware/local'
-require 'stickler/repository/local'
-
 module Stickler::Middleware
   #
   # A rack middleware for implementing the gemcutter api

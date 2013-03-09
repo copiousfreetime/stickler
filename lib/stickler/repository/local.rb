@@ -1,10 +1,8 @@
-require 'stickler/spec_lite'
-require 'stickler/logable'
-require 'stickler/repository'
 require 'stickler/repository/index'
 require 'addressable/uri'
 require 'tempfile'
 require 'forwardable'
+require 'rubygems/format'
 
 module Stickler::Repository
   #

@@ -1,7 +1,6 @@
-require File.expand_path( File.join( File.dirname(__FILE__), "..", "spec_helper.rb" ) )
-require File.expand_path( File.join( File.dirname(__FILE__), "api_behavior.rb" ) )
+require 'spec_helper'
+require 'repository/api_behavior'
 
-require 'stickler/repository/api'
 module Stickler::Repository
   class Stub
     include Stickler::Repository::Api

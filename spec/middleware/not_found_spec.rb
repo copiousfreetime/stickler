@@ -1,5 +1,4 @@
-require File.expand_path( File.join( File.dirname(__FILE__), "..", "spec_helper.rb" ) )
-require 'stickler/middleware/not_found'
+require 'spec_helper'
 
 describe ::Stickler::Middleware::NotFound do
   include Rack::Test::Methods

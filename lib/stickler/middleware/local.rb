@@ -1,8 +1,4 @@
-require 'sinatra'
-require 'stickler/middleware'
 require 'stickler/middleware/index'
-require 'stickler/repository/local'
-
 module Stickler::Middleware
   #
   # A Sinatra middleware that implements the HTTP portions of a Modern gem server.  
