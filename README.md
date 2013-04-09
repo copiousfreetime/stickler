@@ -101,7 +101,7 @@ Open your browser to http://localhost:6789
 ## See Also
 
 The man pages that ship with the gem.  They may be viewed if you also install
-the (gem-man)[http://defunkt.github.com/gem-man/] gem.
+the [gem-man](http://defunkt.github.com/gem-man/) gem.
 
     % gem install gem-man
     % gem man stickler
