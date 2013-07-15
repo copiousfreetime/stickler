@@ -6,10 +6,10 @@ require 'trollop'
 SUB_COMMANDS = %w[ start stop ]
 exec_name = File.basename( $0 )
 
-#----------------------------------------------------------------------
+# ---------------------------------------------------------------------
 # parse through the top level global options, this is intercept
 # --version and --help
-#----------------------------------------------------------------------
+# ---------------------------------------------------------------------
 global_options = Trollop::options do
   version "Stickler #{Stickler::VERSION}"
   banner <<-_
@@ -26,15 +26,15 @@ _
   stop_on SUB_COMMANDS
 end
 
-#----------------------------------------------------------------------
+# ---------------------------------------------------------------------
 # sub command processing
-#----------------------------------------------------------------------
+# ---------------------------------------------------------------------
 cmd = ARGV.shift
 Trollop::die "unknown sub command #{cmd.inspect}" unless SUB_COMMANDS.include?( cmd )
 
-#----------------------------------------------------------------------
+# ---------------------------------------------------------------------
 # All for the display of a default
-#----------------------------------------------------------------------
+# ---------------------------------------------------------------------
 DEFAULT_HANDLERS = %w[ thin mongrel webrick ]
 def rack_handler( handlers = DEFAULT_HANDLERS )
   handlers = Array( handlers )
@@ -49,10 +49,10 @@ def rack_handler( handlers = DEFAULT_HANDLERS )
   Trollop::die "No Server handler (#{handlers.join(",")}) found."
 end
 
-#----------------------------------------------------------------------
+# ---------------------------------------------------------------------
 # option parsing of the sub command, all subcommands have the same
 # options
-#----------------------------------------------------------------------
+# ---------------------------------------------------------------------
 rack_options = Trollop::options do
   banner <<-_
 Usage: #{exec_name} #{cmd} [options] /path/to/stickler/root
@@ -71,9 +71,9 @@ end
 rack_options[:Host] = rack_options.delete(:host)
 rack_options[:Port] = rack_options.delete(:port)
 
-#----------------------------------------------------------------------
+# ---------------------------------------------------------------------
 # validate the sole argument, the stickler root directory
-#----------------------------------------------------------------------
+# ---------------------------------------------------------------------
 stickler_root = ARGV.shift
 Trollop::die "Stickler root argument required" unless stickler_root
 

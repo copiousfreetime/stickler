@@ -7,10 +7,10 @@ require 'stickler'
 SUB_COMMANDS = %w[ apache2 nginx ]
 exec_name = File.basename( $0 )
 
-#----------------------------------------------------------------------
+# ---------------------------------------------------------------------
 # parse through the top level global options, this is intercept
 # --version and --help
-#----------------------------------------------------------------------
+# ---------------------------------------------------------------------
 global_options = Trollop::options do
   version "Stickler #{::Stickler::VERSION}"
   banner <<-_
@@ -27,15 +27,15 @@ _
   stop_on SUB_COMMANDS
 end
 
-#----------------------------------------------------------------------
+# ---------------------------------------------------------------------
 # sub command processing
-#----------------------------------------------------------------------
+# ---------------------------------------------------------------------
 cmd = ARGV.shift
 Trollop::die "unknown sub command #{cmd.inspect}" unless SUB_COMMANDS.include?( cmd )
 
-#----------------------------------------------------------------------
+# ---------------------------------------------------------------------
 # validate the sole argument, the stickler root directory
-#----------------------------------------------------------------------
+# ---------------------------------------------------------------------
 stickler_root = ARGV.shift
 Trollop::die "Stickler root argument required" unless stickler_root
 stickler_root = File.expand_path( stickler_root )
@@ -55,9 +55,9 @@ begin
   config_ru = File.join( stickler_root, "config.ru" )
   File.open( config_ru, "w+" ) do |f|
     f.puts <<-__config_ru__
-#-----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # config.ru for use with passenger deployed Stickler
-#-----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 require 'rubygems' if RUBY_VERSION < "1.9"
 require 'stickler'
 run ::Stickler::Server.new( "#{stickler_root}" ).app

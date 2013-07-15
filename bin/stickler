@@ -6,10 +6,10 @@ require 'stickler/client'
 SUB_COMMANDS = %w[ push yank mirror config list delete unyank ].sort
 exec_name = File.basename( $0 )
 
-#----------------------------------------------------------------------
+# ---------------------------------------------------------------------
 # parse through the top level global options, this is intercept
 # --version and --help
-#----------------------------------------------------------------------
+# ---------------------------------------------------------------------
 global_options = Trollop::options do
   version "Stickler #{Stickler::VERSION}"
   banner <<-_
@@ -33,9 +33,9 @@ _
   stop_on SUB_COMMANDS
 end
 
-#----------------------------------------------------------------------
+# ---------------------------------------------------------------------
 # sub command processing
-#----------------------------------------------------------------------
+# ---------------------------------------------------------------------
 cmd = ARGV.shift
 Trollop::die "No sub command given" unless cmd
 Trollop::die "Unknown sub command #{cmd.inspect}" unless SUB_COMMANDS.include?( cmd )
