@@ -60,8 +60,8 @@ Usage: #{exec_name} #{cmd} [options] /path/to/stickler/root
   Options:
 _
   opt :daemonize, "Daemonize the server", :default => false
-  opt :host, "The host address to bind to", :type => :string, :default =>'0.0.0.0'
-  opt :pid, "Path to write a pid file to after daemonizing", :type => :int
+  opt :host, "The host address to bind to", :type => String, :default =>'0.0.0.0'
+  opt :pid, "Path to write a pid file to after daemonizing", :type => String, :default => 'stickler-server.pid'
   opt :port, "The port to bind to", :type => :int, :default => 6789
   opt :server, "The rack handler: thin, mongrel, webrick, etc", :type => String, :default => rack_handler
 end
