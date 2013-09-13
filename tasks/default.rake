@@ -50,14 +50,16 @@ task :develop => "develop:default"
 # Minitest - standard TestTask
 #------------------------------------------------------------------------------
 begin
-  require 'rspec/core/rake_task'
-   RSpec::Core::RakeTask.new( :test ) do |t|
-    t.ruby_opts    = %w[ -w ]
-    t.rspec_opts   = %w[ --color --format documentation ]
+  require 'rake/testtask'
+  Rake::TestTask.new( :test ) do |t|
+    t.ruby_opts    = %w[ -w -rubygems ]
+    t.libs         = %w[ lib spec ]
+    t.pattern      = "spec/**/*_spec.rb"
   end
-  task :default => :test
+
   task :test_requirements
   task :test => :test_requirements
+  task :default => :test
 rescue LoadError
   This.task_warning( 'test' )
 end
@@ -72,11 +74,12 @@ begin
   RDoc::Task.new do |t|
     t.markup   = 'tomdoc'
     t.rdoc_dir = 'doc'
-    t.main     = 'README.rdoc'
+    t.main     = 'README.md'
     t.title    = "#{This.name} #{This.version}"
-    t.rdoc_files.include( '*.rdoc', 'lib/**/*.rb' )
+    t.rdoc_files.include( FileList['*.{rdoc,md,txt}'], FileList['ext/**/*.c'],
+                          FileList['lib/**/*.rb'] )
   end
-rescue LoadError => le
+rescue StandardError, LoadError
   This.task_warning( 'rdoc' )
 end
 
@@ -226,19 +229,13 @@ end
 # the gemspec is also a dev artifact and should not be kept around.
 CLOBBER << This.gemspec_file.to_s
 
+# .rbc files from ruby 2.0
+CLOBBER << FileList["**/*.rbc"]
+
 # The standard gem packaging task, everyone has it.
 require 'rubygems/package_task'
 Gem::PackageTask.new( This.platform_gemspec ) do
   # nothing
-end
-
-
-#------------------------------------------------------------------------------
-# man pages
-#------------------------------------------------------------------------------
-desc "Create the man pages"
-task :man do
-  sh "ronn --roff #{FileList["man/*.ronn"]}"
 end
 
 #------------------------------------------------------------------------------

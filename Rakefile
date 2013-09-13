@@ -25,3 +25,4 @@ This.ruby_gemspec do |spec|
 end
 
 load 'tasks/default.rake'
+load 'tasks/man.rake'
