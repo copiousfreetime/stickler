@@ -13,121 +13,31 @@ stickler\-server \- start and stop the stickler server process
 stickler\-server is the daemon process that houses the repositories of proprietary gems and/or mirrors of third party gems\.
 .
 .SH "COMMANDS"
-\fIstart\fR:
-.
-.IP "" 4
-.
-.nf
-
-Start the stickler server process
-.
-.fi
-.
-.IP "" 0
+\fIstart\fR: Start the stickler server process
 .
 .P
-\fIstop\fR:
-.
-.IP "" 4
-.
-.nf
-
-Stop the stickler server process
-.
-.fi
-.
-.IP "" 0
+\fIstop\fR: Stop the stickler server process
 .
 .SH "OPTIONS"
-\fI\-d, \-\-daemonize\fR:
-.
-.IP "" 4
-.
-.nf
-
-Daemonize the server
-.
-.fi
-.
-.IP "" 0
+\fI\-d, \-\-daemonize\fR: Daemonize the server
 .
 .P
-\fI\-\-help\fR:
-.
-.IP "" 4
-.
-.nf
-
-Show the help message
-.
-.fi
-.
-.IP "" 0
+\fI\-\-help\fR: Show the help message
 .
 .P
-\fI\-h, \-\-host\fR=\'HOST\':
-.
-.IP "" 4
-.
-.nf
-
-The host address to bind to (default: 0\.0\.0\.0)
-.
-.fi
-.
-.IP "" 0
+\fI\-h, \-\-host\fR=\'HOST\': The host address to bind to (default: 0\.0\.0\.0)
 .
 .P
-\fI\-o, \-\-port\fR=\'PORT\':
-.
-.IP "" 4
-.
-.nf
-
-The port to bind to (default: 6789)
-.
-.fi
-.
-.IP "" 0
+\fI\-o, \-\-port\fR=\'PORT\': The port to bind to (default: 6789)
 .
 .P
-\fI\-p, \-\-pid\fR=\'PID_FILE\':
-.
-.IP "" 4
-.
-.nf
-
-Path to wriate a pid file to after daemonizing
-.
-.fi
-.
-.IP "" 0
+\fI\-p, \-\-pid\fR=\'PID_FILE\': Path to wriate a pid file to after daemonizing
 .
 .P
-\fI\-s, \-\-server\fR=\'SERVER\':
-.
-.IP "" 4
-.
-.nf
-
-The rack handler to use: thin, mongrel, webrick, etc\.
-.
-.fi
-.
-.IP "" 0
+\fI\-s, \-\-server\fR=\'SERVER\': The rack handler to use: thin, mongrel, webrick, etc\.
 .
 .P
-\fI\-v, \-\-version\fR:
-.
-.IP "" 4
-.
-.nf
-
-Output the version\.
-.
-.fi
-.
-.IP "" 0
+\fI\-v, \-\-version\fR: Output the version\.
 .
 .SH "EXAMPLES"
 Start the server, daemonized, using /var/lib/stickler as the root directory of all the repositories\.

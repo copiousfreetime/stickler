@@ -2,7 +2,7 @@ CONTRIBUTING.md
 HISTORY.md
 LICENSE
 Manifest.txt
-README.rdoc
+README.md
 Rakefile
 bin/stickler
 bin/stickler-passenger-config
@@ -83,4 +83,5 @@ spec/spec.opts
 spec/spec_helper.rb
 spec/spec_lite_spec.rb
 tasks/default.rake
+tasks/man.rake
 tasks/this.rb

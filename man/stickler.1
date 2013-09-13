@@ -16,210 +16,52 @@ Stickler is a tool to organize and maintain an internal gem repository of propri
 The stickler(1) command interacts with an instance of stickler\-server(1) to control the publishing and mirroring of ruby gems\.
 .
 .SH "COMMANDS"
-\fIpush\fR:
-.
-.IP "" 4
-.
-.nf
-
-Push one or more gems to a gemserver\.  This works the same as `gem push`
-although there is no authorization mechanism\.
-.
-.fi
-.
-.IP "" 0
+\fIpush\fR: Push one or more gems to a gemserver\. This works the same as \fBgem push\fR although there is no authorization mechanism\.
 .
 .P
-\fIyank\fR:
-.
-.IP "" 4
-.
-.nf
-
-Remove a gem from the gemserver\'s index\.  It will still be available from
-direct download\.  This works the same as `gem yank`\.
-.
-.fi
-.
-.IP "" 0
+\fIyank\fR: Remove a gem from the gemserver\'s index\. It will still be available from direct download\. This works the same as \fBgem yank\fR\.
 .
 .P
-\fImirror\fR:
-.
-.IP "" 4
-.
-.nf
-
-Pull a specific version of a gem from an upstream gem server and
-store it in a stickler\-server(1)\.
-.
-.fi
-.
-.IP "" 0
+\fImirror\fR: Pull a specific version of a gem from an upstream gem server and store it in a stickler\-server(1)\.
 .
 .P
-\fIconfig\fR:
-.
-.IP "" 4
-.
-.nf
-
-Access or update the stickler client configuration\.
-.
-.fi
-.
-.IP "" 0
+\fIconfig\fR: Access or update the stickler client configuration\.
 .
 .P
-\fIlist\fR:
-.
-.IP "" 4
-.
-.nf
-
-List all the gems in the remote repository\.
-.
-.fi
-.
-.IP "" 0
+\fIlist\fR: List all the gems in the remote repository\.
 .
 .P
-\fIunyank\fR:
-.
-.IP "" 4
-.
-.nf
-
-Put a gem that was _yanked_ back into the gemserver index\. This reverses a
-`yank`\.
-.
-.fi
-.
-.IP "" 0
+\fIunyank\fR: Put a gem that was \fIyanked\fR back into the gemserver index\. This reverses a \fByank\fR\.
 .
 .SH "OPTIONS"
 These are the options for all commands\. Not all options apply to all commands\.
 .
 .P
-\fI\-a, \-\-add\fR:
-.
-.IP "" 4
-.
-.nf
-
-Add the `\-\-server` or `\-\-upstream` items to the config file when using the
-`config` command\.
-.
-.fi
-.
-.IP "" 0
+\fI\-a, \-\-add\fR: Add the \fB\-\-server\fR or \fB\-\-upstream\fR items to the config file when using the \fBconfig\fR command\.
 .
 .P
-\fI\-d, \-\-debug\fR:
-.
-.IP "" 4
-.
-.nf
-
-Output debug information
-.
-.fi
-.
-.IP "" 0
+\fI\-d, \-\-debug\fR: Output debug information
 .
 .P
-\fI\-g, \-\-gem\-version\fR=\'VERSION\':
-.
-.IP "" 4
-.
-.nf
-
-The version of the gem to yank from `\-\-server` or to mirror from
-`\-\-upstream`\.
-.
-.fi
-.
-.IP "" 0
+\fI\-g, \-\-gem\-version\fR=\'VERSION\': The version of the gem to yank from \fB\-\-server\fR or to mirror from \fB\-\-upstream\fR\.
 .
 .P
-\fI\-h, \-\-help\fR:
-.
-.IP "" 4
-.
-.nf
-
-Show the help message
-.
-.fi
-.
-.IP "" 0
+\fI\-h, \-\-help\fR: Show the help message
 .
 .P
-\fI\-l, \-\-list\fR:
-.
-.IP "" 4
-.
-.nf
-
-Display the current configuration when using the `config` command\.
-.
-.fi
-.
-.IP "" 0
+\fI\-l, \-\-list\fR: Display the current configuration when using the \fBconfig\fR command\.
 .
 .P
-\fI\-p, \-\-platform\fR=\'PLATFORM\':
-.
-.IP "" 4
-.
-.nf
-
-The platform of the gem to yank from `\-\-server` or to mirror from
-`\-\-upstream` (e\.g\.  ruby, java, mswin32)
-.
-.fi
-.
-.IP "" 0
+\fI\-p, \-\-platform\fR=\'PLATFORM\': The platform of the gem to yank from \fB\-\-server\fR or to mirror from \fB\-\-upstream\fR (e\.g\. ruby, java, mswin32)
 .
 .P
-\fI\-s, \-\-server\fR=\'SERVER\':
-.
-.IP "" 4
-.
-.nf
-
-The gem server or stickler\-server(1) URL\.  This is used by all the commands\.
-.
-.fi
-.
-.IP "" 0
+\fI\-s, \-\-server\fR=\'SERVER\': The gem server or stickler\-server(1) URL\. This is used by all the commands\.
 .
 .P
-\fI\-u, \-\-upstream\fR=\'SERVER\':
-.
-.IP "" 4
-.
-.nf
-
-The upstream server from which to mirror a gem when using the `mirror`
-command\.
-.
-.fi
-.
-.IP "" 0
+\fI\-u, \-\-upstream\fR=\'SERVER\': The upstream server from which to mirror a gem when using the \fBmirror\fR command\.
 .
 .P
-\fI\-v, \-\-version\fR:
-.
-.IP "" 4
-.
-.nf
-
-Output the version\.
-.
-.fi
-.
-.IP "" 0
+\fI\-v, \-\-version\fR: Output the version\.
 .
 .SH "CONFIGURATION"
 Stickler uses the \fB\.gem/stickler\fR file to hold its configuration\. It is a yaml file and Currently there are two options\. These are altered using the \fBstickler config\fR command\.
