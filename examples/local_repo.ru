@@ -9,7 +9,7 @@ $:.unshift File.expand_path( File.join( File.dirname(__FILE__), "..", "lib" ) )
 require 'stickler/middleware/compression'
 require 'stickler/middleware/local'
 
-gem_dir = File.expand_path( File.join( File.dirname( __FILE__ ), *%w[ .. spec data ]))
+gem_dir = File.expand_path( File.join( File.dirname( __FILE__ ), *%w[ .. test data ]))
 
 puts gem_dir
 use ::Stickler::Middleware::Compression

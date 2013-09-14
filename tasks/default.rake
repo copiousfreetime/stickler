@@ -53,8 +53,8 @@ begin
   require 'rake/testtask'
   Rake::TestTask.new( :test ) do |t|
     t.ruby_opts    = %w[ -w -rubygems ]
-    t.libs         = %w[ lib spec ]
-    t.pattern      = "spec/**/*_spec.rb"
+    t.libs         = %w[ lib test ]
+    t.pattern      = "test/**/test_*.rb"
   end
 
   task :test_requirements

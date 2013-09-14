@@ -95,12 +95,15 @@ module ::Stickler::Repository
 
     #
     # See Api#unyank
-      #
+    #
     def unyank( spec )
-      return nil unless remote_gem_file_exist?( spec )
-      query = { :spec_name => spec.name, :version => spec.version.to_s }
-      resource_request( unyank_resource, :query => query  )
-      true
+      if remote_gem_file_exist?( spec ) && search_for( spec ).empty? then
+        query = { :spec_name => spec.name, :version => spec.version.to_s }
+        resource_request( unyank_resource, :query => query  )
+        return true
+      else
+        return nil
+      end
     rescue Excon::Errors::Error => e
       raise Stickler::Repository::Error, "Failure unyanking: #{e.inspect}"
     end

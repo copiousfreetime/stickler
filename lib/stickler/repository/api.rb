@@ -111,6 +111,22 @@ module Stickler::Repository
 
     #
     # :call-seq:
+    #   repo.unyank( spec ) -> true or nil
+    #
+    # "unyank" in the sense of undoing "yank"
+    #
+    # This means, put the gem matching +spec+ back into the index so that it
+    # will be found during searching.
+    #
+    # If the gem is sucessfully put back into the index then true is returned.
+    # Otherwise nil is returned
+    #
+    def unyank( spec )
+      raise NotImplementedError, not_implemented_msg( :unyank )
+    end
+
+    #
+    # :call-seq:
     #   repo.get( spec ) -> bytes
     #
     # Retrieve the gem matching the spec from the repository.  The bytes

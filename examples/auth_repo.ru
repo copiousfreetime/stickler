@@ -7,7 +7,7 @@ $:.unshift File.expand_path( File.join( File.dirname(__FILE__), "..", "lib" ) )
 
 require 'stickler'
 
-tmp = File.expand_path( File.join( File.dirname( __FILE__ ), "..", "spec", "data" ) )
+tmp = File.expand_path( File.join( File.dirname( __FILE__ ), "..", "test", "tmp" ) )
 
 use Rack::Auth::Basic, 'Secure Stickler' do |u,p|
   (u == "stickler") and (p == "secret")
