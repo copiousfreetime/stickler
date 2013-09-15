@@ -11,9 +11,6 @@ module Stickler::Repository
   class Index
     class Error < ::Stickler::Repository::Error; end 
 
-    # The list of specs in the index
-    attr_reader :specs
-
     # The directory the specs live
     attr_reader :spec_dir
 

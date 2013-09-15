@@ -20,7 +20,7 @@ module Stickler
     end
 
     def test_body_says_look_elsewhere 
-     assert_match /Not Found/, last_response.body
+     assert_match( /Not Found/, last_response.body)
     end
   end
 end

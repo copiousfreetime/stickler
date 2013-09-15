@@ -4,7 +4,6 @@ require 'repository/test_api'
 module Stickler
   class LocalRepositoryTest < Test
     include RepositoryApiBehaviorTests
-    attr_reader :repo
 
     def repos_dir
       File.join( test_dir, "repos" )
