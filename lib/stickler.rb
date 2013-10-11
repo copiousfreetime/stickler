@@ -8,6 +8,7 @@ require 'stickler/logable'
 require 'stickler/error'
 require 'stickler/paths'
 require 'stickler/spec_lite'
+require 'stickler/gem_container'
 
 require 'stickler/repository'
 require 'stickler/middleware'

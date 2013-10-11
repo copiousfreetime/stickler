@@ -1,5 +1,5 @@
 require 'test_stickler'
-require 'repository/test_api'
+require 'repository/test_api_behavior'
 
 module Stickler
   class LocalRepositoryTest < Test

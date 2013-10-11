@@ -2,7 +2,6 @@ require 'stickler/repository/index'
 require 'addressable/uri'
 require 'tempfile'
 require 'forwardable'
-require 'rubygems/format'
 
 module Stickler::Repository
   #
@@ -180,13 +179,14 @@ module Stickler::Repository
     #
     def add( io )
       # spooling to a temp file because Gem::Format.from_io() closes the io
-      # stream it is sent.  Why it does this, I do not know.
+      # stream it is sent.  Why it does this, I do not know. This may be
+      # removed once we are no longer using older rubygems
       tempfile = Tempfile.new(  "uploaded-gem.", temp_dir )
       tempfile.write( io.read )
       tempfile.rewind
 
-      format    = Gem::Format.from_file_by_path( tempfile.path )
-      spec      = Stickler::SpecLite.new( format.spec.name, format.spec.version, format.spec.platform )
+      container = Stickler::GemContainer.new( tempfile.path )
+      spec      = Stickler::SpecLite.new( container.spec.name, container.spec.version, container.spec.platform )
       specs     = search_for( spec )
 
       raise Error, "gem #{spec.full_name} already exists" unless specs.empty?
@@ -201,8 +201,6 @@ module Stickler::Repository
     # See Api#push
     #
     def push( path )
-      # is this line needed? Never used.
-      # spec = specification_from_gem_file( path )
       result = nil
       File.open( path ) do |io|
         result = add( io )
@@ -302,8 +300,8 @@ module Stickler::Repository
     end
 
     def specification_from_gem_file( path )
-      format = Gem::Format.from_file_by_path( path )
-      return format.spec
+      container = Stickler::GemContainer.new( path )
+      return container.spec
     end
 
     def speclite_from_specification( spec )

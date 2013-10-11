@@ -28,13 +28,13 @@ module Stickler
     # Do a legacy index of the scratch location
     def make_legacy_index
       indexer = Gem::Indexer.new( @scratch_datadir, :build_legacy => true, :build_modern => false )
-      with_quieter_rubygems { indexer.generate_index }
+      quiet_indexing( indexer )
     end
 
     # Do a modern index of the scratch location
     def make_modern_index
       indexer = Gem::Indexer.new( @scratch_datadir, :build_legacy => false, :build_modern => true )
-      with_quieter_rubygems { indexer.generate_index }
+      quiet_indexing( indexer )
     end
 
     # put in the after clause for cleanup
@@ -42,11 +42,11 @@ module Stickler
       FileUtils.rm_rf( @scratch_dir )
     end
 
-    def with_quieter_rubygems( &block )
-      previous = Gem.configuration.verbose
-      Gem.configuration.verbose = nil
-      yield
-      Gem.configuration.verbose = previous
+
+    def quiet_indexing( indexer )
+      indexer.use_ui( Gem::SilentUI.new ) do
+        indexer.generate_index
+      end
     end
 
     def validate_contents( got, expected, content_type)

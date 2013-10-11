@@ -257,8 +257,8 @@ module ::Stickler::Repository
     end
 
     def specification_from_gem_file( path )
-      format = Gem::Format.from_file_by_path( path )
-      return format.spec
+      container = Stickler::GemContainer.new( path )
+      return container.spec
     end
 
     def speclite_from_specification( spec )
