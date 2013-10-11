@@ -39,6 +39,7 @@ easiest way to contribute.
 * [Kevin Barnes](https://github.com/vinbarnes)
 * [Philip Roberts](https://github.com/latentflip)
 * [Alan Gardner](https://github.com/urfolomeus)
+* [tiago.nobre](https://github.com/macwadu)
 
 [GitHub Account]: https://github.com/signup/free "GitHub Signup"
 [GitHub Issues]:  https://github.com/copiousfreetime/stickler/issues "Stickler Issues"

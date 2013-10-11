@@ -2,6 +2,12 @@ Stickler Changelog
 ==================
 Jeremy Hinegardner <jeremy@copiousfreetime.org>
 
+Version 2.4.0 - 2013-10-XX
+--------------------------
+* Ruby 2.0 compatibility (copiousfreetime/stickler/#28
+* Implement latest-version command (copiousfreetime/stickler/#29)
+* Updated dependencies to latest versions
+
 Version 2.3.0 - 2013-03-09
 --------------------------
 * Expose deleting a gem via the stickler commandline (copiousfreetime/stickler/#10)
