@@ -48,6 +48,9 @@ COMMANDS
 *latest-version*:
     Prints the latest version of a gem
 
+*delete*:
+    Completely remove a gem from the gem server's index.
+
 OPTIONS
 -------
 These are the options for all commands.  Not all options apply to all commands.
