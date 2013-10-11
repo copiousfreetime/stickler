@@ -3,7 +3,7 @@
 require 'stickler'
 require 'stickler/client'
 
-SUB_COMMANDS = %w[ push yank mirror config list delete unyank ].sort
+SUB_COMMANDS = %w[ push yank mirror config list delete unyank latest-version ].sort
 exec_name = File.basename( $0 )
 
 # ---------------------------------------------------------------------
@@ -26,6 +26,7 @@ Stickler server interaction
     #{exec_name} config --server http://stickler.example.com --upstream http://rubygems.org/
     #{exec_name} list --server http://stickler.example.com
     #{exec_name} delete my_gem --gem-version 1.2.3 --server #http://stickler.example.com/
+    #{exec_name} latest-version my_gem --server http://stickler.example.com
 
   Options:
 _
@@ -56,7 +57,7 @@ when "config"
   ::Stickler::Client::Config.new( ARGV ).run
 when "list"
   ::Stickler::Client::List.new( ARGV ).run
-when "last-version"
-  ::Stickler::Client::Version.new(ARGV).run
+when "latest-version"
+  ::Stickler::Client::LatestVersion.new( ARGV ).run
 end
 
