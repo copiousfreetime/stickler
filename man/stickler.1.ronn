@@ -45,6 +45,9 @@ COMMANDS
     Put a gem that was _yanked_ back into the gemserver index. This reverses a
     `yank`.
 
+*last-version*:
+    Prints the latest version of a gem
+
 OPTIONS
 -------
 These are the options for all commands.  Not all options apply to all commands.

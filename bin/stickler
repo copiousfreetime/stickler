@@ -56,5 +56,7 @@ when "config"
   ::Stickler::Client::Config.new( ARGV ).run
 when "list"
   ::Stickler::Client::List.new( ARGV ).run
+when "last-version"
+  ::Stickler::Client::Version.new(ARGV).run
 end
 
