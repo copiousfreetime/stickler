@@ -49,6 +49,13 @@ module ::Stickler::Repository
     end
 
     #
+    # The array of latests specs from usptream
+    #
+    def latest_specs_list
+      Marshal.load( download_latest_specs_list )
+    end
+
+    #
     # See Api#search_for
     #
     def search_for( spec )
@@ -176,6 +183,14 @@ module ::Stickler::Repository
       @specs_list_resource ||= Excon.new( specs_list_uri.to_s, :method => :get, :expects => [200] )
     end
 
+    def latest_specs_list_uri
+      Addressable::URI.join( uri, "latest_specs.#{Gem.marshal_version}.gz" )
+    end
+
+    def latest_specs_list_resource
+      @latest_specs_list_resource ||= Excon.new( latest_specs_list_uri.to_s, :method => :get, :expects => [200] )
+    end
+
     def push_uri
       Addressable::URI.join( uri, "api/v1/gems" )
     end
@@ -215,6 +230,10 @@ module ::Stickler::Repository
 
     def gem_resource( spec )
       Excon.new( full_uri_to_gem( spec ), :method => :get, :expects => [200] )
+    end
+
+    def download_latest_specs_list
+      download_gzipped_resource( latest_specs_list_resource )
     end
 
     def download_specs_list
