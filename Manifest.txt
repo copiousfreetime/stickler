@@ -7,6 +7,7 @@ Rakefile
 bin/stickler
 bin/stickler-passenger-config
 bin/stickler-server
+examples/as_middleware.ru
 examples/auth_repo.ru
 examples/config.ru
 examples/fetch-a-gem
@@ -20,12 +21,14 @@ lib/stickler/client.rb
 lib/stickler/client/config.rb
 lib/stickler/client/config_file.rb
 lib/stickler/client/delete.rb
+lib/stickler/client/latest-version.rb
 lib/stickler/client/list.rb
 lib/stickler/client/mirror.rb
 lib/stickler/client/push.rb
 lib/stickler/client/unyank.rb
 lib/stickler/client/yank.rb
 lib/stickler/error.rb
+lib/stickler/gem_container.rb
 lib/stickler/logable.rb
 lib/stickler/middleware.rb
 lib/stickler/middleware/compression.rb
@@ -35,6 +38,7 @@ lib/stickler/middleware/index.rb
 lib/stickler/middleware/local.rb
 lib/stickler/middleware/mirror.rb
 lib/stickler/middleware/not_found.rb
+lib/stickler/middleware/server.rb
 lib/stickler/paths.rb
 lib/stickler/repository.rb
 lib/stickler/repository/api.rb
