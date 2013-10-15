@@ -9,6 +9,7 @@ require 'stickler/error'
 require 'stickler/paths'
 require 'stickler/spec_lite'
 require 'stickler/gem_container'
+require 'stickler/gemfile_lock_parser'
 
 require 'stickler/repository'
 require 'stickler/middleware'
