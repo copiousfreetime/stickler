@@ -1,5 +1,6 @@
 # vim: syntax=ruby
 require 'rake/clean'
+require 'digest'
 #------------------------------------------------------------------------------
 # If you want to Develop on this project just run 'rake develop' and you'll
 # have all you need to get going. If you want to use bundler for development,
@@ -30,7 +31,7 @@ namespace :develop do
   # Create a Gemfile that just references the gemspec
   file 'Gemfile' => :gemspec do
     File.open( "Gemfile", "w+" ) do |f|
-      f.puts 'source :rubygems'
+      f.puts 'source "https://rubygems.org/"'
       f.puts 'gemspec'
     end
   end
@@ -53,8 +54,8 @@ begin
   require 'rake/testtask'
   Rake::TestTask.new( :test ) do |t|
     t.ruby_opts    = %w[ -w -rubygems ]
-    t.libs         = %w[ lib test ]
-    t.pattern      = "test/**/test_*.rb"
+    t.libs         = %w[ lib spec test ]
+    t.pattern      = "{test,spec}/**/{test_*,*_spec}.rb"
   end
 
   task :test_requirements
