@@ -10,7 +10,7 @@ This.homepage = "http://github.com/copiousfreetime/#{ This.name }"
 This.ruby_gemspec do |spec|
   spec.add_runtime_dependency( 'sinatra'    , '~> 1.4'  )
   spec.add_runtime_dependency( 'addressable', '~> 2.3'  )
-  spec.add_runtime_dependency( 'excon'      , '~> 0.25.0'  )
+  spec.add_runtime_dependency( 'excon'      , '~> 0.27.3'  )
   spec.add_runtime_dependency( 'trollop'    , '~> 2.0' )
   spec.add_runtime_dependency( 'logging'    , '~> 1.8.1'  )
 
