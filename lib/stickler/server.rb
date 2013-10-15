@@ -12,14 +12,10 @@ module Stickler
 
     def app
       root = self.stickler_root
-      Rack::Builder.app do
+      Rack::Builder.app( Sinatra::Base.new ) do
         use Rack::CommonLogger
-        use Stickler::Middleware::Compression
-        use Stickler::Middleware::Gemcutter, :serve_indexes => false, :repo_root => File.join( root, "gemcutter" )
-        use Stickler::Middleware::Mirror,    :serve_indexes => false, :repo_root => File.join( root, "mirror" )
-        use Stickler::Middleware::Index,     :serve_indexes => true
+        use Stickler::Middleware::Server, :stickler_root => root
         use Stickler::Middleware::NotFound
-        run Sinatra::Base
       end
     end
   end
