@@ -22,7 +22,7 @@ _
 
       def parse( argv )
         gem_name = nil
-        opts = super( argv ) do |p|
+        opts = super( argv ) do |p,o|
           raise Trollop::CommandlineError, "At least one gem is required to unyank" if p.leftovers.empty?
           gem_name = p.leftovers.shift
         end

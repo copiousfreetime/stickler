@@ -14,7 +14,7 @@ _
 
       def parse( argv )
         gemfiles = []
-        opts = super do |p|
+        opts = super do |p,o|
           raise Trollop::CommandlineError, "At least one file is required to push" if p.leftovers.empty?
           p.leftovers.each do |gemfile|
             raise Trollop::CommandlineError, "#{gemfile} must be readable" unless File.readable?( gemfile )

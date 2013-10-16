@@ -13,7 +13,7 @@ _
 
       def parse( argv )
         gem_name = nil
-        opts = super( argv ) do |p|
+        opts = super( argv ) do |p,o|
           raise Trollop::CommandlineError, "At lest one gem-name is required" if p.leftovers.empty?
           gem_name = p.leftovers.shift
         end
