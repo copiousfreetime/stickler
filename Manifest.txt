@@ -29,6 +29,7 @@ lib/stickler/client/unyank.rb
 lib/stickler/client/yank.rb
 lib/stickler/error.rb
 lib/stickler/gem_container.rb
+lib/stickler/gemfile_lock_parser.rb
 lib/stickler/logable.rb
 lib/stickler/middleware.rb
 lib/stickler/middleware/compression.rb
@@ -76,6 +77,11 @@ test/data/gems/baz-3.1.4-java.gem
 test/data/gems/baz-3.1.4.gem
 test/data/gems/foo-1.0.0.gem
 test/data/gems/foo-2.0.0a.gem
+test/data/specifications/bar-1.0.0.gemspec
+test/data/specifications/baz-3.1.4-java.gemspec
+test/data/specifications/baz-3.1.4.gemspec
+test/data/specifications/foo-1.0.0.gemspec
+test/data/specifications/foo-2.0.0a.gemspec
 test/index_test_helpers.rb
 test/middleware/test_local.rb
 test/middleware/test_not_found.rb
@@ -87,6 +93,7 @@ test/repository/test_null.rb
 test/repository/test_remote.rb
 test/repository/test_remote_authenticated.rb
 test/stickler_test_server.rb
+test/test_gemfile_lock_parser.rb
 test/test_paths.rb
 test/test_spec_lite.rb
 test/test_stickler.rb
