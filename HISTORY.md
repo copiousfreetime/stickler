@@ -4,23 +4,23 @@ Jeremy Hinegardner <jeremy@copiousfreetime.org>
 
 Version 2.4.0 - 2013-11-13
 --------------------------
-* Ruby 2.0 compatibility (copiousfreetime/stickler/#28
-* Implement latest-version command (copiousfreetime/stickler/#29)
-* Extract Server functionality to Middleware (copiousfreetime/stickler/#33)
+* Ruby 2.0 compatibility (copiousfreetime/stickler#28)
+* Implement latest-version command (copiousfreetime/stickler#29)
+* Extract Server functionality to Middleware (copiousfreetime/stickler#33)
 * Updated dependencies to latest versions
 
 Version 2.3.0 - 2013-03-09
 --------------------------
-* Expose deleting a gem via the stickler commandline (copiousfreetime/stickler/#10)
-* Update dependencies for Excon so http proxy works (copiousfreetime/stickler/#24)
-* Implement unyank for local and remote repositories (copiousfreetime/stickler/#26)
+* Expose deleting a gem via the stickler commandline (copiousfreetime/stickler#10)
+* Update dependencies for Excon so http proxy works (copiousfreetime/stickler#24)
+* Implement unyank for local and remote repositories (copiousfreetime/stickler#26)
 * Updated dependencies to latest versions
 
 Version 2.2.4 - 2012-02-26
 --------------------------
-* Fixed authentication failing on mirror command (copiousfreetime/stickler/#12)
+* Fixed authentication failing on mirror command (copiousfreetime/stickler#12)
 * Fixed 'list' command not working when no flags where given
-* Fixed latest_specs not having all platforms in it (copiousfreetime/stickler/#21)
+* Fixed latest_specs not having all platforms in it (copiousfreetime/stickler#21)
 
 Version 2.2.2 - 2012-02-13
 --------------------------
