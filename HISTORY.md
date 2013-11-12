@@ -2,7 +2,7 @@ Stickler Changelog
 ==================
 Jeremy Hinegardner <jeremy@copiousfreetime.org>
 
-Version 2.4.0 - 2013-10-XX
+Version 2.4.0 - 2013-11-13
 --------------------------
 * Ruby 2.0 compatibility (copiousfreetime/stickler/#28
 * Implement latest-version command (copiousfreetime/stickler/#29)
