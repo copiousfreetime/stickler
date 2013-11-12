@@ -113,8 +113,8 @@ the [gem-man](http://defunkt.github.com/gem-man/) gem.
 
 ## DEVELOPMENT
 
-If you want to do development on stickler, I suggest using [RVM](https://rvm.beginrescueend.com/) 
-and creating a gemset for stickler. Then run `rake how_to_contribute`
+If you want to do development on stickler, please see
+[CONTRIBUTING.md](./CONTRIBUTING.md)
 
 
 ## CREDITS
