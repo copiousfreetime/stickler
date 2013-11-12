@@ -4,28 +4,28 @@ Jeremy Hinegardner <jeremy@copiousfreetime.org>
 
 Version 2.4.0 - 2013-11-13
 --------------------------
-* Ruby 2.0 compatibility (copiousfreetime/stickler#28)
-* Implement latest-version command (copiousfreetime/stickler#29)
-* Extract Server functionality to Middleware (copiousfreetime/stickler#33)
+* Ruby 2.0 compatibility <http://github.com/copiousfreetime/stickler/issues/28>
+* Implement latest-version command <http://github.com/copiousfreetime/stickler/issues/29>
+* Extract Server functionality to Middleware <http://github.com/copiousfreetime/stickler/issues/33>
 * Updated dependencies to latest versions
 
 Version 2.3.0 - 2013-03-09
 --------------------------
-* Expose deleting a gem via the stickler commandline (copiousfreetime/stickler#10)
-* Update dependencies for Excon so http proxy works (copiousfreetime/stickler#24)
-* Implement unyank for local and remote repositories (copiousfreetime/stickler#26)
+* Expose deleting a gem via the stickler commandline <http://github.com/copiousfreetime/stickler/issues/10>
+* Update dependencies for Excon so http proxy works http://github.com/copiousfreetime/stickler/issues/24>
+* Implement unyank for local and remote repositories <http://github.com/copiousfreetime/stickler/issues/26>
 * Updated dependencies to latest versions
 
 Version 2.2.4 - 2012-02-26
 --------------------------
-* Fixed authentication failing on mirror command (copiousfreetime/stickler#12)
+* Fixed authentication failing on mirror command <http://github.com/copiousfreetime/stickler/issues/12>
 * Fixed 'list' command not working when no flags where given
-* Fixed latest_specs not having all platforms in it (copiousfreetime/stickler#21)
+* Fixed latest_specs not having all platforms in it <http://github.com/copiousfreetime/stickler/issues/21>
 
 Version 2.2.2 - 2012-02-13
 --------------------------
 * Updated dependencies to latest versions
-* Added supoort for HTTP Basic Auth in the client
+* Added supoort for <http Basic Auth in the client
 
 Version 2.1.4 - 2011-09-09
 --------------------------
@@ -33,9 +33,9 @@ Version 2.1.4 - 2011-09-09
 
 Version 2.1.3 - 2011-07-24
 --------------------------
-* Do not feed ARGV strings directly into Gem::Version (copiousfreetime/stickler#4)
-* In web page, display gems in sort order, not lexical order (copiousfreetime/stickler#16)
-* Make sure Rack body's respond to #each (copiousfreetime/stickler#17)
+* Do not feed ARGV strings directly into Gem::Version <http://github.com/copiousfreetime/stickler/issues/4>
+* In web page, display gems in sort order, not lexical order <http://github.com/copiousfreetime/stickler/issues/16>
+* Make sure Rack body's respond to #each <http://github.com/copiousfreetime/stickler/issues/17>
 
 Version 2.1.2 - 2011-03-31
 --------------------------
