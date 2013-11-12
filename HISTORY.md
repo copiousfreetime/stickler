@@ -7,6 +7,7 @@ Version 2.4.0 - 2013-11-13
 * Ruby 2.0 compatibility <http://github.com/copiousfreetime/stickler/issues/28>
 * Implement latest-version command <http://github.com/copiousfreetime/stickler/issues/29>
 * Extract Server functionality to Middleware <http://github.com/copiousfreetime/stickler/issues/33>
+* Allow using Gemfile.lock as input to the `mirror` command <https://github.com/copiousfreetime/stickler/pull/31>
 * Updated dependencies to latest versions
 
 Version 2.3.0 - 2013-03-09
