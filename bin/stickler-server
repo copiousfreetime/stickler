@@ -61,7 +61,7 @@ Usage: #{exec_name} #{cmd} [options] /path/to/stickler/root
 _
   opt :daemonize, "Daemonize the server", :default => false
   opt :host, "The host address to bind to", :type => String, :default =>'0.0.0.0'
-  opt :pid, "Path to write a pid file to after daemonizing", :type => String, :default => 'stickler-server.pid'
+  opt :pid, "Path to write a pid file to after daemonizing", :type => String, :default => File.expand_path('stickler-server.pid')
   opt :port, "The port to bind to", :type => :int, :default => 6789
   opt :server, "The rack handler: #{DEFAULT_HANDLERS.join(', ')} etc", :type => String, :default => rack_handler
 end
@@ -89,6 +89,7 @@ case cmd
 when "start"
   Rack::Server.start(rack_options)
 when "stop"
+  abort "pid file #{rack_options[:pid]} does not exist" unless File.exist?( rack_options[:pid] )
   pid = Float( File.read( rack_options[:pid] ) ).to_i
   Process.kill( "INT", pid )
   20.times do
