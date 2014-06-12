@@ -64,6 +64,8 @@ _
   opt :pid, "Path to write a pid file to after daemonizing", :type => String, :default => File.expand_path('stickler-server.pid')
   opt :port, "The port to bind to", :type => :int, :default => 6789
   opt :server, "The rack handler: #{DEFAULT_HANDLERS.join(', ')} etc", :type => String, :default => rack_handler
+  opt :debug, "Turn on debugging", :default => false
+  opt :warn, "Turn on ruby warnings", :default => false
 end
 
 # case changes for rack handlers, don't ask my why.  I'm keeping the
