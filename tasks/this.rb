@@ -132,6 +132,7 @@ class ThisProject
 
       spec.summary     = summary
       spec.description = description
+      spec.license     = license
 
       spec.files       = manifest
       spec.executables = spec.files.grep(/^bin/) { |f| File.basename(f) }
@@ -176,7 +177,7 @@ class ThisProject
     if RUBY_VERSION < "1.9.0"
       platform_gemspec.add_development_dependency( 'rcov', '~> 1.0.0' )
     else
-      platform_gemspec.add_development_dependency( 'simplecov', '~> 0.7.1' )
+      platform_gemspec.add_development_dependency( 'simplecov', '~> 0.8.2' )
     end
   end
 
@@ -198,6 +199,10 @@ class ThisProject
   # Internal: Return the full description text from the READEM
   def description
     description_section.join(" ").tr("\n", ' ').gsub(/[{}]/,'').gsub(/\[[^\]]+\]/,'') # strip rdoc
+  end
+
+  def license
+    "ISC"
   end
 
   # Internal: The path to the gemspec file
