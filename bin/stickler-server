@@ -87,12 +87,7 @@ rack_options[:app] = ::Stickler::Server.new( stickler_root ).app
 
 case cmd
 when "start"
-  # work around until
-  # http://github.com/rack/rack/commit/c73b474525bace3f059a130b15413abd4d917086
-  # makes it into a release.
-  r = ::Rack::Server.new(rack_options)
-  r.instance_variable_set('@app', rack_options[:app])
-  r.start
+  Rack::Server.start(rack_options)
 when "stop"
   pid = Float( File.read( rack_options[:pid] ) ).to_i
   Process.kill( "INT", pid )
