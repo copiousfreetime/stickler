@@ -22,6 +22,7 @@ This.ruby_gemspec do |spec|
   spec.add_development_dependency( 'rdoc'        , '~> 4.0'   )
   spec.add_development_dependency( 'ronn'        , '~> 0.7.3' )
   spec.required_rubygems_version = '~> 2.2'
+  spec.license = 'ISC'
 
 end
 
