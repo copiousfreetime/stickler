@@ -35,7 +35,7 @@ Trollop::die "unknown sub command #{cmd.inspect}" unless SUB_COMMANDS.include?( 
 # ---------------------------------------------------------------------
 # All for the display of a default
 # ---------------------------------------------------------------------
-DEFAULT_HANDLERS = %w[ thin mongrel webrick ]
+DEFAULT_HANDLERS = %w[ puma thin mongrel webrick ]
 def rack_handler( handlers = DEFAULT_HANDLERS )
   handlers = Array( handlers )
   handlers.each do |name|
@@ -63,7 +63,7 @@ _
   opt :host, "The host address to bind to", :type => String, :default =>'0.0.0.0'
   opt :pid, "Path to write a pid file to after daemonizing", :type => String, :default => 'stickler-server.pid'
   opt :port, "The port to bind to", :type => :int, :default => 6789
-  opt :server, "The rack handler: thin, mongrel, webrick, etc", :type => String, :default => rack_handler
+  opt :server, "The rack handler: #{DEFAULT_HANDLERS.join(', ')} etc", :type => String, :default => rack_handler
 end
 
 # case changes for rack handlers, don't ask my why.  I'm keeping the
