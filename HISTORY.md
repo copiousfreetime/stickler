@@ -2,6 +2,13 @@ Stickler Changelog
 ==================
 Jeremy Hinegardner <jeremy@copiousfreetime.org>
 
+Version 2.4.1 - 2014-06-11
+--------------------------
+* Fix daemonization bug <https://github.com/copiousfreetime/stickler/issues/38>
+* Require minimum rubygems version <https://github.com/copiousfreetime/stickler/issues/36>
+* Clear all rubygems specification warnings
+* Updated dependencies to latest versions
+
 Version 2.4.0 - 2013-11-13
 --------------------------
 * Ruby 2.0 compatibility <http://github.com/copiousfreetime/stickler/issues/28>
