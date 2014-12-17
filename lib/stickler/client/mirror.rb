@@ -34,7 +34,7 @@ _
             gem_name = p.leftovers.shift
           else
             gemfile_lock = p.leftovers.shift
-            raise Trollop::CommandlineError, "#{lock} must be readable" unless File.readable?( gemfile_lock )
+            raise Trollop::CommandlineError, "#{gemfile_lock} must be readable" unless File.readable?( gemfile_lock )
           end
         end
         opts[:gem_name]     = gem_name
