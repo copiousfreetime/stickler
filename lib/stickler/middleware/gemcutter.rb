@@ -25,6 +25,14 @@ module Stickler::Middleware
       super( app, options )
     end
 
+    get '/api/v1/dependencies' do
+      ret = params.fetch('gems', '').split(',').map do |gem_name|
+        @repo.dependencies(gem_name)
+      end.compact
+
+      Marshal.dump(ret)
+    end
+
     # gemcutter push
     post '/api/v1/gems' do
       begin

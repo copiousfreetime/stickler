@@ -22,6 +22,7 @@ module Stickler::Repository
 
     def initialize( spec_dir )
       @specs              = []
+      @full_specs         = []
       @spec_dir           = spec_dir
       @last_modified_time = nil
       @last_entry_count   = nil
@@ -119,12 +120,27 @@ module Stickler::Repository
 
       full_spec.untaint
       spec = Stickler::SpecLite.new( full_spec.name, full_spec.version, full_spec.platform )
+      @full_specs << full_spec
       @specs << spec
     end
 
     def search( find_spec )
       specs.select do |spec|
         spec =~ find_spec
+      end
+    end
+
+    def dependencies( gem_name )
+      spec = @full_specs.detect {|x| x.name == gem_name }
+      if spec
+        {
+          :name         => gem_name,
+          :number       => spec.version.to_s,
+          :platform     => spec.platform,
+          :dependencies => spec.dependencies.map {|x|
+            [x.name, x.requirement.to_s]
+          }
+        }
       end
     end
   end
