@@ -33,7 +33,7 @@ module Stickler
           Gem::Format.from_file_by_path( path )
         end
       rescue LoadError
-        abort "FAilure to load rubygems/format"
+        abort "Failure to load rubygems/format"
       end
     end
   end
