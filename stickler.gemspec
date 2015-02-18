@@ -37,6 +37,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<minitest>, ["~> 5.0"])
       s.add_development_dependency(%q<rdoc>, ["~> 4.2"])
       s.add_development_dependency(%q<ronn>, ["~> 0.7"])
+      s.add_development_dependency(%q<simplecov>, ["~> 0.9"])
     else
       s.add_dependency(%q<sinatra>, ["~> 1.4"])
       s.add_dependency(%q<addressable>, ["~> 2.3"])
@@ -49,6 +50,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<minitest>, ["~> 5.0"])
       s.add_dependency(%q<rdoc>, ["~> 4.2"])
       s.add_dependency(%q<ronn>, ["~> 0.7"])
+      s.add_dependency(%q<simplecov>, ["~> 0.9"])
     end
   else
     s.add_dependency(%q<sinatra>, ["~> 1.4"])
@@ -62,5 +64,6 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<minitest>, ["~> 5.0"])
     s.add_dependency(%q<rdoc>, ["~> 4.2"])
     s.add_dependency(%q<ronn>, ["~> 0.7"])
+    s.add_dependency(%q<simplecov>, ["~> 0.9"])
   end
 end
