@@ -11,11 +11,9 @@ version.txt
 *.pid
 tmp
 *.html
-stickler.gemspec
 work/
 scratch/
 *.css
-Gemfile
 Gemfile.lock
 .rvmrc
 test/data/mirror
