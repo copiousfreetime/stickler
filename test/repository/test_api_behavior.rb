@@ -8,8 +8,11 @@ module Stickler
     def setup
       super
       @foo_gem_local_path = File.join( gems_dir, "foo-1.0.0.gem" )
+      @baz_gem_local_path = File.join( gems_dir, "baz-3.1.4-java.gem" )
       @foo_spec           = Stickler::SpecLite.new( 'foo', '1.0.0' )
+      @baz_java_spec      = Stickler::SpecLite.new( 'baz', '3.1.4', 'java')
       assert File.readable?( @foo_gem_local_path ), "#{@foo_gem_local_path} is missing"
+      assert File.readable?( @baz_gem_local_path ), "#{@baz_gem_local_path} is missing"
       @foo_digest         = Digest::SHA1.hexdigest( IO.read( @foo_gem_local_path ) )
       @missing_spec       = Stickler::SpecLite.new( "does_not_exist", "0.1.0" )
     end
@@ -83,6 +86,13 @@ module Stickler
       assert_includes [ ::URI, ::Addressable::URI ], @response_uri.class
     end
 
+    def test_yank_works_with_nondefault_platform
+      assert_empty repo.search_for( @baz_java_spec )
+      repo.push( @baz_gem_local_path )
+      @response_uri = repo.yank( @baz_java_spec )
+      assert_includes [ ::URI, ::Addressable::URI ], @response_uri.class
+    end
+
     def test_yank_returns_nil_for_non_existent_gem
       assert_nil repo.yank( @missing_spec )
     end
@@ -120,6 +130,14 @@ module Stickler
       assert_nil repo.unyank( non_existing_gem )
     end
 
+    def test_unyank_works_with_nondefault_platform
+      assert_empty repo.search_for( @baz_java_spec )
+      repo.push( @baz_gem_local_path )
+      repo.yank( @baz_java_spec )
+      assert_empty repo.search_for( @baz_java_spec )
+      repo.unyank( @baz_java_spec )
+      assert_equal 1, repo.search_for( @baz_java_spec ).size
+    end
 
     # Do we even care about this?
     def test_unyank_returns_nil_for_not_yet_yanked_gem
