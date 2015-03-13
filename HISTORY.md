@@ -2,6 +2,13 @@ Stickler Changelog
 ==================
 Jeremy Hinegardner <jeremy@copiousfreetime.org>
 
+Version 2.4.2 - 2015-03-12
+--------------------------
+* Drop support for ruby 1.8
+* Update dependencies
+* Fix mirror errors when no gem-version supplied <https://github.com/copiousfreetime/stickler/issues/42>
+* Fix yank/unank of non-ruby platform gems <https://github.com/copiousfreetime/stickler/issues/45>
+
 Version 2.4.1 - 2014-06-11
 --------------------------
 * Fix daemonization bug <https://github.com/copiousfreetime/stickler/issues/38>
