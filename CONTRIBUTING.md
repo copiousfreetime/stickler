@@ -40,6 +40,7 @@ easiest way to contribute.
 * [Philip Roberts](https://github.com/latentflip)
 * [Alan Gardner](https://github.com/urfolomeus)
 * [tiago.nobre](https://github.com/macwadu)
+* [Michael Smith](https://github.com/MikaelSmith)
 
 [GitHub Account]: https://github.com/signup/free "GitHub Signup"
 [GitHub Issues]:  https://github.com/copiousfreetime/stickler/issues "Stickler Issues"
