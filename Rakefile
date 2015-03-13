@@ -11,7 +11,7 @@ This.ruby_gemspec do |spec|
   spec.add_runtime_dependency( 'sinatra'    , '~> 1.4'  )
   spec.add_runtime_dependency( 'addressable', '~> 2.3'  )
   spec.add_runtime_dependency( 'excon'      , '~> 0.37' )
-  spec.add_runtime_dependency( 'trollop'    , '~> 2.0'  )
+  spec.add_runtime_dependency( 'trollop'    , '~> 2.1'  )
   spec.add_runtime_dependency( 'logging'    , '~> 1.8'  )
 
   # The Development Dependencies
