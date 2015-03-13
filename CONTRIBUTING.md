@@ -41,6 +41,7 @@ easiest way to contribute.
 * [Alan Gardner](https://github.com/urfolomeus)
 * [tiago.nobre](https://github.com/macwadu)
 * [Michael Smith](https://github.com/MikaelSmith)
+* [Shenil Dodhia](https://github.com/shenil)
 
 [GitHub Account]: https://github.com/signup/free "GitHub Signup"
 [GitHub Issues]:  https://github.com/copiousfreetime/stickler/issues "Stickler Issues"
