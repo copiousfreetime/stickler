@@ -1,6 +1,6 @@
 module Stickler
   # The Current Version of the library
-  VERSION = "2.4.1"
+  VERSION = "2.4.2"
 end
 require 'sinatra/base'
 
