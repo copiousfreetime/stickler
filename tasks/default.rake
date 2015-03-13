@@ -10,21 +10,12 @@ namespace :develop do
 
   # Install all the development and runtime dependencies of this gem using the
   # gemspec.
-  task :default do
+  task :default => 'Gemfile' do
     require 'rubygems/dependency_installer'
     installer = ::Gem::DependencyInstaller.new
-
-    This.set_coverage_gem
-
-    puts "Installing gem depedencies needed for development"
-    This.platform_gemspec.dependencies.each do |dep|
-      if dep.matching_specs.empty? then
-        puts "Installing : #{dep}"
-        installer.install dep
-      else
-        puts "Skipping   : #{dep} -> already installed #{dep.matching_specs.first.full_name}"
-      end
-    end
+    puts "Installing bundler..."
+    installer.install 'bundler'
+    sh 'bundle install'
     puts "\n\nNow run 'rake test'"
   end
 
@@ -37,16 +28,8 @@ namespace :develop do
       f.puts 'gemspec'
     end
   end
-
-  desc "Create a bundler Gemfile"
-  task :using_bundler => 'Gemfile' do
-    puts "Now you can 'bundle'"
-  end
-
-  # Gemfiles are build artifacts
-  CLOBBER << FileList['Gemfile*']
 end
-desc "Boostrap development"
+desc "Bootstrap development"
 task :develop => "develop:default"
 
 #------------------------------------------------------------------------------
@@ -90,31 +73,16 @@ end
 # Coverage - optional code coverage, rcov for 1.8 and simplecov for 1.9, so
 #            for the moment only rcov is listed.
 #------------------------------------------------------------------------------
-if RUBY_VERSION < "1.9.0"
-  begin
-   require 'rcov/rcovtask'
-   Rcov::RcovTask.new( 'coverage' ) do |t|
-     t.libs      << 'spec'
-     t.pattern   = 'spec/**/*_spec.rb'
-     t.verbose   = true
-     t.rcov_opts << "-x ^/"           # remove all the global files
-     t.rcov_opts << "--sort coverage" # so we see the worst files at the top
-   end
-  rescue LoadError
-   This.task_warning( 'rcov' )
+begin
+  require 'simplecov'
+  desc 'Run tests with code coverage'
+  task :coverage do
+    ENV['COVERAGE'] = 'true'
+    Rake::Task[:test].execute
   end
-else
-  begin
-    require 'simplecov'
-    desc 'Run tests with code coverage'
-    task :coverage do
-      ENV['COVERAGE'] = 'true'
-      Rake::Task[:test].execute
-    end
-    CLOBBER << FileList["coverage"]
-  rescue LoadError
-    This.task_warning( 'simplecov' )
-  end
+  CLOBBER << 'coverage' if File.directory?( 'coverage' )
+rescue LoadError
+  This.task_warning( 'simplecov' )
 end
 
 #------------------------------------------------------------------------------
@@ -179,9 +147,10 @@ namespace :fixme do
   end
 
   def outdated_fixme_files
-    local_fixme_files.reject do |local|
+    local_fixme_files.select do |local|
       upstream     = fixme_project_path( local )
-      Digest::SHA256.file( local ) == Digest::SHA256.file( upstream )
+      upstream.exist? &&
+        ( Digest::SHA256.file( local ) != Digest::SHA256.file( upstream ) )
     end
   end
 
@@ -230,9 +199,6 @@ task :gemspec do
     f.write This.platform_gemspec.to_ruby
   end
 end
-
-# the gemspec is also a dev artifact and should not be kept around.
-CLOBBER << This.gemspec_file.to_s
 
 # .rbc files from ruby 2.0
 CLOBBER << FileList["**/*.rbc"]
