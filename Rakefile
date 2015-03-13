@@ -21,6 +21,7 @@ This.ruby_gemspec do |spec|
   spec.add_development_dependency( 'minitest'    , '~> 5.0'  )
   spec.add_development_dependency( 'rdoc'        , '~> 4.2'  )
   spec.add_development_dependency( 'ronn'        , '~> 0.7'  )
+  spec.add_development_dependency( 'mustache'    , '~> 0.99' )
   spec.add_development_dependency( 'simplecov'   , '~> 0.9' )
 
   spec.required_rubygems_version = '~> 2.2'
