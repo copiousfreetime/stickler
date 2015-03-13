@@ -40,7 +40,8 @@ module Stickler::Middleware
     # gemcutter unyank
     post '/api/v1/gems/unyank' do
       begin
-        spec = Stickler::SpecLite.new( params[:spec_name], params[:version] )
+        platform = params.fetch("platform", "ruby")
+        spec = Stickler::SpecLite.new( params[:spec_name], params[:version], platform )
         @repo.unyank( spec )
         logger.info( "Unyanked #{spec.full_name}" )
         return spec.to_s
@@ -52,7 +53,8 @@ module Stickler::Middleware
 
     # gemcutter yank
     delete '/api/v1/gems/yank' do
-      spec = Stickler::SpecLite.new( params[:gem_name], params[:version] )
+      platform = params.fetch("platform", "ruby")
+      spec = Stickler::SpecLite.new( params[:gem_name], params[:version], platform )
       if @repo.yank( spec ) then
         logger.info( "Yanked #{spec.full_name}" )
         return "Yanked #{spec.full_name}"

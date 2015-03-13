@@ -93,7 +93,7 @@ module ::Stickler::Repository
     #
     def yank( spec )
       return nil unless remote_gem_file_exist?( spec )
-      query = { :gem_name => spec.name, :version => spec.version.to_s }
+      query = { :gem_name => spec.name, :version => spec.version.to_s, :platform => spec.platform.to_s }
       resource_request( yank_resource, :query => query  )
       return full_uri_to_gem( spec )
     rescue Excon::Errors::Error => e
@@ -105,7 +105,7 @@ module ::Stickler::Repository
     #
     def unyank( spec )
       if remote_gem_file_exist?( spec ) && search_for( spec ).empty? then
-        query = { :spec_name => spec.name, :version => spec.version.to_s }
+        query = { :spec_name => spec.name, :version => spec.version.to_s, :platform => spec.platform.to_s }
         resource_request( unyank_resource, :query => query  )
         return true
       else
