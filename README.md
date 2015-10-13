@@ -124,5 +124,5 @@ If you want to do development on stickler, please see
 
 ## LICENSE
 
-Copyright (C) 2008-2013 Jeremy Hinegardner ISC License, See [LICENSE](./LICENSE) for details.
+Copyright (C) 2015 Jeremy Hinegardner MIT License, See [LICENSE](./LICENSE) for details.
 

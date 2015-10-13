@@ -2,6 +2,10 @@ Stickler Changelog
 ==================
 Jeremy Hinegardner <jeremy@copiousfreetime.org>
 
+Version 2.4.3 - 2015-10-XX
+--------------------------
+* Relicense as MIT
+
 Version 2.4.2 - 2015-03-12
 --------------------------
 * Drop support for ruby 1.8
