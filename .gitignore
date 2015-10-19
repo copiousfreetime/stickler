@@ -19,3 +19,4 @@ Gemfile.lock
 test/data/mirror
 test/data/gemcutter
 test/tmp
+.gem

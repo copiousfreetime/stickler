@@ -194,7 +194,7 @@ class ThisProject
   end
 
   def license
-    "ISC"
+    "MIT"
   end
 
   # Internal: The path to the gemspec file
