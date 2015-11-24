@@ -105,6 +105,11 @@ module Stickler::Repository
       @index = ::Stickler::Repository::Index.new( @specifications_dir )
     end
 
+    # TODO: doc
+    def dependencies( gem_name )
+      @index.dependencies(gem_name)
+    end
+
     #
     # See Api#uri
     #
