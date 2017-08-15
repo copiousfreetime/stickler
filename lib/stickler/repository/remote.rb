@@ -84,7 +84,11 @@ module ::Stickler::Repository
       resource_request( push_resource, :body => IO.read( path ) )
       return spec
     rescue Excon::Errors::Error => e
-      msg = "Failure pushing #{path} to remote repository : response code => #{e.response.status}, response message => '#{e.response.body}'"
+      if e.respond_to?(:response)
+        msg = "Failure pushing #{path} to remote repository : response code => #{e.response.status}, response message => '#{e.response.body}'"
+      else
+        msg = "Failure pushing #{path} to remote repository : #{e.inspect}"
+      end
       raise Stickler::Repository::Error, msg
     end
 

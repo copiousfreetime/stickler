@@ -56,6 +56,13 @@ module Stickler
       end
     end
 
+    def test_raising_error_when_pushing_to_not_existent_server
+      not_existent_repo = ::Stickler::Repository::Remote.new("http://notexistent:6789/")
+      assert_raises_kind_of( Stickler::Repository::Error ) do
+        not_existent_repo.push( @foo_gem_local_path )
+      end
+    end
+
     ########
     # Delete
     ########
